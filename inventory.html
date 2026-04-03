@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>在庫チェック表</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; }
+
+  header {
+    background: #4caf50;
+    color: white;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0,0,0,.2);
+  }
+  header h1 { font-size: 1.4rem; }
+  header span { font-size: 0.85rem; opacity: .85; }
+
+  .tabs {
+    display: flex;
+    background: white;
+    border-bottom: 2px solid #e0e0e0;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 12px 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 0.9rem;
+    border-bottom: 3px solid transparent;
+    transition: all .2s;
+  }
+  .tab:hover { background: #f5f5f5; }
+  .tab.active { border-bottom-color: #4caf50; color: #4caf50; font-weight: 600; }
+
+  .container { max-width: 700px; margin: 0 auto; padding: 16px; }
+
+  .add-form {
+    background: white;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .add-form input[type="text"] {
+    flex: 1;
+    min-width: 140px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+  }
+  .add-form input[type="number"] {
+    width: 70px;
+    padding: 8px 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+  }
+  .add-form select {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: white;
+  }
+  .btn-add {
+    padding: 8px 18px;
+    background: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .btn-add:hover { background: #43a047; }
+
+  .stats {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 12px 16px;
+    flex: 1;
+    min-width: 120px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    text-align: center;
+  }
+  .stat-card .num { font-size: 1.6rem; font-weight: 700; color: #4caf50; }
+  .stat-card .num.warn { color: #f44336; }
+  .stat-card .lbl { font-size: 0.75rem; color: #888; margin-top: 2px; }
+
+  .item-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .item-card {
+    background: white;
+    border-radius: 8px;
+    padding: 12px 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: opacity .2s;
+  }
+  .item-card.out-of-stock { border-left: 4px solid #f44336; }
+  .item-card.low-stock    { border-left: 4px solid #ff9800; }
+  .item-card.in-stock     { border-left: 4px solid #4caf50; }
+
+  .item-name { flex: 1; font-size: 0.95rem; font-weight: 500; }
+  .item-cat  { font-size: 0.75rem; color: #888; background: #f0f0f0; padding: 2px 8px; border-radius: 10px; }
+
+  .qty-ctrl { display: flex; align-items: center; gap: 6px; }
+  .qty-btn {
+    width: 28px; height: 28px;
+    border: 1px solid #ccc; background: #f9f9f9;
+    border-radius: 6px; cursor: pointer; font-size: 1rem; line-height: 1;
+  }
+  .qty-btn:hover { background: #e0e0e0; }
+  .qty-val { min-width: 28px; text-align: center; font-weight: 600; font-size: 0.95rem; }
+
+  .status-badge {
+    font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+  }
+  .badge-out  { background: #fde8e8; color: #c62828; }
+  .badge-low  { background: #fff3e0; color: #e65100; }
+  .badge-ok   { background: #e8f5e9; color: #2e7d32; }
+
+  .threshold-badge {
+    font-size: 0.7rem; color: #999; background: #f5f5f5; border: 1px solid #e0e0e0;
+    padding: 2px 7px; border-radius: 10px; cursor: pointer; white-space: nowrap;
+  }
+  .threshold-badge:hover { background: #e8e8e8; color: #555; }
+
+  .btn-del {
+    background: none; border: none; cursor: pointer; color: #bbb; font-size: 1.1rem; padding: 4px;
+  }
+  .btn-del:hover { color: #e53935; }
+
+  .empty { text-align: center; padding: 40px; color: #aaa; font-size: 0.95rem; }
+
+  .need-buy-section { margin-top: 24px; }
+  .need-buy-section h2 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; color: #e65100; }
+
+  @media (max-width: 480px) {
+    .item-cat { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>在庫チェック表</h1>
+  <span id="last-updated"></span>
+</header>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-cat="all">すべて</div>
+  <div class="tab" data-cat="要購入">要購入</div>
+  <div class="tab" data-cat="食料品">食料品</div>
+  <div class="tab" data-cat="日用品">日用品</div>
+  <div class="tab" data-cat="冷凍・冷蔵食品">冷凍・冷蔵</div>
+  <div class="tab" data-cat="飲み物">飲み物</div>
+  <div class="tab" data-cat="生協">生協</div>
+</div>
+
+<div class="container">
+  <div class="add-form">
+    <input type="text" id="new-name" placeholder="商品名を入力..." />
+    <select id="new-cat">
+      <option>食料品</option>
+      <option>日用品</option>
+      <option>冷凍・冷蔵食品</option>
+      <option>飲み物</option>
+      <option>生協</option>
+    </select>
+    <input type="number" id="new-qty" value="1" min="0" max="99" />
+    <input type="number" id="new-threshold" value="2" min="0" max="99" title="警告ライン（この数以下で残り少ない）" />
+    <button class="btn-add" onclick="addItem()">追加</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card"><div class="num" id="stat-total">0</div><div class="lbl">合計商品数</div></div>
+    <div class="stat-card"><div class="num warn" id="stat-out">0</div><div class="lbl">在庫なし</div></div>
+    <div class="stat-card"><div class="num" style="color:#ff9800" id="stat-low">0</div><div class="lbl">残り少ない</div></div>
+  </div>
+
+  <div class="item-list" id="item-list"></div>
+</div>
+
+<script>
+const STORAGE_KEY = 'inventory_v1';
+let currentCat = 'all';
+
+const DEFAULT_ITEMS = [
+  { id: 1, name: '卵', cat: '食料品', qty: 6 },
+  { id: 2, name: '牛乳', cat: '冷凍・冷蔵食品', qty: 1 },
+  { id: 3, name: '食パン', cat: '食料品', qty: 1 },
+  { id: 4, name: 'ティッシュ', cat: '日用品', qty: 2 },
+  { id: 5, name: 'トイレットペーパー', cat: '日用品', qty: 4 },
+  { id: 6, name: 'お茶 (2L)', cat: '飲み物', qty: 2 },
+  { id: 7, name: '鶏もも肉', cat: '冷凍・冷蔵食品', qty: 0 },
+  { id: 8, name: '醤油', cat: '食料品', qty: 1 },
+  { id: 9, name: 'シャンプー', cat: '日用品', qty: 1 },
+  { id: 10, name: 'ミネラルウォーター', cat: '飲み物', qty: 3 },
+];
+
+function load() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  return raw ? JSON.parse(raw) : DEFAULT_ITEMS;
+}
+function save(items) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  document.getElementById('last-updated').textContent =
+    '更新: ' + new Date().toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit'});
+}
+
+function getStatus(qty, threshold) {
+  const t = threshold ?? 2;
+  if (qty === 0) return 'out';
+  if (qty <= t) return 'low';
+  return 'ok';
+}
+function badgeHtml(qty, threshold) {
+  const s = getStatus(qty, threshold);
+  if (s === 'out') return '<span class="status-badge badge-out">在庫なし</span>';
+  if (s === 'low') return '<span class="status-badge badge-low">残り少ない</span>';
+  return '<span class="status-badge badge-ok">在庫あり</span>';
+}
+
+function render() {
+  const items = load();
+  const list = document.getElementById('item-list');
+
+  const visible = currentCat === 'all' ? items
+    : currentCat === '要購入' ? items.filter(i => i.qty <= (i.threshold ?? 2))
+    : items.filter(i => i.cat === currentCat);
+
+  if (visible.length === 0) {
+    list.innerHTML = '<div class="empty">アイテムがありません。上から追加してください。</div>';
+  } else {
+    list.innerHTML = visible.map(item => {
+      const s = getStatus(item.qty);
+      return `
+      <div class="item-card ${s === 'out' ? 'out-of-stock' : s === 'low' ? 'low-stock' : 'in-stock'}" data-id="${item.id}">
+        <div class="item-name">${escHtml(item.name)}</div>
+        <span class="item-cat">${escHtml(item.cat)}</span>
+        ${badgeHtml(item.qty, item.threshold)}
+        <span class="threshold-badge" onclick="changeThreshold(${item.id})" title="警告ラインを変更">警告:${item.threshold ?? 2}以下</span>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
+          <span class="qty-val">${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${item.id}, +1)">+</button>
+        </div>
+        <button class="btn-del" onclick="deleteItem(${item.id})" title="削除">&#x2715;</button>
+      </div>`;
+    }).join('');
+  }
+
+  // stats
+  document.getElementById('stat-total').textContent = items.length;
+  document.getElementById('stat-out').textContent  = items.filter(i => i.qty === 0).length;
+  document.getElementById('stat-low').textContent  = items.filter(i => i.qty > 0 && i.qty <= (i.threshold ?? 2)).length;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function addItem() {
+  const name = document.getElementById('new-name').value.trim();
+  if (!name) { document.getElementById('new-name').focus(); return; }
+  const cat  = document.getElementById('new-cat').value;
+  const qty       = parseInt(document.getElementById('new-qty').value) || 0;
+  const threshold = parseInt(document.getElementById('new-threshold').value) ?? 2;
+  const items = load();
+  const newId = items.length ? Math.max(...items.map(i=>i.id)) + 1 : 1;
+  items.push({ id: newId, name, cat, qty, threshold });
+  save(items);
+  document.getElementById('new-name').value = '';
+  document.getElementById('new-qty').value  = '1';
+  render();
+}
+
+function changeQty(id, delta) {
+  const items = load();
+  const item = items.find(i => i.id === id);
+  if (item) { item.qty = Math.max(0, item.qty + delta); save(items); render(); }
+}
+
+function changeThreshold(id) {
+  const items = load();
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+  const val = prompt(`「${item.name}」の警告ライン\nこの数以下になったら「残り少ない」と表示します`, item.threshold ?? 2);
+  if (val === null) return;
+  const t = parseInt(val);
+  if (isNaN(t) || t < 0) return;
+  item.threshold = t;
+  save(items);
+  render();
+}
+
+function deleteItem(id) {
+  const items = load().filter(i => i.id !== id);
+  save(items);
+  render();
+}
+
+// Tabs
+document.getElementById('tabs').addEventListener('click', e => {
+  const tab = e.target.closest('.tab');
+  if (!tab) return;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  currentCat = tab.dataset.cat;
+  render();
+});
+
+// Enter key in name field
+document.getElementById('new-name').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addItem();
+});
+
+render();
+</script>
+</body>
+</html>
