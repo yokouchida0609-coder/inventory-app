@@ -126,7 +126,11 @@
   .task-card.done .task-checkbox::after { content: '✓'; }
 
   .task-name { flex: 1; font-size: 0.95rem; font-weight: 500; }
-  .task-note { font-size: 0.75rem; color: #bbb; white-space: nowrap; }
+  .task-note { font-size: 0.75rem; color: #999; white-space: nowrap; }
+  .month-badge {
+    font-size: 0.72rem; padding: 2px 9px; border-radius: 10px;
+    color: #555; font-weight: 500; white-space: nowrap;
+  }
   .task-time { font-size: 0.8rem; color: #4caf50; font-weight: 600; white-space: nowrap; }
   .weekday-badge {
     font-size: 0.68rem; color: #999; background: #f0f0f0;
@@ -480,6 +484,16 @@ function saveState(state) {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
 }
 
+const MONTH_COLORS = {
+  1: '#ef9a9a', 2: '#f48fb1', 3: '#ce93d8', 4: '#90caf9',
+  5: '#80cbc4', 6: '#a5d6a7', 7: '#fff176', 8: '#ffcc80',
+  9: '#ffab91', 10: '#bcaaa4', 11: '#b0bec5', 12: '#80deea'
+};
+function getMonthColor(note) {
+  const m = note && note.match(/^(\d+)/);
+  return m ? (MONTH_COLORS[parseInt(m[1])] || null) : null;
+}
+
 function getCheckedKey(id) {
   if (id.startsWith('yr'))  return 'annualChecked';
   if (id.startsWith('mo'))  return 'monthlyChecked';
@@ -548,7 +562,12 @@ function renderTaskList(containerId, tasks, checkedArr, state) {
     }
     const cls = 'task-card' + (done ? ' done' : '') + (inactive ? ' inactive' : '');
     const onclick = inactive ? '' : 'onclick="toggleTask(\'' + task.id + '\')"';
-    const noteHtml = noteText ? '<span class="task-note">' + noteText + '</span>' : '';
+    const monthColor = task.id.startsWith('yr') ? getMonthColor(noteText) : null;
+    const noteHtml = noteText
+      ? (monthColor
+          ? '<span class="month-badge" style="background:' + monthColor + '">' + noteText + '</span>'
+          : '<span class="task-note">' + noteText + '</span>')
+      : '';
     const timeHtml = task.time ? '<span class="task-time">' + task.time + '</span>' : '';
     const badgeHtml = task.weekdayOnly ? '<span class="weekday-badge">平日のみ</span>' : '';
     return '<div class="' + cls + '" ' + onclick + '>'
