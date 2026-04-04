@@ -348,7 +348,7 @@ const DAY_NAMES = ['日','月','火','水','木','金','土'];
 
 const weekStartStr = (() => {
   const d = new Date(logicalToday);
-  d.setDate(d.getDate() - d.getDay());
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // 月曜始まり
   return d.toISOString().slice(0, 10);
 })();
 const monthKeyStr = todayStr.slice(0, 7);
