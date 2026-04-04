@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>デイリールーティン</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; }
+
+  header {
+    background: #4caf50;
+    color: white;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0,0,0,.2);
+  }
+  header h1 { font-size: 1.4rem; }
+  header span { font-size: 0.85rem; opacity: .85; }
+
+  .tabs {
+    display: flex;
+    background: white;
+    border-bottom: 2px solid #e0e0e0;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 12px 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 0.9rem;
+    border-bottom: 3px solid transparent;
+    transition: all .2s;
+  }
+  .tab:hover { background: #f5f5f5; }
+  .tab.active { border-bottom-color: #4caf50; color: #4caf50; font-weight: 600; }
+
+  .container { max-width: 700px; margin: 0 auto; padding: 16px; }
+
+  .progress-bar-wrap {
+    background: white;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 8px;
+  }
+  .progress-bar {
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #4caf50;
+    border-radius: 4px;
+    transition: width 0.3s;
+  }
+
+  .section { margin-bottom: 20px; }
+  .section-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #999;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+    padding-left: 4px;
+  }
+
+  .task-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .task-card {
+    background: white;
+    border-radius: 8px;
+    padding: 12px 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: opacity .2s, background .2s;
+    user-select: none;
+  }
+  .task-card:hover { background: #fafafa; }
+  .task-card.done { opacity: 0.45; }
+  .task-card.done .task-name { text-decoration: line-through; }
+  .task-card.inactive { opacity: 0.3; cursor: default; }
+
+  .task-checkbox {
+    width: 22px; height: 22px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: white;
+    transition: all .2s;
+  }
+  .task-card.done .task-checkbox {
+    background: #4caf50;
+    border-color: #4caf50;
+  }
+  .task-card.done .task-checkbox::after { content: '✓'; }
+
+  .task-name { flex: 1; font-size: 0.95rem; font-weight: 500; }
+  .task-note { font-size: 0.75rem; color: #bbb; white-space: nowrap; }
+  .task-time { font-size: 0.8rem; color: #4caf50; font-weight: 600; white-space: nowrap; }
+  .weekday-badge {
+    font-size: 0.68rem; color: #999; background: #f0f0f0;
+    padding: 2px 6px; border-radius: 10px; white-space: nowrap; flex-shrink: 0;
+  }
+
+  .reset-btn {
+    width: 100%;
+    padding: 10px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    color: #bbb;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-top: 4px;
+  }
+  .reset-btn:hover { background: #fff3e0; color: #e65100; border-color: #ffcc80; }
+
+  /* 週間・月間・年間 */
+  .ref-section { margin-bottom: 20px; }
+  .ref-section h2 {
+    font-size: 0.8rem; font-weight: 700; color: #999;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px; padding-left: 4px;
+  }
+  .ref-list { display: flex; flex-direction: column; gap: 6px; }
+  .ref-card {
+    background: white; border-radius: 8px;
+    padding: 11px 14px; box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .ref-freq {
+    font-size: 0.72rem; color: #888; background: #f0f0f0;
+    padding: 2px 8px; border-radius: 10px; white-space: nowrap; flex-shrink: 0;
+  }
+  .ref-name { flex: 1; font-size: 0.9rem; }
+  .ref-note { font-size: 0.75rem; color: #bbb; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>デイリールーティン</h1>
+  <span id="header-date"></span>
+</header>
+
+<div class="tabs">
+  <div class="tab active" data-tab="today">今日</div>
+  <div class="tab" data-tab="weekly">週間</div>
+  <div class="tab" data-tab="monthly">月間</div>
+  <div class="tab" data-tab="annual">年間</div>
+</div>
+
+<div class="container">
+
+  <!-- 今日タブ -->
+  <div class="tab-content active" id="tab-today">
+    <div class="progress-bar-wrap">
+      <div class="progress-label">
+        <span>今日の進捗</span>
+        <span id="progress-text">0 / 0 完了</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">朝</div>
+      <div class="task-list" id="tasks-morning"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">昼</div>
+      <div class="task-list" id="tasks-noon"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">夜</div>
+      <div class="task-list" id="tasks-evening"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">随時</div>
+      <div class="task-list" id="tasks-anytime"></div>
+    </div>
+
+    <button class="reset-btn" onclick="resetToday()">今日のチェックをリセット</button>
+  </div>
+
+  <!-- 週間タブ -->
+  <div class="tab-content" id="tab-weekly">
+    <div class="ref-section">
+      <h2>週1回</h2>
+      <div class="ref-list">
+        <div class="ref-card"><span class="ref-freq">週1</span><span class="ref-name">枕カバー洗濯</span></div>
+        <div class="ref-card"><span class="ref-freq">週1</span><span class="ref-name">玄関掃除</span></div>
+        <div class="ref-card"><span class="ref-freq">週1</span><span class="ref-name">アイロン</span></div>
+        <div class="ref-card"><span class="ref-freq">週1</span><span class="ref-name">ブルーレイのデータ整理</span></div>
+        <div class="ref-card"><span class="ref-freq">週1</span><span class="ref-name">お風呂掃除</span></div>
+        <div class="ref-card"><span class="ref-freq">週1</span><span class="ref-name">トイレ掃除</span></div>
+      </div>
+    </div>
+    <div class="ref-section">
+      <h2>週2回</h2>
+      <div class="ref-list">
+        <div class="ref-card"><span class="ref-freq">週2</span><span class="ref-name">チョコザップ</span></div>
+        <div class="ref-card"><span class="ref-freq">2日に1回</span><span class="ref-name">洗濯</span><span class="ref-note">在宅日・朝歯磨き後</span></div>
+      </div>
+    </div>
+    <div class="ref-section">
+      <h2>曜日固定</h2>
+      <div class="ref-list">
+        <div class="ref-card"><span class="ref-freq">月・金</span><span class="ref-name">ゴミ出し</span><span class="ref-note">22:00以降</span></div>
+        <div class="ref-card"><span class="ref-freq">金</span><span class="ref-name">冷蔵庫チェック</span><span class="ref-note">ゴミ出し前</span></div>
+        <div class="ref-card"><span class="ref-freq">日</span><span class="ref-name">ペットボトルゴミ出し</span><span class="ref-note">22:00ごろ</span></div>
+      </div>
+    </div>
+    <div class="ref-section">
+      <h2>2週間ごと</h2>
+      <div class="ref-list">
+        <div class="ref-card"><span class="ref-freq">2週間</span><span class="ref-name">爪切り</span></div>
+        <div class="ref-card"><span class="ref-freq">2週間</span><span class="ref-name">シーツ交換</span></div>
+        <div class="ref-card"><span class="ref-freq">2週間</span><span class="ref-name">ベランダ掃除</span></div>
+      </div>
+    </div>
+    <div class="ref-section">
+      <h2>3週間ごと</h2>
+      <div class="ref-list">
+        <div class="ref-card"><span class="ref-freq">3週間</span><span class="ref-name">髪染め</span><span class="ref-note">お風呂前（19時前後）</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 月間タブ -->
+  <div class="tab-content" id="tab-monthly">
+    <div class="ref-list">
+      <div class="ref-card"><span class="ref-freq">月初〜7日</span><span class="ref-name">家計管理表更新</span></div>
+      <div class="ref-card"><span class="ref-freq">月末</span><span class="ref-name">アメブロ更新（2つ）</span></div>
+      <div class="ref-card"><span class="ref-freq">月末</span><span class="ref-name">交通費の取得と報告</span></div>
+      <div class="ref-card"><span class="ref-freq">月末</span><span class="ref-name">備蓄チェック</span></div>
+      <div class="ref-card"><span class="ref-freq">月1回</span><span class="ref-name">空気清浄機フィルター掃除</span></div>
+      <div class="ref-card"><span class="ref-freq">月1回</span><span class="ref-name">掃除機フィルター掃除</span></div>
+    </div>
+  </div>
+
+  <!-- 年間タブ -->
+  <div class="tab-content" id="tab-annual">
+    <div class="ref-list">
+      <div class="ref-card"><span class="ref-freq">1月</span><span class="ref-name">年間家計チェック</span></div>
+      <div class="ref-card"><span class="ref-freq">1月</span><span class="ref-name">お正月マニュアル更新</span></div>
+      <div class="ref-card"><span class="ref-freq">2月</span><span class="ref-name">確定申告</span></div>
+      <div class="ref-card"><span class="ref-freq">2月中旬</span><span class="ref-name">ANAチケット手配（5月GW分）</span></div>
+      <div class="ref-card"><span class="ref-freq">4月</span><span class="ref-name">コンタクト購入</span></div>
+      <div class="ref-card"><span class="ref-freq">5月</span><span class="ref-name">健康診断・ピル購入</span></div>
+      <div class="ref-card"><span class="ref-freq">5月</span><span class="ref-name">カーテン・スニーカー洗い</span></div>
+      <div class="ref-card"><span class="ref-freq">5月</span><span class="ref-name">ディナー予約（6月誕生日）</span></div>
+      <div class="ref-card"><span class="ref-freq">5月中旬</span><span class="ref-name">ANAチケット手配（8月お盆分）</span></div>
+      <div class="ref-card"><span class="ref-freq">5〜6月</span><span class="ref-name">7月宿泊旅行の予約</span></div>
+      <div class="ref-card"><span class="ref-freq">6月</span><span class="ref-name">ディナー予約（7月結婚記念日）</span></div>
+      <div class="ref-card"><span class="ref-freq">7月</span><span class="ref-name">宿泊旅行（マスト）</span></div>
+      <div class="ref-card"><span class="ref-freq">9月</span><span class="ref-name">エアコン業者清掃</span></div>
+      <div class="ref-card"><span class="ref-freq">9月</span><span class="ref-name">ディナー予約（10月誕生日）</span></div>
+      <div class="ref-card"><span class="ref-freq">9月中旬</span><span class="ref-name">ANAチケット手配（12月年末分）</span></div>
+      <div class="ref-card"><span class="ref-freq">10月</span><span class="ref-name">ふるさと納税</span></div>
+      <div class="ref-card"><span class="ref-freq">11月</span><span class="ref-name">ディナー予約（12月クリスマス）</span></div>
+      <div class="ref-card"><span class="ref-freq">11月</span><span class="ref-name">年賀状購入</span></div>
+      <div class="ref-card"><span class="ref-freq">12月</span><span class="ref-name">年賀状デザイン・印刷</span></div>
+      <div class="ref-card"><span class="ref-freq">12月</span><span class="ref-name">お正月連絡</span></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const STORAGE_KEY = 'routine_v1';
+const today = new Date();
+const todayStr = today.toISOString().slice(0, 10);
+const dayOfWeek = today.getDay(); // 0=日, 6=土
+const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
+const DAY_NAMES = ['日','月','火','水','木','金','土'];
+
+document.getElementById('header-date').textContent =
+  today.getFullYear() + '/' +
+  String(today.getMonth()+1).padStart(2,'0') + '/' +
+  String(today.getDate()).padStart(2,'0') +
+  '（' + DAY_NAMES[dayOfWeek] + '）';
+
+const MORNING_TASKS = [
+  { id: 'm1', name: 'りべ大視聴',         note: '朝ごはん前', weekdayOnly: false },
+  { id: 'm2', name: '朝の歯磨き',          note: '起床後',    weekdayOnly: false },
+  { id: 'm3', name: 'チベット体操',         note: '歯磨き後',  weekdayOnly: false },
+  { id: 'm4', name: '朝ごはん',             note: '',         weekdayOnly: false },
+  { id: 'm5', name: '留守電確認',           note: '朝ごはん後', weekdayOnly: true },
+  { id: 'm6', name: '英語・フランス語ラジオ', note: '午前中',   weekdayOnly: true },
+  { id: 'm7', name: '掃除機',              note: '午前中',    weekdayOnly: false },
+];
+const NOON_TASKS = [
+  { id: 'n1', name: '昼ごはん', note: '', time: '13:00', weekdayOnly: false },
+];
+const EVENING_TASKS = [
+  { id: 'e1', name: '晩御飯',            note: '',         time: '18:00', weekdayOnly: false },
+  { id: 'e2', name: 'お風呂',            note: '',         time: '19:00', weekdayOnly: false },
+  { id: 'e3', name: '読書',              note: '英語本・その他',           weekdayOnly: false },
+  { id: 'e4', name: 'Spotify',          note: '',                         weekdayOnly: false },
+  { id: 'e5', name: 'note投稿',          note: 'ほぼ毎日',                 weekdayOnly: false },
+  { id: 'e6', name: 'りべ大宿題',        note: '暇な時間',                 weekdayOnly: false },
+  { id: 'e7', name: '夜の歯磨き',        note: '',         time: '22:00', weekdayOnly: false },
+  { id: 'e8', name: 'ストレッチ・舌体操', note: '就寝前',                  weekdayOnly: false },
+  { id: 'e9', name: 'スマホ・イヤホン充電', note: '就寝前',               weekdayOnly: false },
+  { id: 'e10', name: 'チャッピーに今日の報告', note: '就寝前',            weekdayOnly: false },
+];
+const ANYTIME_TASKS = [
+  { id: 'a1', name: 'テーブル掃除',       note: '毎日',   weekdayOnly: false },
+  { id: 'a2', name: 'Google フォト整理', note: '随時',   weekdayOnly: false },
+  { id: 'a3', name: 'Facebook投稿',     note: '随時',   weekdayOnly: false },
+];
+
+let memoryState = { date: todayStr, checked: [] };
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { date: todayStr, checked: [] };
+    const state = JSON.parse(raw);
+    if (state.date !== todayStr) return { date: todayStr, checked: [] };
+    return state;
+  } catch(e) {
+    return memoryState;
+  }
+}
+function saveState(state) {
+  memoryState = state;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function toggleTask(id) {
+  const state = loadState();
+  const idx = state.checked.indexOf(id);
+  if (idx === -1) state.checked.push(id); else state.checked.splice(idx, 1);
+  saveState(state);
+  render();
+}
+
+function resetToday() {
+  if (!confirm('今日のチェックをすべてリセットしますか？')) return;
+  saveState({ date: todayStr, checked: [] });
+  render();
+}
+
+function allCountable() {
+  return [...MORNING_TASKS, ...NOON_TASKS, ...EVENING_TASKS, ...ANYTIME_TASKS]
+    .filter(t => !t.weekdayOnly || isWeekday);
+}
+
+function renderTaskList(containerId, tasks) {
+  const state = loadState();
+  const el = document.getElementById(containerId);
+  el.innerHTML = tasks.map(task => {
+    const inactive = task.weekdayOnly && !isWeekday;
+    const done = !inactive && state.checked.includes(task.id);
+    const cls = 'task-card' + (done ? ' done' : '') + (inactive ? ' inactive' : '');
+    const onclick = inactive ? '' : 'onclick="toggleTask(\'' + task.id + '\')"';
+    const noteHtml = task.note ? '<span class="task-note">' + task.note + '</span>' : '';
+    const timeHtml = task.time ? '<span class="task-time">' + task.time + '</span>' : '';
+    const badgeHtml = task.weekdayOnly ? '<span class="weekday-badge">平日のみ</span>' : '';
+    return '<div class="' + cls + '" ' + onclick + '>'
+      + '<div class="task-checkbox"></div>'
+      + '<span class="task-name">' + task.name + '</span>'
+      + noteHtml + timeHtml + badgeHtml
+      + '</div>';
+  }).join('');
+}
+
+function render() {
+  const state = loadState();
+  const countable = allCountable();
+  const doneCount = state.checked.filter(id => countable.find(t => t.id === id)).length;
+  const total = countable.length;
+  const pct = total > 0 ? Math.round(doneCount / total * 100) : 0;
+  document.getElementById('progress-text').textContent = `${doneCount} / ${total} 完了`;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  renderTaskList('tasks-morning', MORNING_TASKS);
+  renderTaskList('tasks-noon', NOON_TASKS);
+  renderTaskList('tasks-evening', EVENING_TASKS);
+  renderTaskList('tasks-anytime', ANYTIME_TASKS);
+}
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+render();
+</script>
+</body>
+</html>
