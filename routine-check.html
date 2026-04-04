@@ -74,6 +74,18 @@
     letter-spacing: 0.08em;
     margin-bottom: 8px;
     padding-left: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .reset-badge {
+    font-size: 0.65rem;
+    font-weight: 400;
+    color: white;
+    background: #a5d6a7;
+    padding: 1px 7px;
+    border-radius: 8px;
+    letter-spacing: 0;
   }
 
   .task-list { display: flex; flex-direction: column; gap: 6px; }
@@ -134,7 +146,7 @@
   }
   .reset-btn:hover { background: #fff3e0; color: #e65100; border-color: #ffcc80; }
 
-  /* 週間・月間・年間 */
+  /* 週間・月間・年間タブ */
   .ref-section { margin-bottom: 20px; }
   .ref-section h2 {
     font-size: 0.8rem; font-weight: 700; color: #999;
@@ -201,6 +213,22 @@
     <div class="section">
       <div class="section-title">随時</div>
       <div class="task-list" id="tasks-anytime"></div>
+    </div>
+    <div class="section" id="section-day-tasks">
+      <div class="section-title">曜日タスク</div>
+      <div class="task-list" id="tasks-day"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">週間タスク <span class="reset-badge">日曜リセット</span></div>
+      <div class="task-list" id="tasks-weekly"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">月間タスク <span class="reset-badge">月末リセット</span></div>
+      <div class="task-list" id="tasks-monthly"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">年間タスク <span class="reset-badge">年末リセット</span></div>
+      <div class="task-list" id="tasks-annual"></div>
     </div>
 
     <button class="reset-btn" onclick="resetToday()">今日のチェックをリセット</button>
@@ -291,12 +319,20 @@
 </div>
 
 <script>
-const STORAGE_KEY = 'routine_v1';
+const STORAGE_KEY = 'routine_v2';
 const today = new Date();
 const todayStr = today.toISOString().slice(0, 10);
 const dayOfWeek = today.getDay(); // 0=日, 6=土
 const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
 const DAY_NAMES = ['日','月','火','水','木','金','土'];
+
+const weekStartStr = (() => {
+  const d = new Date(today);
+  d.setDate(d.getDate() - d.getDay());
+  return d.toISOString().slice(0, 10);
+})();
+const monthKeyStr = todayStr.slice(0, 7);
+const yearKeyStr  = todayStr.slice(0, 4);
 
 document.getElementById('header-date').textContent =
   today.getFullYear() + '/' +
@@ -305,65 +341,164 @@ document.getElementById('header-date').textContent =
   '（' + DAY_NAMES[dayOfWeek] + '）';
 
 const MORNING_TASKS = [
-  { id: 'm1', name: 'りべ大視聴',         note: '朝ごはん前', weekdayOnly: false },
-  { id: 'm2', name: '朝の歯磨き',          note: '起床後',    weekdayOnly: false },
-  { id: 'm3', name: 'チベット体操',         note: '歯磨き後',  weekdayOnly: false },
-  { id: 'm4', name: '朝ごはん',             note: '',         weekdayOnly: false },
-  { id: 'm5', name: '留守電確認',           note: '朝ごはん後', weekdayOnly: true },
+  { id: 'm1', name: 'りべ大視聴',          note: '朝ごはん前', weekdayOnly: false },
+  { id: 'm2', name: '朝の歯磨き',           note: '起床後',    weekdayOnly: false },
+  { id: 'm3', name: 'チベット体操',          note: '歯磨き後',  weekdayOnly: false },
+  { id: 'm4', name: '朝ごはん',              note: '',         weekdayOnly: false },
+  { id: 'm5', name: '留守電確認',            note: '朝ごはん後', weekdayOnly: true },
   { id: 'm6', name: '英語・フランス語ラジオ', note: '午前中',   weekdayOnly: true },
-  { id: 'm7', name: '掃除機',              note: '午前中',    weekdayOnly: false },
+  { id: 'm7', name: '掃除機',               note: '午前中',    weekdayOnly: false },
 ];
 const NOON_TASKS = [
   { id: 'n1', name: '昼ごはん', note: '', time: '13:00', weekdayOnly: false },
 ];
 const EVENING_TASKS = [
-  { id: 'e1', name: '晩御飯',            note: '',         time: '18:00', weekdayOnly: false },
-  { id: 'e2', name: 'お風呂',            note: '',         time: '19:00', weekdayOnly: false },
-  { id: 'e2b', name: '食洗器',           note: 'お風呂後',                 weekdayOnly: false },
-  { id: 'e3', name: '読書',              note: '英語本・その他',           weekdayOnly: false },
-  { id: 'e4', name: 'Spotify',          note: '',                         weekdayOnly: false },
-  { id: 'e5', name: 'note投稿',          note: 'ほぼ毎日',                 weekdayOnly: false },
-  { id: 'e6', name: 'りべ大宿題',        note: '暇な時間',                 weekdayOnly: false },
-  { id: 'e7', name: '夜の歯磨き',        note: '',         time: '22:00', weekdayOnly: false },
-  { id: 'e8', name: 'ストレッチ・舌体操', note: '就寝前',                  weekdayOnly: false },
-  { id: 'e9', name: 'スマホ・イヤホン充電', note: '就寝前',               weekdayOnly: false },
-  { id: 'e10', name: 'チャッピーに今日の報告', note: '就寝前',            weekdayOnly: false },
+  { id: 'e1',  name: '晩御飯',              note: '',               time: '18:00', weekdayOnly: false },
+  { id: 'e2',  name: 'お風呂',              note: '',               time: '19:00', weekdayOnly: false },
+  { id: 'e2b', name: '食洗器',              note: 'お風呂後',                       weekdayOnly: false },
+  { id: 'e3',  name: '読書',               note: '英語本・その他',                  weekdayOnly: false },
+  { id: 'e4',  name: 'Spotify',            note: '',                               weekdayOnly: false },
+  { id: 'e5',  name: 'note投稿',            note: 'ほぼ毎日',                       weekdayOnly: false },
+  { id: 'e6',  name: 'りべ大宿題',          note: '暇な時間',                       weekdayOnly: false },
+  { id: 'e7',  name: '夜の歯磨き',          note: '',               time: '22:00', weekdayOnly: false },
+  { id: 'e8',  name: 'ストレッチ・舌体操',   note: '就寝前',                        weekdayOnly: false },
+  { id: 'e9',  name: 'スマホ・イヤホン充電', note: '就寝前',                        weekdayOnly: false },
+  { id: 'e10', name: 'チャッピーに今日の報告', note: '就寝前',                      weekdayOnly: false },
 ];
 const ANYTIME_TASKS = [
-  { id: 'a1', name: 'テーブル掃除',       note: '毎日',   weekdayOnly: false },
-  { id: 'a2', name: 'Google フォト整理', note: '随時',   weekdayOnly: false },
-  { id: 'a3', name: 'Facebook投稿',     note: '随時',   weekdayOnly: false },
+  { id: 'a1', name: 'テーブル掃除',       note: '毎日', weekdayOnly: false },
+  { id: 'a2', name: 'Google フォト整理',  note: '随時', weekdayOnly: false },
+  { id: 'a3', name: 'Facebook投稿',      note: '随時', weekdayOnly: false },
 ];
 
-let memoryState = { date: todayStr, checked: [] };
+// 曜日固定タスク（その日のみ表示、毎日リセット）
+// days: [0=日,1=月,...,6=土]
+const WEEKLY_DAY_TASKS = [
+  { id: 'wd1', name: 'ゴミ出し',           note: '22:00以降', days: [1, 5] },
+  { id: 'wd2', name: '冷蔵庫チェック',     note: 'ゴミ出し前', days: [5] },
+  { id: 'wd3', name: 'ペットボトルゴミ出し', note: '22:00ごろ', days: [0] },
+];
+
+// 週間タスク（日曜リセット）
+const WEEKLY_TASKS = [
+  { id: 'w1',  name: '枕カバー洗濯',         note: '週1' },
+  { id: 'w2',  name: '玄関掃除',             note: '週1' },
+  { id: 'w3',  name: 'アイロン',             note: '週1' },
+  { id: 'w4',  name: 'ブルーレイのデータ整理', note: '週1' },
+  { id: 'w5',  name: 'お風呂掃除',           note: '週1' },
+  { id: 'w6',  name: 'トイレ掃除',           note: '週1' },
+  { id: 'w7a', name: 'チョコザップ',          note: '週2 / 1回目' },
+  { id: 'w7b', name: 'チョコザップ',          note: '週2 / 2回目' },
+  { id: 'w8',  name: '爪切り',               note: '2週間' },
+  { id: 'w9',  name: 'シーツ交換',           note: '2週間' },
+  { id: 'w10', name: 'ベランダ掃除',         note: '2週間' },
+  { id: 'w11', name: '髪染め',               note: '3週間・お風呂前' },
+];
+
+// 月間タスク（月が変わるとリセット）
+const MONTHLY_TASKS = [
+  { id: 'mo1', name: '家計管理表更新',       note: '月初〜7日' },
+  { id: 'mo2', name: 'アメブロ更新（2つ）',  note: '月末' },
+  { id: 'mo3', name: '交通費の取得と報告',   note: '月末' },
+  { id: 'mo4', name: '備蓄チェック',         note: '月末' },
+  { id: 'mo5', name: '空気清浄機フィルター掃除', note: '月1回' },
+  { id: 'mo6', name: '掃除機フィルター掃除', note: '月1回' },
+];
+
+// 年間タスク（年が変わるとリセット）
+const ANNUAL_TASKS = [
+  { id: 'yr1',  name: '年間家計チェック',            note: '1月' },
+  { id: 'yr2',  name: 'お正月マニュアル更新',         note: '1月' },
+  { id: 'yr3',  name: '確定申告',                   note: '2月' },
+  { id: 'yr4',  name: 'ANAチケット手配（5月GW分）',  note: '2月中旬' },
+  { id: 'yr5',  name: 'コンタクト購入',              note: '4月' },
+  { id: 'yr6',  name: '健康診断・ピル購入',           note: '5月' },
+  { id: 'yr7',  name: 'カーテン・スニーカー洗い',     note: '5月' },
+  { id: 'yr8',  name: 'ディナー予約（6月誕生日）',    note: '5月' },
+  { id: 'yr9',  name: 'ANAチケット手配（8月お盆分）', note: '5月中旬' },
+  { id: 'yr10', name: '7月宿泊旅行の予約',           note: '5〜6月' },
+  { id: 'yr11', name: 'ディナー予約（7月結婚記念日）', note: '6月' },
+  { id: 'yr12', name: '宿泊旅行（マスト）',           note: '7月' },
+  { id: 'yr13', name: 'エアコン業者清掃',            note: '9月' },
+  { id: 'yr14', name: 'ディナー予約（10月誕生日）',   note: '9月' },
+  { id: 'yr15', name: 'ANAチケット手配（12月年末分）', note: '9月中旬' },
+  { id: 'yr16', name: 'ふるさと納税',               note: '10月' },
+  { id: 'yr17', name: 'ディナー予約（12月クリスマス）', note: '11月' },
+  { id: 'yr18', name: '年賀状購入',                 note: '11月' },
+  { id: 'yr19', name: '年賀状デザイン・印刷',        note: '12月' },
+  { id: 'yr20', name: 'お正月連絡',                 note: '12月' },
+];
+
+function getDefaultState() {
+  return {
+    date: todayStr, checked: [],
+    weekStart: weekStartStr, weeklyChecked: [],
+    monthKey: monthKeyStr, monthlyChecked: [],
+    yearKey: yearKeyStr, annualChecked: []
+  };
+}
+let memoryState = getDefaultState();
 
 function loadState() {
+  let state;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { date: todayStr, checked: [] };
-    const state = JSON.parse(raw);
-    if (state.date !== todayStr) return { date: todayStr, checked: [] };
-    return state;
+    state = raw ? JSON.parse(raw) : null;
   } catch(e) {
-    return memoryState;
+    state = memoryState;
   }
+  if (!state) state = getDefaultState();
+
+  if (state.date !== todayStr) {
+    state.date = todayStr;
+    state.checked = [];
+  }
+  if (state.weekStart !== weekStartStr) {
+    state.weekStart = weekStartStr;
+    state.weeklyChecked = [];
+  }
+  if (state.monthKey !== monthKeyStr) {
+    state.monthKey = monthKeyStr;
+    state.monthlyChecked = [];
+  }
+  if (state.yearKey !== yearKeyStr) {
+    state.yearKey = yearKeyStr;
+    state.annualChecked = [];
+  }
+  if (!state.weeklyChecked)  state.weeklyChecked  = [];
+  if (!state.monthlyChecked) state.monthlyChecked = [];
+  if (!state.annualChecked)  state.annualChecked  = [];
+
+  return state;
 }
+
 function saveState(state) {
   memoryState = state;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
 }
 
+function getCheckedKey(id) {
+  if (id.startsWith('yr'))  return 'annualChecked';
+  if (id.startsWith('mo'))  return 'monthlyChecked';
+  if (id.startsWith('w') && !id.startsWith('wd')) return 'weeklyChecked';
+  return 'checked';
+}
+
 function toggleTask(id) {
   const state = loadState();
-  const idx = state.checked.indexOf(id);
-  if (idx === -1) state.checked.push(id); else state.checked.splice(idx, 1);
+  const key = getCheckedKey(id);
+  const arr = state[key];
+  const idx = arr.indexOf(id);
+  if (idx === -1) arr.push(id); else arr.splice(idx, 1);
   saveState(state);
   render();
 }
 
 function resetToday() {
   if (!confirm('今日のチェックをすべてリセットしますか？')) return;
-  saveState({ date: todayStr, checked: [] });
+  const state = loadState();
+  state.checked = [];
+  saveState(state);
   render();
 }
 
@@ -372,12 +507,12 @@ function allCountable() {
     .filter(t => !t.weekdayOnly || isWeekday);
 }
 
-function renderTaskList(containerId, tasks) {
-  const state = loadState();
+function renderTaskList(containerId, tasks, checkedArr) {
   const el = document.getElementById(containerId);
+  if (!el) return;
   el.innerHTML = tasks.map(task => {
     const inactive = task.weekdayOnly && !isWeekday;
-    const done = !inactive && state.checked.includes(task.id);
+    const done = !inactive && checkedArr.includes(task.id);
     const cls = 'task-card' + (done ? ' done' : '') + (inactive ? ' inactive' : '');
     const onclick = inactive ? '' : 'onclick="toggleTask(\'' + task.id + '\')"';
     const noteHtml = task.note ? '<span class="task-note">' + task.note + '</span>' : '';
@@ -393,16 +528,33 @@ function renderTaskList(containerId, tasks) {
 
 function render() {
   const state = loadState();
+
+  // 進捗バー（毎日タスクのみ）
   const countable = allCountable();
   const doneCount = state.checked.filter(id => countable.find(t => t.id === id)).length;
   const total = countable.length;
   const pct = total > 0 ? Math.round(doneCount / total * 100) : 0;
-  document.getElementById('progress-text').textContent = `${doneCount} / ${total} 完了`;
+  document.getElementById('progress-text').textContent = doneCount + ' / ' + total + ' 完了';
   document.getElementById('progress-fill').style.width = pct + '%';
-  renderTaskList('tasks-morning', MORNING_TASKS);
-  renderTaskList('tasks-noon', NOON_TASKS);
-  renderTaskList('tasks-evening', EVENING_TASKS);
-  renderTaskList('tasks-anytime', ANYTIME_TASKS);
+
+  renderTaskList('tasks-morning',  MORNING_TASKS,  state.checked);
+  renderTaskList('tasks-noon',     NOON_TASKS,     state.checked);
+  renderTaskList('tasks-evening',  EVENING_TASKS,  state.checked);
+  renderTaskList('tasks-anytime',  ANYTIME_TASKS,  state.checked);
+
+  // 曜日タスク（今日の分だけ表示）
+  const todayDayTasks = WEEKLY_DAY_TASKS.filter(t => t.days.includes(dayOfWeek));
+  const daySection = document.getElementById('section-day-tasks');
+  if (todayDayTasks.length > 0) {
+    daySection.style.display = '';
+    renderTaskList('tasks-day', todayDayTasks, state.checked);
+  } else {
+    daySection.style.display = 'none';
+  }
+
+  renderTaskList('tasks-weekly',  WEEKLY_TASKS,  state.weeklyChecked);
+  renderTaskList('tasks-monthly', MONTHLY_TASKS, state.monthlyChecked);
+  renderTaskList('tasks-annual',  ANNUAL_TASKS,  state.annualChecked);
 }
 
 document.querySelectorAll('.tab').forEach(tab => {
