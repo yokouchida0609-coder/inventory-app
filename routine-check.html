@@ -170,6 +170,17 @@
   .ref-name { flex: 1; font-size: 0.9rem; }
   .ref-note { font-size: 0.75rem; color: #bbb; }
 
+  #tasks-morning .task-card, #tasks-noon .task-card,
+  #tasks-evening .task-card, #tasks-anytime .task-card,
+  #tasks-day .task-card { background: #e1f5fe; }
+  #tasks-weekly .task-card  { background: #fff3e0; }
+  #tasks-monthly .task-card { background: #e8f5e9; }
+  #tasks-annual .task-card  { background: #fce4ec; }
+  #tasks-annual .task-card.current-month {
+    outline: 2px solid #e53935;
+    background: #ffebee;
+  }
+
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 </style>
@@ -607,6 +618,14 @@ function render() {
   renderTaskList('tasks-weekly',  WEEKLY_TASKS,  state.weeklyChecked,  state);
   renderTaskList('tasks-monthly', MONTHLY_TASKS, state.monthlyChecked, state);
   renderTaskList('tasks-annual',  ANNUAL_TASKS,  state.annualChecked,  state);
+
+  // 今月の年間タスクに赤枠
+  const currentMonth = today.getMonth() + 1;
+  document.querySelectorAll('#tasks-annual .task-card').forEach((card, i) => {
+    const note = ANNUAL_TASKS[i] && ANNUAL_TASKS[i].note;
+    const m = note && note.match(/^(\d+)/);
+    if (m && parseInt(m[1]) === currentMonth) card.classList.add('current-month');
+  });
 }
 
 document.querySelectorAll('.tab').forEach(tab => {
