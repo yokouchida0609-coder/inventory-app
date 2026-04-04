@@ -335,14 +335,19 @@
 
 <script>
 const STORAGE_KEY = 'routine_v2';
-const today = new Date();
-const todayStr = today.toISOString().slice(0, 10);
-const dayOfWeek = today.getDay(); // 0=日, 6=土
+const today = new Date(); // 実際の現在時刻（ヘッダー表示用）
+
+// 6時以前は前日扱い（タスクリセットを朝6時に）
+const logicalToday = new Date(today);
+if (logicalToday.getHours() < 6) logicalToday.setDate(logicalToday.getDate() - 1);
+
+const todayStr = logicalToday.toISOString().slice(0, 10);
+const dayOfWeek = logicalToday.getDay(); // 0=日, 6=土
 const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
 const DAY_NAMES = ['日','月','火','水','木','金','土'];
 
 const weekStartStr = (() => {
-  const d = new Date(today);
+  const d = new Date(logicalToday);
   d.setDate(d.getDate() - d.getDay());
   return d.toISOString().slice(0, 10);
 })();
