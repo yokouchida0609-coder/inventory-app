@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>現金支出メモ</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  body { background: #f0f4f8; font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif; }
+  .card { background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .btn-primary { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; border-radius: 12px; padding: 12px 20px; font-weight: 600; transition: opacity 0.2s; }
+  .btn-primary:active { opacity: 0.8; }
+  .btn-secondary { background: #f1f5f9; color: #475569; border-radius: 12px; padding: 10px 16px; font-weight: 500; }
+  .category-tag { border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+  .category-食費 { background: #fef9c3; color: #854d0e; }
+  .category-娯楽 { background: #dbeafe; color: #1d4ed8; }
+  .category-交通費 { background: #dcfce7; color: #15803d; }
+  .category-おみやげ { background: #fce7f3; color: #9d174d; }
+  .category-その他 { background: #f1f5f9; color: #475569; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 50; display: flex; align-items: flex-end; justify-content: center; }
+  .modal-content { background: white; border-radius: 20px 20px 0 0; width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto; padding: 24px; padding-bottom: 40px; }
+  input, select, textarea { width: 100%; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 10px 14px; font-size: 16px; outline: none; transition: border-color 0.2s; background: white; }
+  input:focus, select:focus { border-color: #11998e; }
+  .fade-in { animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .date-header { font-size: 13px; font-weight: 700; color: #64748b; padding: 8px 4px 4px; }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- ヘッダー -->
+  <div style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); padding: 20px 16px 32px;">
+    <div class="flex items-center justify-between mb-1">
+      <h1 class="text-white font-bold text-xl">💴 現金支出メモ</h1>
+      <span class="text-white text-sm opacity-80" id="totalBadge"></span>
+    </div>
+    <p class="text-white text-sm opacity-70">現金の支出を記録する</p>
+
+    <!-- 月合計 -->
+    <div class="mt-3 grid grid-cols-2 gap-2">
+      <div style="background:rgba(255,255,255,0.2);border-radius:12px;padding:10px 14px;">
+        <div class="text-white text-xs opacity-70">今月の合計</div>
+        <div class="text-white font-bold text-xl" id="monthTotal">¥0</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.2);border-radius:12px;padding:10px 14px;">
+        <div class="text-white text-xs opacity-70">全期間の合計</div>
+        <div class="text-white font-bold text-xl" id="allTotal">¥0</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: -16px; padding: 0 16px;">
+    <!-- 追加ボタン -->
+    <button onclick="openAddModal()" class="btn-primary w-full text-center mb-4 flex items-center justify-center gap-2">
+      <span style="font-size:20px">+</span> 支出を追加
+    </button>
+
+    <!-- フィルター -->
+    <div class="card p-3 mb-4 flex gap-2 items-center">
+      <select id="filterCategory" onchange="renderList()" class="flex-1 text-sm" style="padding:8px 10px;">
+        <option value="">すべてのカテゴリ</option>
+        <option value="食費">食費</option>
+        <option value="娯楽">娯楽</option>
+        <option value="交通費">交通費</option>
+        <option value="おみやげ">おみやげ</option>
+        <option value="その他">その他</option>
+      </select>
+      <select id="filterMonth" onchange="renderList()" class="flex-1 text-sm" style="padding:8px 10px;">
+        <option value="">すべての月</option>
+      </select>
+    </div>
+
+    <!-- ローディング -->
+    <div id="loadingState" class="text-center py-16 text-gray-400">
+      <div style="font-size:36px" class="animate-spin inline-block">⏳</div>
+      <p class="mt-2 text-sm">データを読み込み中...</p>
+    </div>
+
+    <!-- リスト -->
+    <div id="expenseList" class="space-y-1 pb-8 hidden"></div>
+
+    <!-- 空状態 -->
+    <div id="emptyState" class="text-center py-16 text-gray-400 hidden">
+      <div style="font-size:48px">💴</div>
+      <p class="mt-2">支出がまだありません</p>
+      <p class="text-sm mt-1">上のボタンから追加してみよう！</p>
+    </div>
+
+    <!-- Excel出力 -->
+    <div class="card p-4 mb-8 hidden" id="excelSection">
+      <p class="text-sm font-semibold text-gray-600 mb-3">📊 Excelダウンロード</p>
+      <div class="flex gap-2">
+        <button onclick="downloadExcel(false)" class="btn-secondary flex-1 text-sm text-center">表示中のデータ</button>
+        <button onclick="downloadExcel(true)" class="btn-primary flex-1 text-sm text-center">全データ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 追加モーダル -->
+<div id="addModal" class="modal-overlay hidden" onclick="closeModalOnOverlay(event,'addModal')">
+  <div class="modal-content fade-in" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold text-gray-800">💴 支出を追加</h3>
+      <button onclick="closeModal('addModal')" class="text-gray-400 text-xl">×</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">日付</label>
+        <input type="date" id="addDate">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">店名・内容 <span class="text-red-400">*</span></label>
+        <input type="text" id="addShop" placeholder="例：コンビニ、ランチ">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">金額（円） <span class="text-red-400">*</span></label>
+        <input type="number" id="addAmount" placeholder="例：500" inputmode="numeric">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">カテゴリ</label>
+        <select id="addCategory">
+          <option value="食費">🍜 食費</option>
+          <option value="娯楽">🎮 娯楽</option>
+          <option value="交通費">🚃 交通費</option>
+          <option value="おみやげ">🎁 おみやげ</option>
+          <option value="その他">📌 その他</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">メモ（任意）</label>
+        <input type="text" id="addNote" placeholder="例：友達とランチ">
+      </div>
+    </div>
+    <div class="flex gap-3 mt-5">
+      <button onclick="closeModal('addModal')" class="btn-secondary flex-1">キャンセル</button>
+      <button onclick="addExpense()" class="btn-primary flex-1 text-center">追加</button>
+    </div>
+  </div>
+</div>
+
+<!-- 編集モーダル -->
+<div id="editModal" class="modal-overlay hidden" onclick="closeModalOnOverlay(event,'editModal')">
+  <div class="modal-content fade-in" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold text-gray-800">✏️ 支出を編集</h3>
+      <button onclick="closeModal('editModal')" class="text-gray-400 text-xl">×</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">日付</label>
+        <input type="date" id="editDate">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">店名・内容</label>
+        <input type="text" id="editShop">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">金額（円）</label>
+        <input type="number" id="editAmount" inputmode="numeric">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">カテゴリ</label>
+        <select id="editCategory">
+          <option value="食費">🍜 食費</option>
+          <option value="娯楽">🎮 娯楽</option>
+          <option value="交通費">🚃 交通費</option>
+          <option value="おみやげ">🎁 おみやげ</option>
+          <option value="その他">📌 その他</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">メモ（任意）</label>
+        <input type="text" id="editNote">
+      </div>
+    </div>
+    <div class="flex gap-3 mt-5">
+      <button onclick="closeModal('editModal')" class="btn-secondary flex-1">キャンセル</button>
+      <button onclick="saveEdit()" class="btn-primary flex-1 text-center">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwSRu15j1AFCKDKFHAuKMaFJ9CKd4_sKYMffx3HCrkSqJ2lj9y484nJsp3dIzRndUZO/exec';
+
+let expenses = [];
+let editingId = null;
+
+function genId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+// ===== CLOUD SYNC =====
+function save() {
+  localStorage.setItem('cash_expenses', JSON.stringify(expenses));
+  if (GAS_URL !== 'REPLACE_WITH_GAS_URL') {
+    fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify(expenses)
+    }).catch(() => {});
+  }
+}
+
+async function loadFromCloud() {
+  document.getElementById('loadingState').classList.remove('hidden');
+  document.getElementById('expenseList').classList.add('hidden');
+  document.getElementById('emptyState').classList.add('hidden');
+  document.getElementById('excelSection').classList.add('hidden');
+
+  if (GAS_URL !== 'REPLACE_WITH_GAS_URL') {
+    try {
+      const res = await fetch(GAS_URL + '?v=' + Date.now());
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        expenses = data;
+        localStorage.setItem('cash_expenses', JSON.stringify(expenses));
+      } else {
+        expenses = JSON.parse(localStorage.getItem('cash_expenses') || '[]');
+      }
+    } catch(e) {
+      expenses = JSON.parse(localStorage.getItem('cash_expenses') || '[]');
+    }
+  } else {
+    expenses = JSON.parse(localStorage.getItem('cash_expenses') || '[]');
+  }
+
+  document.getElementById('loadingState').classList.add('hidden');
+  document.getElementById('expenseList').classList.remove('hidden');
+  buildMonthFilter();
+  renderList();
+}
+
+// ===== RENDER =====
+function buildMonthFilter() {
+  const months = [...new Set(expenses.map(e => e.date.slice(0, 7)))].sort().reverse();
+  const sel = document.getElementById('filterMonth');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">すべての月</option>';
+  months.forEach(m => {
+    const [y, mo] = m.split('-');
+    sel.innerHTML += `<option value="${m}" ${cur===m?'selected':''}>${y}年${parseInt(mo)}月</option>`;
+  });
+}
+
+function getFiltered() {
+  const cat = document.getElementById('filterCategory').value;
+  const month = document.getElementById('filterMonth').value;
+  return expenses.filter(e => {
+    if (cat && e.category !== cat) return false;
+    if (month && !e.date.startsWith(month)) return false;
+    return true;
+  });
+}
+
+function renderList() {
+  const filtered = getFiltered();
+  const list = document.getElementById('expenseList');
+  const empty = document.getElementById('emptyState');
+  const excel = document.getElementById('excelSection');
+
+  // 合計更新
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const monthSum = expenses.filter(e => e.date.startsWith(thisMonth)).reduce((s,e) => s+e.amount, 0);
+  const allSum = expenses.reduce((s,e) => s+e.amount, 0);
+  document.getElementById('monthTotal').textContent = `¥${monthSum.toLocaleString()}`;
+  document.getElementById('allTotal').textContent = `¥${allSum.toLocaleString()}`;
+  document.getElementById('totalBadge').textContent = expenses.length > 0 ? `${expenses.length}件` : '';
+
+  if (filtered.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    excel.classList.add('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  excel.classList.remove('hidden');
+
+  // 日付でソート（新しい順）
+  const sorted = [...filtered].sort((a, b) => b.date.localeCompare(a.date));
+
+  // 日付ごとにグループ化
+  const groups = {};
+  sorted.forEach(e => {
+    if (!groups[e.date]) groups[e.date] = [];
+    groups[e.date].push(e);
+  });
+
+  list.innerHTML = Object.entries(groups).map(([date, items]) => {
+    const d = new Date(date + 'T00:00:00');
+    const dateStr = d.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+    const dayTotal = items.reduce((s, e) => s + e.amount, 0);
+
+    const itemsHtml = items.map(e => `
+      <div class="card p-3 flex items-center gap-3 mb-2">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <span class="font-semibold text-gray-800 text-sm truncate">${escapeHtml(e.shop)}</span>
+            <span class="category-tag category-${e.category} flex-shrink-0">${e.category}</span>
+          </div>
+          ${e.note ? `<div class="text-xs text-gray-400 mt-0.5 truncate">${escapeHtml(e.note)}</div>` : ''}
+        </div>
+        <div class="text-right flex-shrink-0">
+          <div class="font-bold text-gray-800">¥${e.amount.toLocaleString()}</div>
+          <div class="flex gap-1 mt-1">
+            <button onclick="openEdit('${e.id}')" class="text-xs text-blue-400 underline">編集</button>
+            <button onclick="deleteExpense('${e.id}')" class="text-xs text-red-400 underline">削除</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    return `
+      <div class="date-header flex justify-between items-center">
+        <span>${dateStr}</span>
+        <span class="text-green-600">¥${dayTotal.toLocaleString()}</span>
+      </div>
+      ${itemsHtml}
+    `;
+  }).join('');
+}
+
+// ===== CRUD =====
+function openAddModal() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('addDate').value = today;
+  document.getElementById('addShop').value = '';
+  document.getElementById('addAmount').value = '';
+  document.getElementById('addCategory').value = '食費';
+  document.getElementById('addNote').value = '';
+  openModal('addModal');
+  setTimeout(() => document.getElementById('addShop').focus(), 300);
+}
+
+function addExpense() {
+  const date = document.getElementById('addDate').value;
+  const shop = document.getElementById('addShop').value.trim();
+  const amount = parseInt(document.getElementById('addAmount').value);
+  const category = document.getElementById('addCategory').value;
+  const note = document.getElementById('addNote').value.trim();
+
+  if (!shop) { alert('店名・内容を入力してください'); return; }
+  if (!amount || amount <= 0) { alert('金額を入力してください'); return; }
+
+  expenses.push({ id: genId(), date, shop, amount, category, note });
+  save();
+  closeModal('addModal');
+  buildMonthFilter();
+  renderList();
+}
+
+function openEdit(id) {
+  const e = expenses.find(x => x.id === id);
+  if (!e) return;
+  editingId = id;
+  document.getElementById('editDate').value = e.date;
+  document.getElementById('editShop').value = e.shop;
+  document.getElementById('editAmount').value = e.amount;
+  document.getElementById('editCategory').value = e.category;
+  document.getElementById('editNote').value = e.note || '';
+  openModal('editModal');
+}
+
+function saveEdit() {
+  const e = expenses.find(x => x.id === editingId);
+  if (!e) return;
+  const shop = document.getElementById('editShop').value.trim();
+  const amount = parseInt(document.getElementById('editAmount').value);
+  if (!shop || !amount || amount <= 0) { alert('入力内容を確認してください'); return; }
+
+  e.date = document.getElementById('editDate').value;
+  e.shop = shop;
+  e.amount = amount;
+  e.category = document.getElementById('editCategory').value;
+  e.note = document.getElementById('editNote').value.trim();
+
+  save();
+  closeModal('editModal');
+  buildMonthFilter();
+  renderList();
+}
+
+function deleteExpense(id) {
+  if (!confirm('この支出を削除しますか？')) return;
+  expenses = expenses.filter(e => e.id !== id);
+  save();
+  buildMonthFilter();
+  renderList();
+}
+
+// ===== EXCEL =====
+function downloadExcel(all) {
+  const data = all ? expenses : getFiltered();
+  if (data.length === 0) { alert('データがありません'); return; }
+
+  const sorted = [...data].sort((a, b) => a.date.localeCompare(b.date));
+  const rows = sorted.map(e => ({
+    '日付': e.date,
+    '店名・内容': e.shop,
+    '金額': e.amount,
+    'カテゴリ': e.category,
+    'メモ': e.note || ''
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws['!cols'] = [{ wch: 12 }, { wch: 25 }, { wch: 10 }, { wch: 10 }, { wch: 20 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '現金支出');
+  const today = new Date().toISOString().split('T')[0];
+  XLSX.writeFile(wb, `現金支出_${today}.xlsx`);
+}
+
+// ===== MODAL =====
+function openModal(id) {
+  document.getElementById(id).classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+  document.body.style.overflow = '';
+}
+function closeModalOnOverlay(event, id) {
+  if (event.target === document.getElementById(id)) closeModal(id);
+}
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ===== INIT =====
+loadFromCloud();
+</script>
+</body>
+</html>
