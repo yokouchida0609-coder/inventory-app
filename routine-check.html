@@ -608,10 +608,10 @@ function render() {
   document.getElementById('progress-text').textContent = doneCount + ' / ' + total + ' 完了';
   document.getElementById('progress-fill').style.width = pct + '%';
 
-  renderTaskList('tasks-morning',  MORNING_TASKS,  state.checked);
-  renderTaskList('tasks-noon',     NOON_TASKS,     state.checked);
-  renderTaskList('tasks-evening',  EVENING_TASKS,  state.checked);
-  renderTaskList('tasks-anytime',  ANYTIME_TASKS,  state.checked);
+  renderTaskList('tasks-morning',  MORNING_TASKS,  state.checked, state);
+  renderTaskList('tasks-noon',     NOON_TASKS,     state.checked, state);
+  renderTaskList('tasks-evening',  EVENING_TASKS,  state.checked, state);
+  renderTaskList('tasks-anytime',  ANYTIME_TASKS,  state.checked, state);
 
   // 曜日タスク（今日の分だけ表示）
   const todayDayTasks = WEEKLY_DAY_TASKS.filter(t => t.days.includes(dayOfWeek));
