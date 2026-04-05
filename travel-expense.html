@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>日帰り旅行記録</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  body { background: #f0f4f8; font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif; }
+  .card { background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 12px 20px; font-weight: 600; transition: opacity 0.2s; }
+  .btn-primary:active { opacity: 0.8; }
+  .btn-secondary { background: #f1f5f9; color: #475569; border-radius: 12px; padding: 10px 16px; font-weight: 500; }
+  .btn-danger { background: #fee2e2; color: #dc2626; border-radius: 8px; padding: 6px 12px; font-size: 13px; }
+  .category-tag { border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 50; display: flex; align-items: flex-end; justify-content: center; }
+  .modal-content { background: white; border-radius: 20px 20px 0 0; width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto; padding: 24px; padding-bottom: 40px; }
+  .modal-content-center { background: white; border-radius: 20px; width: calc(100% - 40px); max-width: 400px; max-height: 92vh; overflow-y: auto; padding: 24px; margin: auto; }
+  input, select, textarea { width: 100%; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 10px 14px; font-size: 16px; outline: none; transition: border-color 0.2s; background: white; }
+  input:focus, select:focus, textarea:focus { border-color: #667eea; }
+  .trip-card { transition: transform 0.15s; }
+  .trip-card:active { transform: scale(0.98); }
+  .category-交通 { background: #dbeafe; color: #1d4ed8; }
+  .category-食事 { background: #fef9c3; color: #854d0e; }
+  .category-入場料 { background: #dcfce7; color: #15803d; }
+  .category-お土産 { background: #fce7f3; color: #9d174d; }
+  .category-その他 { background: #f1f5f9; color: #475569; }
+  .payment-現金 { background: #d1fae5; color: #065f46; }
+  .payment-クレジットカード { background: #dbeafe; color: #1e40af; }
+  .payment-Suica { background: #fef3c7; color: #92400e; }
+  .payment-PayPay { background: #fde8d8; color: #c2410c; }
+  .tab-active { border-bottom: 3px solid #667eea; color: #667eea; font-weight: 700; }
+  .tab-inactive { border-bottom: 3px solid transparent; color: #94a3b8; }
+  #cameraPreview { width: 100%; border-radius: 12px; }
+  .fade-in { animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<!-- APP HEADER -->
+<div id="app">
+  <!-- 一覧画面 -->
+  <div id="listView">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px 16px 32px;">
+      <div class="flex items-center justify-between mb-1">
+        <h1 class="text-white font-bold text-xl">🗾 旅行記録</h1>
+        <span class="text-white text-sm opacity-80" id="tripCountBadge"></span>
+      </div>
+      <p class="text-white text-sm opacity-70">日帰り旅行の支出を記録</p>
+    </div>
+
+    <div style="margin-top: -16px; padding: 0 16px;">
+      <button onclick="openNewTripModal()" class="btn-primary w-full text-center mb-4 flex items-center justify-center gap-2">
+        <span style="font-size:20px">+</span> 新しい旅行を作成
+      </button>
+
+      <div id="tripList" class="space-y-3 pb-8"></div>
+      <div id="emptyState" class="text-center py-16 text-gray-400 hidden">
+        <div style="font-size:48px">✈️</div>
+        <p class="mt-2">旅行記録がまだありません</p>
+        <p class="text-sm mt-1">上のボタンから追加してみよう！</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 旅行詳細画面 -->
+  <div id="detailView" class="hidden">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 16px;">
+      <button onclick="backToList()" class="text-white mb-2 flex items-center gap-1 opacity-80">
+        ← 一覧に戻る
+      </button>
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-white font-bold text-lg" id="detailTripName"></h2>
+          <p class="text-white text-sm opacity-80" id="detailTripMeta"></p>
+        </div>
+        <button onclick="deleteCurrentTrip()" class="text-white opacity-60 text-sm mt-1">削除</button>
+      </div>
+
+      <!-- 合計表示 -->
+      <div class="mt-3 grid grid-cols-2 gap-2">
+        <div style="background:rgba(255,255,255,0.2);border-radius:12px;padding:10px 14px;">
+          <div class="text-white text-xs opacity-70">合計支出</div>
+          <div class="text-white font-bold text-xl" id="detailTotal">¥0</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.2);border-radius:12px;padding:10px 14px;">
+          <div class="text-white text-xs opacity-70">現金支出</div>
+          <div class="text-white font-bold text-xl" id="detailCashTotal">¥0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- タブ -->
+    <div class="flex bg-white border-b sticky top-0 z-10">
+      <button onclick="switchTab('expenses')" id="tabExpenses" class="flex-1 py-3 text-sm tab-active">支出一覧</button>
+      <button onclick="switchTab('summary')" id="tabSummary" class="flex-1 py-3 text-sm tab-inactive">カテゴリ集計</button>
+    </div>
+
+    <!-- 支出一覧タブ -->
+    <div id="tabExpensesContent" class="p-4 pb-24">
+      <button onclick="openAddExpenseModal()" class="btn-primary w-full text-center mb-4 flex items-center justify-center gap-2">
+        <span style="font-size:18px">+</span> 支出を追加
+      </button>
+      <div id="expenseList" class="space-y-2"></div>
+      <div id="expenseEmpty" class="text-center py-10 text-gray-400 hidden">
+        <div style="font-size:36px">🧾</div>
+        <p class="mt-2 text-sm">支出がまだありません</p>
+      </div>
+
+      <!-- Excel出力 -->
+      <div class="mt-6 card p-4">
+        <p class="text-sm font-semibold text-gray-600 mb-3">📊 Excelダウンロード</p>
+        <div class="flex gap-2">
+          <button onclick="downloadExcel(false)" class="btn-secondary flex-1 text-sm text-center">全支出</button>
+          <button onclick="downloadExcel(true)" class="btn-primary flex-1 text-sm text-center">現金のみ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- カテゴリ集計タブ -->
+    <div id="tabSummaryContent" class="p-4 pb-24 hidden">
+      <div id="categoryChart" class="card p-4 mb-4"></div>
+      <div id="paymentChart" class="card p-4"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODALS ===== -->
+
+<!-- 新規旅行モーダル -->
+<div id="newTripModal" class="modal-overlay hidden" onclick="closeModalOnOverlay(event, 'newTripModal')">
+  <div class="modal-content fade-in" onclick="event.stopPropagation()">
+    <h3 class="text-lg font-bold text-gray-800 mb-4">✈️ 旅行を作成</h3>
+    <div class="space-y-3">
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">旅行名</label>
+        <input type="text" id="newTripName" placeholder="例：熱海日帰り旅行">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">日付</label>
+        <input type="date" id="newTripDate">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">行き先</label>
+        <input type="text" id="newTripDestination" placeholder="例：熱海">
+      </div>
+    </div>
+    <div class="flex gap-3 mt-5">
+      <button onclick="closeModal('newTripModal')" class="btn-secondary flex-1">キャンセル</button>
+      <button onclick="createTrip()" class="btn-primary flex-1 text-center">作成</button>
+    </div>
+  </div>
+</div>
+
+<!-- 支出追加モーダル -->
+<div id="addExpenseModal" class="modal-overlay hidden" onclick="closeModalOnOverlay(event, 'addExpenseModal')">
+  <div class="modal-content fade-in" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold text-gray-800">🧾 支出を追加</h3>
+      <button onclick="closeModal('addExpenseModal')" class="text-gray-400 text-xl">×</button>
+    </div>
+
+    <!-- カメラ/手入力切替 -->
+    <div class="flex rounded-xl overflow-hidden border border-gray-200 mb-4">
+      <button onclick="setInputMode('manual')" id="modeManual" class="flex-1 py-2 text-sm font-medium bg-purple-600 text-white">✏️ 手入力</button>
+      <button onclick="setInputMode('camera')" id="modeCamera" class="flex-1 py-2 text-sm font-medium text-gray-500">📷 レシート</button>
+    </div>
+
+    <!-- カメラセクション -->
+    <div id="cameraSection" class="hidden mb-4">
+      <div class="relative">
+        <video id="cameraPreview" autoplay playsinline class="rounded-xl bg-black" style="height:200px;object-fit:cover;"></video>
+        <canvas id="cameraCanvas" class="hidden"></canvas>
+      </div>
+      <div class="flex gap-2 mt-2">
+        <button onclick="capturePhoto()" class="btn-primary flex-1 text-center text-sm">📷 撮影する</button>
+        <button onclick="stopCamera()" class="btn-secondary text-sm">停止</button>
+      </div>
+      <div id="ocrResult" class="hidden mt-2 p-3 bg-blue-50 rounded-xl text-sm text-blue-800">
+        <p class="font-medium">OCR読み取り結果 <span class="text-xs font-normal text-blue-500">(修正可能)</span></p>
+        <p id="ocrText" class="mt-1"></p>
+      </div>
+      <div id="ocrLoading" class="hidden mt-2 text-center text-sm text-gray-500 py-3">
+        <div class="inline-block animate-spin text-2xl">⏳</div>
+        <p class="mt-1">読み取り中...</p>
+      </div>
+      <p class="text-xs text-gray-400 mt-2">※ 日本語レシートの精度は限られます。撮影後に手動で確認・修正してください。</p>
+    </div>
+
+    <!-- 入力フォーム -->
+    <div class="space-y-3">
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">店名・内容 <span class="text-red-400">*</span></label>
+        <input type="text" id="expenseShop" placeholder="例：熱海プリン本舗">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">金額（円） <span class="text-red-400">*</span></label>
+        <input type="number" id="expenseAmount" placeholder="例：500" inputmode="numeric">
+      </div>
+
+      <!-- 交通費用：駅入力 -->
+      <div id="trainSection" class="hidden">
+        <label class="text-sm font-medium text-gray-600 block mb-1">区間</label>
+        <div class="flex gap-2 items-center">
+          <input type="text" id="trainFrom" placeholder="出発駅" class="flex-1">
+          <span class="text-gray-400">→</span>
+          <input type="text" id="trainTo" placeholder="到着駅" class="flex-1">
+        </div>
+        <a id="trainSearchLink" href="#" target="_blank" onclick="openTrainSearch()" class="block mt-2 text-xs text-blue-500 underline">
+          🔍 Yahoo路線で運賃を調べる →
+        </a>
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">カテゴリ</label>
+        <select id="expenseCategory" onchange="onCategoryChange()">
+          <option value="交通">🚃 交通</option>
+          <option value="食事">🍜 食事</option>
+          <option value="入場料">🎫 入場料</option>
+          <option value="お土産">🎁 お土産</option>
+          <option value="その他">📌 その他</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">支払方法</label>
+        <div class="grid grid-cols-4 gap-2">
+          <button onclick="selectPayment('現金')" id="pay現金" class="payment-btn py-2 text-xs rounded-xl border-2 border-transparent bg-green-50 text-green-700 font-medium">💴 現金</button>
+          <button onclick="selectPayment('クレジットカード')" id="payクレジットカード" class="payment-btn py-2 text-xs rounded-xl border-2 border-transparent bg-blue-50 text-blue-700 font-medium">💳 クレカ</button>
+          <button onclick="selectPayment('Suica')" id="paySuica" class="payment-btn py-2 text-xs rounded-xl border-2 border-transparent bg-yellow-50 text-yellow-700 font-medium">🚇 Suica</button>
+          <button onclick="selectPayment('PayPay')" id="payPayPay" class="payment-btn py-2 text-xs rounded-xl border-2 border-transparent bg-orange-50 text-orange-700 font-medium">📱 PayPay</button>
+        </div>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">メモ（任意）</label>
+        <input type="text" id="expenseNote" placeholder="例：お昼のランチ">
+      </div>
+    </div>
+
+    <div class="flex gap-3 mt-5">
+      <button onclick="closeModal('addExpenseModal')" class="btn-secondary flex-1">キャンセル</button>
+      <button onclick="addExpense()" class="btn-primary flex-1 text-center">追加</button>
+    </div>
+  </div>
+</div>
+
+<!-- 支出編集モーダル -->
+<div id="editExpenseModal" class="modal-overlay hidden" onclick="closeModalOnOverlay(event, 'editExpenseModal')">
+  <div class="modal-content fade-in" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold text-gray-800">✏️ 支出を編集</h3>
+      <button onclick="closeModal('editExpenseModal')" class="text-gray-400 text-xl">×</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">店名・内容</label>
+        <input type="text" id="editExpenseShop">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">金額（円）</label>
+        <input type="number" id="editExpenseAmount" inputmode="numeric">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">カテゴリ</label>
+        <select id="editExpenseCategory">
+          <option value="交通">🚃 交通</option>
+          <option value="食事">🍜 食事</option>
+          <option value="入場料">🎫 入場料</option>
+          <option value="お土産">🎁 お土産</option>
+          <option value="その他">📌 その他</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">支払方法</label>
+        <div class="grid grid-cols-4 gap-2">
+          <button onclick="selectEditPayment('現金')" id="editPay現金" class="edit-payment-btn py-2 text-xs rounded-xl border-2 border-transparent bg-green-50 text-green-700 font-medium">💴 現金</button>
+          <button onclick="selectEditPayment('クレジットカード')" id="editPayクレジットカード" class="edit-payment-btn py-2 text-xs rounded-xl border-2 border-transparent bg-blue-50 text-blue-700 font-medium">💳 クレカ</button>
+          <button onclick="selectEditPayment('Suica')" id="editPaySuica" class="edit-payment-btn py-2 text-xs rounded-xl border-2 border-transparent bg-yellow-50 text-yellow-700 font-medium">🚇 Suica</button>
+          <button onclick="selectEditPayment('PayPay')" id="editPayPayPay" class="edit-payment-btn py-2 text-xs rounded-xl border-2 border-transparent bg-orange-50 text-orange-700 font-medium">📱 PayPay</button>
+        </div>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">メモ（任意）</label>
+        <input type="text" id="editExpenseNote">
+      </div>
+    </div>
+    <div class="flex gap-3 mt-5">
+      <button onclick="closeModal('editExpenseModal')" class="btn-secondary flex-1">キャンセル</button>
+      <button onclick="saveEditExpense()" class="btn-primary flex-1 text-center">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+let trips = JSON.parse(localStorage.getItem('travel_trips') || '[]');
+let currentTripId = null;
+let currentPayment = '現金';
+let currentEditPayment = '現金';
+let currentEditExpenseId = null;
+let cameraStream = null;
+let inputMode = 'manual';
+
+function save() {
+  localStorage.setItem('travel_trips', JSON.stringify(trips));
+}
+
+function getTrip(id) {
+  return trips.find(t => t.id === id);
+}
+
+function genId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+// ===== RENDER LIST =====
+function renderList() {
+  const list = document.getElementById('tripList');
+  const empty = document.getElementById('emptyState');
+  const badge = document.getElementById('tripCountBadge');
+
+  badge.textContent = trips.length > 0 ? `${trips.length}件` : '';
+
+  if (trips.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  const sorted = [...trips].sort((a, b) => new Date(b.date) - new Date(a.date));
+  list.innerHTML = sorted.map(trip => {
+    const total = trip.expenses.reduce((s, e) => s + e.amount, 0);
+    const cash = trip.expenses.filter(e => e.payment === '現金').reduce((s, e) => s + e.amount, 0);
+    const date = new Date(trip.date + 'T00:00:00');
+    const dateStr = date.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' });
+    const categories = [...new Set(trip.expenses.map(e => e.category))];
+
+    return `
+    <div class="card p-4 trip-card cursor-pointer" onclick="openTrip('${trip.id}')">
+      <div class="flex items-start justify-between">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-base font-bold text-gray-800 truncate">${escapeHtml(trip.name)}</span>
+          </div>
+          <div class="text-sm text-gray-500">${dateStr}　📍 ${escapeHtml(trip.destination)}</div>
+          <div class="flex flex-wrap gap-1 mt-2">
+            ${categories.map(c => `<span class="category-tag category-${c}">${c}</span>`).join('')}
+            ${trip.expenses.length === 0 ? '<span class="text-xs text-gray-400">支出なし</span>' : ''}
+          </div>
+        </div>
+        <div class="text-right ml-3 flex-shrink-0">
+          <div class="text-lg font-bold text-gray-800">¥${total.toLocaleString()}</div>
+          <div class="text-xs text-gray-400">現金 ¥${cash.toLocaleString()}</div>
+          <div class="text-xs text-gray-400 mt-1">${trip.expenses.length}件</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===== TRIP CRUD =====
+function openNewTripModal() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('newTripDate').value = today;
+  document.getElementById('newTripName').value = '';
+  document.getElementById('newTripDestination').value = '';
+  openModal('newTripModal');
+  setTimeout(() => document.getElementById('newTripName').focus(), 300);
+}
+
+function createTrip() {
+  const name = document.getElementById('newTripName').value.trim();
+  const date = document.getElementById('newTripDate').value;
+  const destination = document.getElementById('newTripDestination').value.trim();
+
+  if (!name || !date) {
+    alert('旅行名と日付は必須です');
+    return;
+  }
+
+  const trip = { id: genId(), name, date, destination: destination || '未設定', expenses: [] };
+  trips.unshift(trip);
+  save();
+  closeModal('newTripModal');
+  renderList();
+  openTrip(trip.id);
+}
+
+function openTrip(id) {
+  currentTripId = id;
+  const trip = getTrip(id);
+  if (!trip) return;
+
+  document.getElementById('detailTripName').textContent = trip.name;
+  const date = new Date(trip.date + 'T00:00:00');
+  const dateStr = date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+  document.getElementById('detailTripMeta').textContent = `${dateStr}　📍 ${trip.destination}`;
+
+  document.getElementById('listView').classList.add('hidden');
+  document.getElementById('detailView').classList.remove('hidden');
+  window.scrollTo(0, 0);
+
+  switchTab('expenses');
+  renderExpenses();
+}
+
+function backToList() {
+  stopCamera();
+  currentTripId = null;
+  document.getElementById('detailView').classList.add('hidden');
+  document.getElementById('listView').classList.remove('hidden');
+  renderList();
+  window.scrollTo(0, 0);
+}
+
+function deleteCurrentTrip() {
+  const trip = getTrip(currentTripId);
+  if (!trip) return;
+  if (!confirm(`「${trip.name}」を削除しますか？\n支出データもすべて消えます。`)) return;
+  trips = trips.filter(t => t.id !== currentTripId);
+  save();
+  backToList();
+}
+
+// ===== EXPENSES =====
+function renderExpenses() {
+  const trip = getTrip(currentTripId);
+  if (!trip) return;
+
+  const total = trip.expenses.reduce((s, e) => s + e.amount, 0);
+  const cash = trip.expenses.filter(e => e.payment === '現金').reduce((s, e) => s + e.amount, 0);
+  document.getElementById('detailTotal').textContent = `¥${total.toLocaleString()}`;
+  document.getElementById('detailCashTotal').textContent = `¥${cash.toLocaleString()}`;
+
+  const list = document.getElementById('expenseList');
+  const empty = document.getElementById('expenseEmpty');
+
+  if (trip.expenses.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  list.innerHTML = trip.expenses.map(e => `
+    <div class="card p-3 flex items-center gap-3">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2">
+          <span class="font-semibold text-gray-800 text-sm truncate">${escapeHtml(e.shop)}</span>
+          <span class="category-tag category-${e.category} flex-shrink-0">${e.category}</span>
+        </div>
+        <div class="flex items-center gap-2 mt-1">
+          <span class="text-xs px-2 py-0.5 rounded-full payment-${e.payment}">${e.payment}</span>
+          ${e.note ? `<span class="text-xs text-gray-400 truncate">${escapeHtml(e.note)}</span>` : ''}
+        </div>
+      </div>
+      <div class="text-right flex-shrink-0">
+        <div class="font-bold text-gray-800">¥${e.amount.toLocaleString()}</div>
+        <div class="flex gap-1 mt-1">
+          <button onclick="openEditExpense('${e.id}')" class="text-xs text-blue-400 underline">編集</button>
+          <button onclick="deleteExpense('${e.id}')" class="text-xs text-red-400 underline">削除</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  renderSummaryChart();
+}
+
+function openAddExpenseModal() {
+  document.getElementById('expenseShop').value = '';
+  document.getElementById('expenseAmount').value = '';
+  document.getElementById('expenseNote').value = '';
+  document.getElementById('expenseCategory').value = '食事';
+  onCategoryChange();
+  selectPayment('現金');
+  setInputMode('manual');
+  openModal('addExpenseModal');
+}
+
+function addExpense() {
+  const shop = document.getElementById('expenseShop').value.trim();
+  const amount = parseInt(document.getElementById('expenseAmount').value);
+  const category = document.getElementById('expenseCategory').value;
+  const note = document.getElementById('expenseNote').value.trim();
+
+  if (!shop) { alert('店名・内容を入力してください'); return; }
+  if (!amount || amount <= 0) { alert('金額を入力してください'); return; }
+
+  const trip = getTrip(currentTripId);
+  if (!trip) return;
+
+  trip.expenses.push({ id: genId(), shop, amount, category, payment: currentPayment, note });
+  save();
+  closeModal('addExpenseModal');
+  stopCamera();
+  renderExpenses();
+}
+
+function deleteExpense(expenseId) {
+  if (!confirm('この支出を削除しますか？')) return;
+  const trip = getTrip(currentTripId);
+  if (!trip) return;
+  trip.expenses = trip.expenses.filter(e => e.id !== expenseId);
+  save();
+  renderExpenses();
+}
+
+function openEditExpense(expenseId) {
+  const trip = getTrip(currentTripId);
+  if (!trip) return;
+  const expense = trip.expenses.find(e => e.id === expenseId);
+  if (!expense) return;
+
+  currentEditExpenseId = expenseId;
+  document.getElementById('editExpenseShop').value = expense.shop;
+  document.getElementById('editExpenseAmount').value = expense.amount;
+  document.getElementById('editExpenseCategory').value = expense.category;
+  document.getElementById('editExpenseNote').value = expense.note || '';
+  selectEditPayment(expense.payment);
+  openModal('editExpenseModal');
+}
+
+function saveEditExpense() {
+  const shop = document.getElementById('editExpenseShop').value.trim();
+  const amount = parseInt(document.getElementById('editExpenseAmount').value);
+  const category = document.getElementById('editExpenseCategory').value;
+  const note = document.getElementById('editExpenseNote').value.trim();
+
+  if (!shop || !amount || amount <= 0) { alert('入力内容を確認してください'); return; }
+
+  const trip = getTrip(currentTripId);
+  if (!trip) return;
+  const expense = trip.expenses.find(e => e.id === currentEditExpenseId);
+  if (!expense) return;
+
+  expense.shop = shop;
+  expense.amount = amount;
+  expense.category = category;
+  expense.payment = currentEditPayment;
+  expense.note = note;
+
+  save();
+  closeModal('editExpenseModal');
+  renderExpenses();
+}
+
+// ===== PAYMENT SELECTION =====
+function selectPayment(method) {
+  currentPayment = method;
+  document.querySelectorAll('.payment-btn').forEach(btn => {
+    btn.style.border = '2px solid transparent';
+  });
+  const btn = document.getElementById('pay' + method);
+  if (btn) btn.style.border = '2px solid #667eea';
+}
+
+function selectEditPayment(method) {
+  currentEditPayment = method;
+  document.querySelectorAll('.edit-payment-btn').forEach(btn => {
+    btn.style.border = '2px solid transparent';
+  });
+  const btn = document.getElementById('editPay' + method);
+  if (btn) btn.style.border = '2px solid #667eea';
+}
+
+// ===== CATEGORY =====
+function onCategoryChange() {
+  const cat = document.getElementById('expenseCategory').value;
+  const trainSection = document.getElementById('trainSection');
+  if (cat === '交通') {
+    trainSection.classList.remove('hidden');
+  } else {
+    trainSection.classList.add('hidden');
+  }
+}
+
+function openTrainSearch() {
+  const from = document.getElementById('trainFrom').value;
+  const to = document.getElementById('trainTo').value;
+  const query = encodeURIComponent(`${from} ${to} 運賃`);
+  window.open(`https://transit.yahoo.co.jp/search/result?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`, '_blank');
+  return false;
+}
+
+// ===== SUMMARY CHART =====
+function renderSummaryChart() {
+  const trip = getTrip(currentTripId);
+  if (!trip) return;
+
+  const categoryColors = { '交通': '#3b82f6', '食事': '#f59e0b', '入場料': '#10b981', 'お土産': '#ec4899', 'その他': '#94a3b8' };
+  const paymentColors = { '現金': '#059669', 'クレジットカード': '#2563eb', 'Suica': '#d97706', 'PayPay': '#ea580c' };
+
+  function buildChart(title, grouped, colors) {
+    const total = Object.values(grouped).reduce((s, v) => s + v, 0);
+    if (total === 0) return `<p class="text-sm text-gray-400 text-center py-4">${title}: データなし</p>`;
+
+    const bars = Object.entries(grouped)
+      .filter(([, v]) => v > 0)
+      .sort((a, b) => b[1] - a[1])
+      .map(([k, v]) => {
+        const pct = Math.round(v / total * 100);
+        const color = colors[k] || '#94a3b8';
+        return `
+        <div class="mb-3">
+          <div class="flex justify-between text-sm mb-1">
+            <span class="font-medium text-gray-700">${k}</span>
+            <span class="text-gray-600">¥${v.toLocaleString()} <span class="text-gray-400 text-xs">${pct}%</span></span>
+          </div>
+          <div class="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all" style="width:${pct}%;background:${color}"></div>
+          </div>
+        </div>`;
+      }).join('');
+
+    return `<h4 class="font-semibold text-gray-700 mb-3">${title}別　合計 ¥${total.toLocaleString()}</h4>${bars}`;
+  }
+
+  const byCategory = {};
+  const byPayment = {};
+  ['交通','食事','入場料','お土産','その他'].forEach(c => byCategory[c] = 0);
+  ['現金','クレジットカード','Suica','PayPay'].forEach(p => byPayment[p] = 0);
+
+  trip.expenses.forEach(e => {
+    byCategory[e.category] = (byCategory[e.category] || 0) + e.amount;
+    byPayment[e.payment] = (byPayment[e.payment] || 0) + e.amount;
+  });
+
+  document.getElementById('categoryChart').innerHTML = buildChart('カテゴリ', byCategory, categoryColors);
+  document.getElementById('paymentChart').innerHTML = buildChart('支払方法', byPayment, paymentColors);
+}
+
+// ===== EXCEL DOWNLOAD =====
+function downloadExcel(cashOnly) {
+  const trip = getTrip(currentTripId);
+  if (!trip) return;
+
+  let expenses = trip.expenses;
+  if (cashOnly) expenses = expenses.filter(e => e.payment === '現金');
+
+  if (expenses.length === 0) {
+    alert(cashOnly ? '現金支出がありません' : '支出がありません');
+    return;
+  }
+
+  const rows = expenses.map(e => ({
+    '日付': trip.date,
+    '旅行名': trip.name,
+    '行き先': trip.destination,
+    '店名・内容': e.shop,
+    '金額': e.amount,
+    'カテゴリ': e.category,
+    '支払方法': e.payment,
+    'メモ': e.note || ''
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws['!cols'] = [
+    { wch: 12 }, { wch: 20 }, { wch: 10 }, { wch: 25 },
+    { wch: 10 }, { wch: 10 }, { wch: 16 }, { wch: 20 }
+  ];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '支出一覧');
+
+  const suffix = cashOnly ? '_現金のみ' : '';
+  const filename = `旅行記録_${trip.name}${suffix}_${trip.date}.xlsx`;
+  XLSX.writeFile(wb, filename);
+}
+
+// ===== CAMERA & OCR =====
+function setInputMode(mode) {
+  inputMode = mode;
+  const manual = document.getElementById('modeManual');
+  const camera = document.getElementById('modeCamera');
+  const cameraSection = document.getElementById('cameraSection');
+
+  if (mode === 'camera') {
+    manual.className = 'flex-1 py-2 text-sm font-medium text-gray-500 bg-gray-50';
+    camera.className = 'flex-1 py-2 text-sm font-medium bg-purple-600 text-white';
+    cameraSection.classList.remove('hidden');
+    startCamera();
+  } else {
+    manual.className = 'flex-1 py-2 text-sm font-medium bg-purple-600 text-white';
+    camera.className = 'flex-1 py-2 text-sm font-medium text-gray-500 bg-gray-50';
+    cameraSection.classList.add('hidden');
+    stopCamera();
+  }
+}
+
+async function startCamera() {
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+    });
+    const video = document.getElementById('cameraPreview');
+    video.srcObject = cameraStream;
+  } catch (err) {
+    alert('カメラが使えませんでした。\n手動で入力してください。');
+    setInputMode('manual');
+  }
+}
+
+function stopCamera() {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(t => t.stop());
+    cameraStream = null;
+  }
+}
+
+async function capturePhoto() {
+  const video = document.getElementById('cameraPreview');
+  const canvas = document.getElementById('cameraCanvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0);
+
+  const imageData = canvas.toDataURL('image/jpeg', 0.9);
+
+  document.getElementById('ocrLoading').classList.remove('hidden');
+  document.getElementById('ocrResult').classList.add('hidden');
+
+  try {
+    if (typeof Tesseract === 'undefined') {
+      await loadTesseract();
+    }
+
+    const result = await Tesseract.recognize(imageData, 'jpn+eng', {
+      logger: () => {}
+    });
+
+    const text = result.data.text;
+    document.getElementById('ocrLoading').classList.add('hidden');
+
+    // 金額を探す（¥や円の前後の数字）
+    const amountMatches = text.match(/[¥￥]?\s*([0-9,]+)\s*円?/g);
+    const amounts = amountMatches ? amountMatches
+      .map(m => parseInt(m.replace(/[¥￥,円\s]/g, '')))
+      .filter(n => n > 0 && n < 1000000) : [];
+
+    // 最大金額を合計として使う
+    if (amounts.length > 0) {
+      const maxAmount = Math.max(...amounts);
+      document.getElementById('expenseAmount').value = maxAmount;
+    }
+
+    // OCR結果の表示
+    const cleanText = text.replace(/\s+/g, ' ').trim().slice(0, 200);
+    document.getElementById('ocrText').textContent = cleanText || '（読み取れませんでした）';
+    document.getElementById('ocrResult').classList.remove('hidden');
+
+  } catch (err) {
+    document.getElementById('ocrLoading').classList.add('hidden');
+    alert('OCRに失敗しました。手動で入力してください。');
+  }
+}
+
+function loadTesseract() {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+// ===== TABS =====
+function switchTab(tab) {
+  const isExpenses = tab === 'expenses';
+  document.getElementById('tabExpenses').className = `flex-1 py-3 text-sm ${isExpenses ? 'tab-active' : 'tab-inactive'}`;
+  document.getElementById('tabSummary').className = `flex-1 py-3 text-sm ${isExpenses ? 'tab-inactive' : 'tab-active'}`;
+  document.getElementById('tabExpensesContent').classList.toggle('hidden', !isExpenses);
+  document.getElementById('tabSummaryContent').classList.toggle('hidden', isExpenses);
+
+  if (!isExpenses) renderSummaryChart();
+}
+
+// ===== MODAL UTILS =====
+function openModal(id) {
+  document.getElementById(id).classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function closeModalOnOverlay(event, id) {
+  if (event.target === document.getElementById(id)) {
+    closeModal(id);
+    if (id === 'addExpenseModal') stopCamera();
+  }
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ===== INIT =====
+renderList();
+</script>
+</body>
+</html>
