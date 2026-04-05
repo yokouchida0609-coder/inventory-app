@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>日帰り旅行記録</title>
+<title>旅行記録</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -27,6 +27,7 @@
   .category-入場料 { background: #dcfce7; color: #15803d; }
   .category-お土産 { background: #fce7f3; color: #9d174d; }
   .category-その他 { background: #f1f5f9; color: #475569; }
+  .category-宿泊費 { background: #ede9fe; color: #6d28d9; }
   .payment-現金 { background: #d1fae5; color: #065f46; }
   .payment-クレジットカード { background: #dbeafe; color: #1e40af; }
   .payment-Suica { background: #fef3c7; color: #92400e; }
@@ -49,7 +50,7 @@
         <h1 class="text-white font-bold text-xl">🗾 旅行記録</h1>
         <span class="text-white text-sm opacity-80" id="tripCountBadge"></span>
       </div>
-      <p class="text-white text-sm opacity-70">日帰り旅行の支出を記録</p>
+      <p class="text-white text-sm opacity-70">旅行の支出を記録</p>
     </div>
 
     <div style="margin-top: -16px; padding: 0 16px;">
@@ -219,6 +220,7 @@
         <select id="expenseCategory" onchange="onCategoryChange()">
           <option value="交通">🚃 交通</option>
           <option value="食事">🍜 食事</option>
+          <option value="宿泊費">🏨 宿泊費</option>
           <option value="入場料">🎫 入場料</option>
           <option value="お土産">🎁 お土産</option>
           <option value="その他">📌 その他</option>
@@ -267,6 +269,7 @@
         <select id="editExpenseCategory">
           <option value="交通">🚃 交通</option>
           <option value="食事">🍜 食事</option>
+          <option value="宿泊費">🏨 宿泊費</option>
           <option value="入場料">🎫 入場料</option>
           <option value="お土産">🎁 お土産</option>
           <option value="その他">📌 その他</option>
@@ -591,7 +594,7 @@ function renderSummaryChart() {
   const trip = getTrip(currentTripId);
   if (!trip) return;
 
-  const categoryColors = { '交通': '#3b82f6', '食事': '#f59e0b', '入場料': '#10b981', 'お土産': '#ec4899', 'その他': '#94a3b8' };
+  const categoryColors = { '交通': '#3b82f6', '食事': '#f59e0b', '宿泊費': '#7c3aed', '入場料': '#10b981', 'お土産': '#ec4899', 'その他': '#94a3b8' };
   const paymentColors = { '現金': '#059669', 'クレジットカード': '#2563eb', 'Suica': '#d97706', 'PayPay': '#ea580c' };
 
   function buildChart(title, grouped, colors) {
@@ -621,7 +624,7 @@ function renderSummaryChart() {
 
   const byCategory = {};
   const byPayment = {};
-  ['交通','食事','入場料','お土産','その他'].forEach(c => byCategory[c] = 0);
+  ['交通','食事','宿泊費','入場料','お土産','その他'].forEach(c => byCategory[c] = 0);
   ['現金','クレジットカード','Suica','PayPay'].forEach(p => byPayment[p] = 0);
 
   trip.expenses.forEach(e => {
