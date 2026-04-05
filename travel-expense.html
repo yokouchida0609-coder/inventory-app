@@ -58,6 +58,10 @@
         <span style="font-size:20px">+</span> 新しい旅行を作成
       </button>
 
+      <div id="loadingState" class="text-center py-16 text-gray-400">
+        <div style="font-size:36px" class="animate-spin inline-block">⏳</div>
+        <p class="mt-2 text-sm">データを読み込み中...</p>
+      </div>
       <div id="tripList" class="space-y-3 pb-8"></div>
       <div id="emptyState" class="text-center py-16 text-gray-400 hidden">
         <div style="font-size:48px">✈️</div>
@@ -297,8 +301,11 @@
 </div>
 
 <script>
+// ===== CONFIG =====
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbw8AFsEaLhYZP6FSBTB5Djx2qlv23Omc1O60QBNjszlNz_YW6swqlPBQhGbZtY8VdjI/exec';
+
 // ===== DATA =====
-let trips = JSON.parse(localStorage.getItem('travel_trips') || '[]');
+let trips = [];
 let currentTripId = null;
 let currentPayment = '現金';
 let currentEditPayment = '現金';
@@ -308,6 +315,32 @@ let inputMode = 'manual';
 
 function save() {
   localStorage.setItem('travel_trips', JSON.stringify(trips));
+  fetch(GAS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify(trips)
+  }).catch(() => {});
+}
+
+async function loadFromCloud() {
+  document.getElementById('loadingState').classList.remove('hidden');
+  document.getElementById('tripList').classList.add('hidden');
+  document.getElementById('emptyState').classList.add('hidden');
+  try {
+    const res = await fetch(GAS_URL + '?v=' + Date.now());
+    const data = await res.json();
+    if (Array.isArray(data)) {
+      trips = data;
+      localStorage.setItem('travel_trips', JSON.stringify(trips));
+    } else {
+      trips = JSON.parse(localStorage.getItem('travel_trips') || '[]');
+    }
+  } catch(e) {
+    trips = JSON.parse(localStorage.getItem('travel_trips') || '[]');
+  }
+  document.getElementById('loadingState').classList.add('hidden');
+  document.getElementById('tripList').classList.remove('hidden');
+  renderList();
 }
 
 function getTrip(id) {
@@ -810,7 +843,7 @@ function escapeHtml(str) {
 }
 
 // ===== INIT =====
-renderList();
+loadFromCloud();
 </script>
 </body>
 </html>
