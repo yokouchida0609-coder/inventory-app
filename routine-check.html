@@ -384,6 +384,7 @@ const EVENING_TASKS = [
 ];
 const ANYTIME_TASKS = [
   { id: 'a1', name: 'テーブル掃除',       note: '', weekdayOnly: false },
+  { id: 'a9', name: '洗濯',             note: '2日に1回', intervalDays: 2 },
   { id: 'a4', name: 'エアロバイク',       note: '', weekdayOnly: false },
   { id: 'a5', name: 'リベ大宿題',        note: '', weekdayOnly: false },
   { id: 'a6', name: '読書',             note: '', weekdayOnly: false },
@@ -520,7 +521,8 @@ function getCheckedKey(id) {
 
 function toggleTask(id) {
   const state = loadState();
-  const intervalTask = WEEKLY_TASKS.find(t => t.id === id && t.intervalDays);
+  const allTasks = [...MORNING_TASKS, ...NOON_TASKS, ...EVENING_TASKS, ...ANYTIME_TASKS, ...WEEKLY_DAY_TASKS, ...WEEKLY_TASKS, ...MONTHLY_TASKS, ...ANNUAL_TASKS];
+  const intervalTask = allTasks.find(t => t.id === id && t.intervalDays);
   if (intervalTask) {
     if (state.lastDone[id]) {
       delete state.lastDone[id];
