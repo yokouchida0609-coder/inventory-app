@@ -220,9 +220,9 @@
         <select id="expenseCategory" onchange="onCategoryChange()">
           <option value="交通">🚃 交通</option>
           <option value="食事">🍜 食事</option>
-          <option value="宿泊費">🏨 宿泊費</option>
           <option value="入場料">🎫 入場料</option>
           <option value="お土産">🎁 お土産</option>
+          <option value="宿泊費">🏨 宿泊費</option>
           <option value="その他">📌 その他</option>
         </select>
       </div>
@@ -269,9 +269,9 @@
         <select id="editExpenseCategory">
           <option value="交通">🚃 交通</option>
           <option value="食事">🍜 食事</option>
-          <option value="宿泊費">🏨 宿泊費</option>
           <option value="入場料">🎫 入場料</option>
           <option value="お土産">🎁 お土産</option>
+          <option value="宿泊費">🏨 宿泊費</option>
           <option value="その他">📌 その他</option>
         </select>
       </div>
@@ -624,7 +624,7 @@ function renderSummaryChart() {
 
   const byCategory = {};
   const byPayment = {};
-  ['交通','食事','宿泊費','入場料','お土産','その他'].forEach(c => byCategory[c] = 0);
+  ['交通','食事','入場料','お土産','宿泊費','その他'].forEach(c => byCategory[c] = 0);
   ['現金','クレジットカード','Suica','PayPay'].forEach(p => byPayment[p] = 0);
 
   trip.expenses.forEach(e => {
