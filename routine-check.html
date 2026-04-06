@@ -282,7 +282,11 @@
       <div class="my-task-form-title">タスクを追加</div>
       <div class="my-task-row1">
         <select class="my-task-select" id="my-task-section">
+          <option>朝</option>
+          <option>昼</option>
+          <option>夜</option>
           <option>随時</option>
+          <option>曜日</option>
           <option>週間</option>
           <option>月間</option>
           <option>年間</option>
@@ -826,7 +830,11 @@ function deleteMyTask(id) {
 }
 
 const SECTION_TO_CONTAINER = {
+  '朝':   'tasks-morning',
+  '昼':   'tasks-noon',
+  '夜':   'tasks-evening',
   '随時': 'tasks-anytime',
+  '曜日': 'tasks-day',
   '週間': 'tasks-weekly',
   '月間': 'tasks-monthly',
   '年間': 'tasks-annual',
