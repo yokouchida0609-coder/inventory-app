@@ -311,10 +311,7 @@
       <div class="section-title">随時</div>
       <div class="task-list" id="tasks-anytime"></div>
     </div>
-    <div class="section" id="section-my-tasks" style="display:none">
-      <div class="section-title">マイタスク</div>
-      <div id="my-task-list"></div>
-    </div>
+
     <div class="section" id="section-day-tasks">
       <div class="section-title">曜日タスク</div>
       <div class="task-list" id="tasks-day"></div>
@@ -760,21 +757,35 @@ function deleteMyTask(id) {
   renderMyTasks();
 }
 
+const SECTION_TO_CONTAINER = {
+  '随時': 'tasks-anytime',
+  '週間': 'tasks-weekly',
+  '月間': 'tasks-monthly',
+  '年間': 'tasks-annual',
+};
+
 function renderMyTasks() {
   const tasks = loadMyTasks();
-  const el = document.getElementById('my-task-list');
-  const section = document.getElementById('section-my-tasks');
-  if (tasks.length === 0) { section.style.display = 'none'; return; }
-  section.style.display = '';
-  el.innerHTML = tasks.map(t => {
+  // 各セクションにカスタムタスクを追記
+  Object.values(SECTION_TO_CONTAINER).forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.querySelectorAll('.my-task-card').forEach(c => c.remove());
+  });
+  tasks.forEach(t => {
+    const containerId = SECTION_TO_CONTAINER[t.section] || 'tasks-anytime';
+    const el = document.getElementById(containerId);
+    if (!el) return;
     const noteHtml = t.note ? '<span class="my-task-note">' + t.note + '</span>' : '';
-    return '<div class="my-task-card' + (t.done ? ' done' : '') + '" data-section="' + t.section + '">'
-      + '<div class="my-task-checkbox" onclick="toggleMyTask(\'' + t.id + '\')"></div>'
+    const card = document.createElement('div');
+    card.className = 'my-task-card' + (t.done ? ' done' : '');
+    card.dataset.section = t.section;
+    card.innerHTML = '<div class="my-task-checkbox" onclick="toggleMyTask(\'' + t.id + '\')"></div>'
       + '<span class="my-task-name" onclick="toggleMyTask(\'' + t.id + '\')">' + t.name + '</span>'
       + noteHtml
-      + '<button class="my-task-delete" onclick="deleteMyTask(\'' + t.id + '\')">×</button>'
-      + '</div>';
-  }).join('');
+      + '<button class="my-task-delete" onclick="event.stopPropagation();deleteMyTask(\'' + t.id + '\')">×</button>';
+    el.appendChild(card);
+  });
 }
 
 // Enterキーで追加
