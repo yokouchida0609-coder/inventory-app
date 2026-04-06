@@ -28,6 +28,8 @@
     .title-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 4px; }
     .total-val { font-size: 14px; color: #718096; background: white; border-radius: 8px; padding: 6px 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
     .total-val span { font-size: 18px; font-weight: 700; color: #2d3748; margin-left: 6px; }
+    .save-btn { background: #48bb78; color: white; border: none; border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .save-btn:hover { background: #38a169; }
     #grid-owned .stock-card { border: 2px solid #fc8181 !important; box-shadow: 0 0 0 3px rgba(252,129,129,0.2); }
     .check-btn { cursor: pointer; font-size: 20px; background: none; border: none; padding: 0 4px; line-height: 1; transition: transform 0.1s; }
     .check-btn:hover { transform: scale(1.2); }
@@ -61,8 +63,9 @@
   <div class='title-row'>
     <h1>📊 高配当株 ダッシュボード</h1>
     <div class='total-val'>保有評価額合計 <span id='total-val'>—</span></div>
+    <button class='save-btn' onclick='saveUserData()'>💾 データを保存</button>
   </div>
-  <div class='date'>2026年04月06日 20:31 時点</div>
+  <div class='date'>2026年04月06日 20:54 時点</div>
 
   <div class='section-title' id='title-owned' style='display:none'>📦 保有銘柄</div>
   <div class='grid' id='grid-owned'></div>
@@ -1187,11 +1190,12 @@
   <div class='footer'>Yahoo!ファイナンスより自動収集</div>
 
 <script>
+  // PCから保存されたデータ（埋め込み）
+  const EMBEDDED_DATA = {};
+
   const STORAGE_KEY = 'stock_checked';
 
-  function getChecked() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
-  }
+  function getChecked() { return getCheckedList(); }
   function saveChecked(arr) { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
 
   const MEMO_KEY    = 'stock_memo';
@@ -1199,11 +1203,29 @@
   const CURRENT_KEY = 'stock_current';
   const AVG_KEY     = 'stock_avg';
   const BUDGET_KEY  = 'stock_budget';
-  function getMemos()    { try { return JSON.parse(localStorage.getItem(MEMO_KEY)    || '{}'); } catch { return {}; } }
-  function getTargets()  { try { return JSON.parse(localStorage.getItem(TARGET_KEY)  || '{}'); } catch { return {}; } }
-  function getCurrents() { try { return JSON.parse(localStorage.getItem(CURRENT_KEY) || '{}'); } catch { return {}; } }
-  function getAvgs()     { try { return JSON.parse(localStorage.getItem(AVG_KEY)     || '{}'); } catch { return {}; } }
-  function getBudgets()  { try { return JSON.parse(localStorage.getItem(BUDGET_KEY)  || '{}'); } catch { return {}; } }
+  function getMemos()    { try { return JSON.parse(localStorage.getItem(MEMO_KEY)    || JSON.stringify(EMBEDDED_DATA.memo    || {})); } catch { return {}; } }
+  function getTargets()  { try { return JSON.parse(localStorage.getItem(TARGET_KEY)  || JSON.stringify(EMBEDDED_DATA.target  || {})); } catch { return {}; } }
+  function getCurrents() { try { return JSON.parse(localStorage.getItem(CURRENT_KEY) || JSON.stringify(EMBEDDED_DATA.current || {})); } catch { return {}; } }
+  function getAvgs()     { try { return JSON.parse(localStorage.getItem(AVG_KEY)     || JSON.stringify(EMBEDDED_DATA.avg     || {})); } catch { return {}; } }
+  function getBudgets()  { try { return JSON.parse(localStorage.getItem(BUDGET_KEY)  || JSON.stringify(EMBEDDED_DATA.budget  || {})); } catch { return {}; } }
+  function getCheckedList() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify(EMBEDDED_DATA.checked || [])); } catch { return []; } }
+
+  function saveUserData() {
+    const data = {
+      current: getCurrents(),
+      avg:     getAvgs(),
+      budget:  getBudgets(),
+      memo:    getMemos(),
+      target:  getTargets(),
+      checked: getCheckedList()
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'stocks_userdata.json';
+    a.click();
+    alert('stocks_userdata.json をダウンロードしました！\nC:\\Users\\yoko7\\reminder-app\\ に上書き保存してください。');
+  }
   function saveMemo(code, text)   { const m = getMemos();    m[code] = text; localStorage.setItem(MEMO_KEY,    JSON.stringify(m)); }
   function saveTarget(code, val)  { const t = getTargets();  t[code] = val;  localStorage.setItem(TARGET_KEY,  JSON.stringify(t)); }
   function saveCurrent(code, val) { const c = getCurrents(); c[code] = val;  localStorage.setItem(CURRENT_KEY, JSON.stringify(c)); }
