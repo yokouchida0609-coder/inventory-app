@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>陽子スーパー予算</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+  body { background: #f0fdf4; font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif; margin: 0; padding: 0; }
+  .card { background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+  .btn-primary { background: linear-gradient(135deg, #16a34a 0%, #4ade80 100%); color: white; border-radius: 12px; padding: 14px 20px; font-weight: 700; font-size: 16px; transition: opacity 0.15s; border: none; cursor: pointer; }
+  .btn-primary:active { opacity: 0.8; }
+  .btn-secondary { background: #f0fdf4; color: #15803d; border-radius: 12px; padding: 12px 16px; font-weight: 500; font-size: 15px; border: none; cursor: pointer; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 50; display: flex; align-items: flex-end; justify-content: center; }
+  .modal-content { background: white; border-radius: 20px 20px 0 0; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; padding: 24px; padding-bottom: 48px; }
+  input, select { width: 100%; border: 1.5px solid #bbf7d0; border-radius: 10px; padding: 12px 14px; font-size: 16px; outline: none; transition: border-color 0.2s; background: white; }
+  input:focus, select:focus { border-color: #16a34a; }
+  .fade-in { animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .budget-bar-bg { background: rgba(255,255,255,0.3); border-radius: 8px; height: 10px; overflow: hidden; }
+  .budget-bar-fill { height: 100%; border-radius: 8px; transition: width 0.5s ease; }
+  .bar-ok { background: linear-gradient(90deg, #86efac, #ffffff); }
+  .bar-warn { background: linear-gradient(90deg, #fb923c, #ef4444); }
+
+  .store-badge { border-radius: 16px; padding: 3px 10px; font-size: 12px; font-weight: 600; }
+  .store-スーパー { background: #dcfce7; color: #15803d; }
+  .store-コンビニ { background: #d1fae5; color: #065f46; }
+  .store-その他 { background: #f0fdf4; color: #166534; }
+
+  .remaining-big { font-size: 42px; font-weight: 800; line-height: 1; }
+</style>
+</head>
+<body>
+
+<div id="app" style="max-width: 480px; margin: 0 auto; min-height: 100vh;">
+
+  <!-- ヘッダー -->
+  <div style="background: linear-gradient(135deg, #16a34a 0%, #4ade80 100%); padding: 24px 16px 32px;">
+    <div class="flex items-center justify-between mb-1">
+      <h1 class="text-white font-bold text-xl">🛒 陽子スーパー予算</h1>
+      <button onclick="openSettings()" style="background:rgba(255,255,255,0.25);border:none;border-radius:8px;padding:6px 12px;color:white;font-size:13px;cursor:pointer;">⚙️ 設定</button>
+    </div>
+    <p class="text-white text-sm mb-4" style="opacity:0.8;">🏪 スーパーの食費管理</p>
+
+    <!-- 今週の残り予算（メイン表示） -->
+    <div style="background:rgba(255,255,255,0.18);border-radius:16px;padding:16px 18px;margin-bottom:12px;">
+      <div class="text-white text-sm mb-1" style="opacity:0.85;">今週の残り予算</div>
+      <div class="remaining-big" id="weekRemaining" style="color:white;">¥7,000</div>
+      <div class="text-white text-sm mt-1" id="weekSubtitle" style="opacity:0.75;">今週はまだ使っていません</div>
+      <div class="budget-bar-bg mt-3">
+        <div class="budget-bar-fill bar-ok" id="weekBar" style="width:0%"></div>
+      </div>
+      <div class="flex justify-between text-white text-xs mt-1" style="opacity:0.65;">
+        <span id="weekUsed">使用: ¥0</span>
+        <span id="weekBudgetLabel">週予算: ¥7,000</span>
+      </div>
+    </div>
+
+    <!-- 今月の残り予算 -->
+    <div style="background:rgba(255,255,255,0.14);border-radius:12px;padding:12px 16px;">
+      <div class="flex justify-between items-center">
+        <div>
+          <div class="text-white text-xs" style="opacity:0.75;">今月の残り予算</div>
+          <div class="text-white font-bold text-2xl" id="monthRemaining">¥30,000</div>
+        </div>
+        <div class="text-right">
+          <div class="text-white text-xs" style="opacity:0.75;">使用済み</div>
+          <div class="text-white font-bold text-lg" id="monthUsed">¥0</div>
+        </div>
+      </div>
+      <div class="budget-bar-bg mt-2">
+        <div class="budget-bar-fill bar-ok" id="monthBar" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: -16px; padding: 0 16px 24px;">
+
+    <!-- 追加ボタン -->
+    <button onclick="openAdd()" class="btn-primary mb-4" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <span style="font-size:22px;">+</span> 買い物を記録する
+    </button>
+
+    <!-- 今週のリスト -->
+    <div class="card p-4 mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="font-bold" style="color:#15803d;">今週の買い物</h2>
+        <span class="text-sm text-gray-400" id="weekRange"></span>
+      </div>
+      <div id="weekList">
+        <div class="text-center py-8 text-gray-400">
+          <div style="font-size:36px">🛒</div>
+          <p class="text-sm mt-2">まだ記録がありません</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 過去のデータ（折りたたみ） -->
+    <div class="card p-4 mb-4">
+      <button onclick="togglePast()" class="flex justify-between items-center w-full" style="background:none;border:none;cursor:pointer;">
+        <h2 class="font-bold text-gray-600">📦 過去のデータ</h2>
+        <span id="pastToggleIcon" class="text-gray-400">▼</span>
+      </button>
+      <div id="pastSection" class="hidden mt-3">
+        <div id="pastList">
+          <div class="text-center py-4 text-gray-400 text-sm">過去のデータはありません</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 追加モーダル -->
+<div id="addModal" class="modal-overlay hidden" onclick="closeOverlay(event,'addModal')">
+  <div class="modal-content fade-in" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-lg font-bold" style="color:#15803d;">🛒 買い物を記録</h3>
+      <button onclick="closeModal('addModal')" style="background:none;border:none;font-size:22px;color:#94a3b8;cursor:pointer;">×</button>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="text-sm font-semibold text-gray-600 block mb-1">日付</label>
+        <input type="date" id="addDate">
+      </div>
+      <div>
+        <label class="text-sm font-semibold text-gray-600 block mb-1">金額（円） <span style="color:#16a34a">*</span></label>
+        <input type="number" id="addAmount" placeholder="例: 3200" inputmode="numeric" style="font-size:28px;font-weight:700;color:#16a34a;">
+      </div>
+      <div>
+        <label class="text-sm font-semibold text-gray-600 block mb-1">店名</label>
+        <select id="addStore">
+          <option value="スーパー">🏪 スーパー</option>
+          <option value="コンビニ">🏬 コンビニ</option>
+          <option value="その他">📍 その他</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-sm font-semibold text-gray-600 block mb-1">メモ（任意）</label>
+        <input type="text" id="addMemo" placeholder="例: 野菜まとめ買い">
+      </div>
+    </div>
+    <div class="flex gap-3 mt-6">
+      <button onclick="closeModal('addModal')" class="btn-secondary flex-1">キャンセル</button>
+      <button onclick="addRecord()" class="btn-primary flex-1 text-center">記録する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 設定モーダル -->
+<div id="settingsModal" class="modal-overlay hidden" onclick="closeOverlay(event,'settingsModal')">
+  <div class="modal-content fade-in" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-lg font-bold" style="color:#15803d;">⚙️ 予算設定</h3>
+      <button onclick="closeModal('settingsModal')" style="background:none;border:none;font-size:22px;color:#94a3b8;cursor:pointer;">×</button>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="text-sm font-semibold text-gray-600 block mb-1">週予算（円）</label>
+        <input type="number" id="settingsWeek" inputmode="numeric">
+        <p class="text-xs text-gray-400 mt-1">月曜〜日曜で自動リセットされます</p>
+      </div>
+      <div>
+        <label class="text-sm font-semibold text-gray-600 block mb-1">月予算（円）</label>
+        <input type="number" id="settingsMonth" inputmode="numeric">
+      </div>
+    </div>
+    <div class="flex gap-3 mt-6">
+      <button onclick="closeModal('settingsModal')" class="btn-secondary flex-1">キャンセル</button>
+      <button onclick="saveSettings()" class="btn-primary flex-1 text-center">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let records = JSON.parse(localStorage.getItem('supermarket_records') || '[]');
+let settings = JSON.parse(localStorage.getItem('supermarket_settings') || '{"weekBudget":7000,"monthBudget":30000}');
+
+function toYMD(d) { return d.toISOString().split('T')[0]; }
+
+function getWeekRange(d) {
+  const day = d.getDay();
+  const diffToMon = (day === 0) ? -6 : 1 - day;
+  const mon = new Date(d);
+  mon.setDate(d.getDate() + diffToMon);
+  mon.setHours(0,0,0,0);
+  const sun = new Date(mon);
+  sun.setDate(mon.getDate() + 6);
+  sun.setHours(23,59,59,999);
+  return { mon, sun };
+}
+
+function getMonthRange(d) {
+  const start = new Date(d.getFullYear(), d.getMonth(), 1);
+  const end = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59);
+  return { start, end };
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' });
+}
+
+function formatYMD(d) { return `${d.getMonth()+1}/${d.getDate()}`; }
+
+function getWeekTotal() {
+  const { mon, sun } = getWeekRange(new Date());
+  return records.filter(r => { const d = new Date(r.date+'T00:00:00'); return d>=mon && d<=sun; }).reduce((s,r)=>s+r.amount,0);
+}
+
+function getMonthTotal() {
+  const { start, end } = getMonthRange(new Date());
+  return records.filter(r => { const d = new Date(r.date+'T00:00:00'); return d>=start && d<=end; }).reduce((s,r)=>s+r.amount,0);
+}
+
+function render() {
+  const now = new Date();
+  const { mon, sun } = getWeekRange(now);
+  const weekBudget = settings.weekBudget;
+  const monthBudget = settings.monthBudget;
+  const weekUsed = getWeekTotal();
+  const monthUsed = getMonthTotal();
+  const weekLeft = weekBudget - weekUsed;
+  const monthLeft = monthBudget - monthUsed;
+  const weekPct = Math.min(100, Math.round(weekUsed / weekBudget * 100));
+  const monthPct = Math.min(100, Math.round(monthUsed / monthBudget * 100));
+
+  const weekEl = document.getElementById('weekRemaining');
+  weekEl.textContent = `¥${Math.max(0, weekLeft).toLocaleString()}`;
+  if (weekLeft < 0) {
+    weekEl.style.color = '#fca5a5';
+    document.getElementById('weekSubtitle').textContent = `⚠️ ¥${Math.abs(weekLeft).toLocaleString()} オーバー！`;
+  } else if (weekLeft < weekBudget * 0.2) {
+    weekEl.style.color = '#fde68a';
+    document.getElementById('weekSubtitle').textContent = `残り少ない！気をつけて！`;
+  } else {
+    weekEl.style.color = 'white';
+    document.getElementById('weekSubtitle').textContent = weekUsed === 0 ? '今週はまだ使っていません' : `今週 ${weekPct}% 使用`;
+  }
+
+  const weekBarEl = document.getElementById('weekBar');
+  weekBarEl.style.width = weekPct + '%';
+  weekBarEl.className = 'budget-bar-fill ' + (weekPct >= 80 ? 'bar-warn' : 'bar-ok');
+  document.getElementById('weekUsed').textContent = `使用: ¥${weekUsed.toLocaleString()}`;
+  document.getElementById('weekBudgetLabel').textContent = `週予算: ¥${weekBudget.toLocaleString()}`;
+
+  document.getElementById('monthRemaining').textContent = `¥${Math.max(0, monthLeft).toLocaleString()}`;
+  document.getElementById('monthRemaining').style.color = monthLeft < 0 ? '#fca5a5' : 'white';
+  document.getElementById('monthUsed').textContent = `¥${monthUsed.toLocaleString()}`;
+  const monthBarEl = document.getElementById('monthBar');
+  monthBarEl.style.width = monthPct + '%';
+  monthBarEl.className = 'budget-bar-fill ' + (monthPct >= 80 ? 'bar-warn' : 'bar-ok');
+
+  document.getElementById('weekRange').textContent = `${formatYMD(mon)}〜${formatYMD(sun)}`;
+
+  // 今週リスト
+  const weekRecords = records
+    .filter(r => { const d = new Date(r.date+'T00:00:00'); return d>=mon && d<=sun; })
+    .sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
+
+  const weekListEl = document.getElementById('weekList');
+  if (weekRecords.length === 0) {
+    weekListEl.innerHTML = `<div class="text-center py-8 text-gray-400"><div style="font-size:36px">🛒</div><p class="text-sm mt-2">まだ記録がありません</p></div>`;
+  } else {
+    const ascending = [...weekRecords].reverse();
+    let cumulative = 0;
+    const withBalance = ascending.map(r => { cumulative += r.amount; return { ...r, balance: weekBudget - cumulative }; });
+    const displayList = [...withBalance].reverse();
+    weekListEl.innerHTML = displayList.map(r => `
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0fdf4;">
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span style="font-size:13px;color:#9ca3af;">${formatDate(r.date)}</span>
+            <span class="store-badge store-${r.store}">${r.store}</span>
+          </div>
+          ${r.memo ? `<div style="font-size:12px;color:#86efac;margin-top:2px;">${escHtml(r.memo)}</div>` : ''}
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-weight:700;color:#1e293b;">¥${r.amount.toLocaleString()}</div>
+          <div style="font-size:11px;color:${r.balance < 0 ? '#ef4444' : '#16a34a'};">残¥${r.balance.toLocaleString()}</div>
+        </div>
+        <button onclick="deleteRecord(${r.id})" style="background:none;border:none;color:#bbf7d0;font-size:18px;cursor:pointer;padding:4px;flex-shrink:0;">×</button>
+      </div>
+    `).join('');
+  }
+
+  // 過去データ
+  const pastRecords = records
+    .filter(r => { const d = new Date(r.date+'T00:00:00'); return d < mon; })
+    .sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
+
+  const pastListEl = document.getElementById('pastList');
+  if (pastRecords.length === 0) {
+    pastListEl.innerHTML = `<div class="text-center py-4 text-gray-400 text-sm">過去のデータはありません</div>`;
+  } else {
+    const weekGroups = {};
+    pastRecords.forEach(r => {
+      const d = new Date(r.date+'T00:00:00');
+      const { mon: wMon, sun: wSun } = getWeekRange(d);
+      const key = toYMD(wMon);
+      if (!weekGroups[key]) weekGroups[key] = { mon: wMon, sun: wSun, records: [], total: 0 };
+      weekGroups[key].records.push(r);
+      weekGroups[key].total += r.amount;
+    });
+    pastListEl.innerHTML = Object.entries(weekGroups)
+      .sort((a,b) => b[0].localeCompare(a[0]))
+      .map(([key, wg]) => `
+        <div style="margin-bottom:16px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:#15803d;padding:4px 0;border-bottom:2px solid #bbf7d0;margin-bottom:6px;">
+            <span>${formatYMD(wg.mon)}〜${formatYMD(wg.sun)}</span>
+            <span>合計 ¥${wg.total.toLocaleString()} / ¥${weekBudget.toLocaleString()}</span>
+          </div>
+          ${wg.records.map(r => `
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f0fdf4;">
+              <div style="flex:1;min-width:0;">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span style="font-size:12px;color:#9ca3af;">${formatDate(r.date)}</span>
+                  <span class="store-badge store-${r.store}">${r.store}</span>
+                </div>
+                ${r.memo ? `<div style="font-size:11px;color:#86efac;">${escHtml(r.memo)}</div>` : ''}
+              </div>
+              <div style="font-weight:600;color:#475569;font-size:14px;flex-shrink:0;">¥${r.amount.toLocaleString()}</div>
+              <button onclick="deleteRecord(${r.id})" style="background:none;border:none;color:#bbf7d0;font-size:16px;cursor:pointer;padding:2px;flex-shrink:0;">×</button>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
+  }
+}
+
+function addRecord() {
+  const amount = parseInt(document.getElementById('addAmount').value);
+  const date = document.getElementById('addDate').value;
+  const store = document.getElementById('addStore').value;
+  const memo = document.getElementById('addMemo').value.trim();
+  if (!amount || amount <= 0) { alert('金額を入力してください'); return; }
+  if (!date) { alert('日付を入力してください'); return; }
+  records.push({ id: Date.now(), date, amount, store, memo });
+  save();
+  closeModal('addModal');
+  render();
+}
+
+function deleteRecord(id) {
+  if (!confirm('この記録を削除しますか？')) return;
+  records = records.filter(r => r.id !== id);
+  save();
+  render();
+}
+
+function openSettings() {
+  document.getElementById('settingsWeek').value = settings.weekBudget;
+  document.getElementById('settingsMonth').value = settings.monthBudget;
+  openModal('settingsModal');
+}
+
+function saveSettings() {
+  const w = parseInt(document.getElementById('settingsWeek').value);
+  const m = parseInt(document.getElementById('settingsMonth').value);
+  if (!w || !m || w <= 0 || m <= 0) { alert('正しい金額を入力してください'); return; }
+  settings.weekBudget = w;
+  settings.monthBudget = m;
+  localStorage.setItem('supermarket_settings', JSON.stringify(settings));
+  closeModal('settingsModal');
+  render();
+}
+
+function save() { localStorage.setItem('supermarket_records', JSON.stringify(records)); }
+
+function openAdd() {
+  document.getElementById('addDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('addAmount').value = '';
+  document.getElementById('addStore').value = 'スーパー';
+  document.getElementById('addMemo').value = '';
+  openModal('addModal');
+  setTimeout(() => document.getElementById('addAmount').focus(), 300);
+}
+
+function togglePast() {
+  const sec = document.getElementById('pastSection');
+  const icon = document.getElementById('pastToggleIcon');
+  if (sec.classList.contains('hidden')) { sec.classList.remove('hidden'); icon.textContent = '▲'; }
+  else { sec.classList.add('hidden'); icon.textContent = '▼'; }
+}
+
+function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.body.style.overflow = ''; }
+function closeOverlay(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+render();
+</script>
+</body>
+</html>
