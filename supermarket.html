@@ -25,8 +25,9 @@
   .bar-warn { background: linear-gradient(90deg, #fb923c, #ef4444); }
 
   .store-badge { border-radius: 16px; padding: 3px 10px; font-size: 12px; font-weight: 600; }
-  .store-スーパー { background: #dcfce7; color: #15803d; }
-  .store-コンビニ { background: #d1fae5; color: #065f46; }
+  .store-まいばすけっと { background: #dcfce7; color: #15803d; }
+  .store-トミヤ { background: #d1fae5; color: #065f46; }
+  .store-シアル { background: #bbf7d0; color: #14532d; }
   .store-その他 { background: #f0fdf4; color: #166534; }
 
   .remaining-big { font-size: 42px; font-weight: 800; line-height: 1; }
@@ -132,8 +133,9 @@
       <div>
         <label class="text-sm font-semibold text-gray-600 block mb-1">店名</label>
         <select id="addStore">
-          <option value="スーパー">🏪 スーパー</option>
-          <option value="コンビニ">🏬 コンビニ</option>
+          <option value="まいばすけっと">🏪 まいばすけっと</option>
+          <option value="トミヤ">🏪 トミヤ</option>
+          <option value="シアル">🏪 シアル</option>
           <option value="その他">📍 その他</option>
         </select>
       </div>
@@ -372,7 +374,7 @@ function save() { localStorage.setItem('supermarket_records', JSON.stringify(rec
 function openAdd() {
   document.getElementById('addDate').value = new Date().toISOString().split('T')[0];
   document.getElementById('addAmount').value = '';
-  document.getElementById('addStore').value = 'スーパー';
+  document.getElementById('addStore').value = 'まいばすけっと';
   document.getElementById('addMemo').value = '';
   openModal('addModal');
   setTimeout(() => document.getElementById('addAmount').focus(), 300);
