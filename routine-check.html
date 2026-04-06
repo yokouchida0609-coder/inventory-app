@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>デイリールーティン</title>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; }
@@ -132,6 +133,15 @@
     color: #555; font-weight: 500; white-space: nowrap;
   }
   .task-time { font-size: 0.8rem; color: #4caf50; font-weight: 600; white-space: nowrap; }
+  .task-delete {
+    background: none; border: none; color: #ddd;
+    font-size: 1rem; cursor: pointer; padding: 0 2px;
+    flex-shrink: 0; line-height: 1;
+  }
+  .task-delete:hover { color: #e53935; }
+  .task-card.sortable-ghost { opacity: 0.4; }
+  .task-card.sortable-chosen { box-shadow: 0 4px 12px rgba(0,0,0,.2); }
+
   .weekday-badge {
     font-size: 0.68rem; color: #999; background: #f0f0f0;
     padding: 2px 6px; border-radius: 10px; white-space: nowrap; flex-shrink: 0;
@@ -585,6 +595,29 @@ function saveState(state) {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
 }
 
+// ---- 非表示タスク ----
+const HIDDEN_KEY = 'hidden_tasks_v1';
+const ORDER_KEY  = 'task_order_v1';
+
+function loadHidden() {
+  try { return JSON.parse(localStorage.getItem(HIDDEN_KEY)) || []; } catch(e) { return []; }
+}
+function saveHidden(arr) {
+  try { localStorage.setItem(HIDDEN_KEY, JSON.stringify(arr)); } catch(e) {}
+}
+function hideTask(id) {
+  const h = loadHidden();
+  if (!h.includes(id)) { h.push(id); saveHidden(h); }
+  render(); renderMyTasks();
+}
+
+function loadOrder() {
+  try { return JSON.parse(localStorage.getItem(ORDER_KEY)) || {}; } catch(e) { return {}; }
+}
+function saveOrder(o) {
+  try { localStorage.setItem(ORDER_KEY, JSON.stringify(o)); } catch(e) {}
+}
+
 const MONTH_COLORS = {
   1: '#ef9a9a', 2: '#f48fb1', 3: '#ce93d8', 4: '#90caf9',
   5: '#80cbc4', 6: '#a5d6a7', 7: '#fff176', 8: '#ffcc80',
@@ -638,7 +671,21 @@ function allCountable() {
 function renderTaskList(containerId, tasks, checkedArr, state) {
   const el = document.getElementById(containerId);
   if (!el) return;
-  el.innerHTML = tasks.map(task => {
+  const hidden = loadHidden();
+  const order  = loadOrder();
+
+  let filtered = tasks.filter(t => !hidden.includes(t.id));
+  if (order[containerId] && order[containerId].length) {
+    const ids = order[containerId];
+    filtered.sort((a, b) => {
+      const ai = ids.indexOf(a.id), bi = ids.indexOf(b.id);
+      if (ai === -1 && bi === -1) return 0;
+      if (ai === -1) return 1; if (bi === -1) return -1;
+      return ai - bi;
+    });
+  }
+
+  el.innerHTML = filtered.map(task => {
     const inactive = task.weekdayOnly && !isWeekday;
     let done, noteText;
     if (task.intervalDays && state) {
@@ -650,14 +697,8 @@ function renderTaskList(containerId, tasks, checkedArr, state) {
           const next = new Date(lastDone);
           next.setDate(next.getDate() + task.intervalDays);
           noteText = '次回: ' + (next.getMonth()+1) + '/' + next.getDate();
-        } else {
-          done = false;
-          noteText = task.note;
-        }
-      } else {
-        done = false;
-        noteText = task.note;
-      }
+        } else { done = false; noteText = task.note; }
+      } else { done = false; noteText = task.note; }
     } else {
       done = !inactive && checkedArr.includes(task.id);
       noteText = task.note;
@@ -672,10 +713,11 @@ function renderTaskList(containerId, tasks, checkedArr, state) {
       : '';
     const timeHtml = task.time ? '<span class="task-time">' + task.time + '</span>' : '';
     const badgeHtml = task.weekdayOnly ? '<span class="weekday-badge">平日のみ</span>' : '';
-    return '<div class="' + cls + '" ' + onclick + '>'
+    const delBtn = '<button class="task-delete" onclick="event.stopPropagation();hideTask(\'' + task.id + '\')">×</button>';
+    return '<div class="' + cls + '" data-id="' + task.id + '" ' + onclick + '>'
       + '<div class="task-checkbox"></div>'
       + '<span class="task-name">' + task.name + '</span>'
-      + noteHtml + timeHtml + badgeHtml
+      + noteHtml + timeHtml + badgeHtml + delBtn
       + '</div>';
   }).join('');
 }
@@ -710,12 +752,38 @@ function render() {
   renderTaskList('tasks-monthly', MONTHLY_TASKS, state.monthlyChecked, state);
   renderTaskList('tasks-annual',  ANNUAL_TASKS,  state.annualChecked,  state);
 
+  if (typeof initSortable === 'function') initSortable();
+
   // 今月の年間タスクに赤枠
   const currentMonth = today.getMonth() + 1;
   document.querySelectorAll('#tasks-annual .task-card').forEach((card, i) => {
     const note = ANNUAL_TASKS[i] && ANNUAL_TASKS[i].note;
     const m = note && note.match(/^(\d+)/);
     if (m && parseInt(m[1]) === currentMonth) card.classList.add('current-month');
+  });
+}
+
+// ---- ソート ----
+const SORTABLE_CONTAINERS = [
+  'tasks-morning','tasks-noon','tasks-evening','tasks-anytime',
+  'tasks-day','tasks-weekly','tasks-monthly','tasks-annual'
+];
+let _sortables = {};
+function initSortable() {
+  SORTABLE_CONTAINERS.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (_sortables[id]) { _sortables[id].destroy(); }
+    _sortables[id] = Sortable.create(el, {
+      animation: 150,
+      delay: 500,
+      delayOnTouchOnly: true,
+      onEnd: function() {
+        const order = loadOrder();
+        order[id] = [...el.querySelectorAll('[data-id]')].map(c => c.dataset.id);
+        saveOrder(order);
+      }
+    });
   });
 }
 
@@ -809,6 +877,7 @@ document.querySelectorAll('.tab').forEach(tab => {
 
 render();
 renderMyTasks();
+initSortable();
 </script>
 </body>
 </html>
