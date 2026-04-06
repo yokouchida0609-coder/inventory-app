@@ -3,35 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>スーパー予算管理</title>
+<title>外食予算管理</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-  body { background: #f0f4f8; font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif; margin: 0; padding: 0; }
-  .card { background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-  .btn-primary { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; border-radius: 12px; padding: 14px 20px; font-weight: 700; font-size: 16px; transition: opacity 0.15s; border: none; cursor: pointer; }
+  body { background: #fff1f2; font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif; margin: 0; padding: 0; }
+  .card { background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+  .btn-primary { background: linear-gradient(135deg, #f43f5e 0%, #fb923c 100%); color: white; border-radius: 12px; padding: 14px 20px; font-weight: 700; font-size: 16px; transition: opacity 0.15s; border: none; cursor: pointer; }
   .btn-primary:active { opacity: 0.8; }
-  .btn-secondary { background: #f1f5f9; color: #475569; border-radius: 12px; padding: 12px 16px; font-weight: 500; font-size: 15px; border: none; cursor: pointer; }
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 50; display: flex; align-items: flex-end; justify-content: center; }
+  .btn-secondary { background: #fff1f2; color: #9f1239; border-radius: 12px; padding: 12px 16px; font-weight: 500; font-size: 15px; border: none; cursor: pointer; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 50; display: flex; align-items: flex-end; justify-content: center; }
   .modal-content { background: white; border-radius: 20px 20px 0 0; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; padding: 24px; padding-bottom: 48px; }
-  input, select { width: 100%; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; font-size: 16px; outline: none; transition: border-color 0.2s; background: white; }
-  input:focus, select:focus { border-color: #6366f1; }
+  input, select { width: 100%; border: 1.5px solid #fecdd3; border-radius: 10px; padding: 12px 14px; font-size: 16px; outline: none; transition: border-color 0.2s; background: white; }
+  input:focus, select:focus { border-color: #f43f5e; }
   .fade-in { animation: fadeIn 0.2s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  .budget-bar-bg { background: #e9d5ff; border-radius: 8px; height: 10px; overflow: hidden; }
+  .budget-bar-bg { background: rgba(255,255,255,0.3); border-radius: 8px; height: 10px; overflow: hidden; }
   .budget-bar-fill { height: 100%; border-radius: 8px; transition: width 0.5s ease; }
-  .bar-ok { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
-  .bar-warn { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+  .bar-ok { background: linear-gradient(90deg, #fda4af, #ffffff); }
+  .bar-warn { background: linear-gradient(90deg, #fb923c, #ef4444); }
 
-  .store-badge { border-radius: 16px; padding: 3px 10px; font-size: 12px; font-weight: 600; }
-  .store-スーパー { background: #ede9fe; color: #5b21b6; }
-  .store-コンビニ { background: #dbeafe; color: #1d4ed8; }
-  .store-その他 { background: #f1f5f9; color: #475569; }
+  .place-badge { border-radius: 16px; padding: 3px 10px; font-size: 12px; font-weight: 600; }
+  .place-レストラン { background: #ffe4e6; color: #9f1239; }
+  .place-カフェ { background: #fff7ed; color: #9a3412; }
+  .place-テイクアウト { background: #fef9c3; color: #854d0e; }
+  .place-その他 { background: #fce7f3; color: #831843; }
 
   .remaining-big { font-size: 42px; font-weight: 800; line-height: 1; }
-  .danger { color: #ef4444; }
-  .safe { color: white; }
 </style>
 </head>
 <body>
@@ -39,35 +38,35 @@
 <div id="app" style="max-width: 480px; margin: 0 auto; min-height: 100vh;">
 
   <!-- ヘッダー -->
-  <div id="header" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); padding: 24px 16px 32px;">
+  <div style="background: linear-gradient(135deg, #f43f5e 0%, #fb923c 100%); padding: 24px 16px 32px;">
     <div class="flex items-center justify-between mb-4">
-      <h1 class="text-white font-bold text-xl">🛒 スーパー予算</h1>
-      <button onclick="openSettings()" style="background:rgba(255,255,255,0.2);border:none;border-radius:8px;padding:6px 12px;color:white;font-size:13px;cursor:pointer;">⚙️ 設定</button>
+      <h1 class="text-white font-bold text-xl">🍽️ 外食予算</h1>
+      <button onclick="openSettings()" style="background:rgba(255,255,255,0.25);border:none;border-radius:8px;padding:6px 12px;color:white;font-size:13px;cursor:pointer;">⚙️ 設定</button>
     </div>
 
     <!-- 今週の残り予算（メイン表示） -->
-    <div style="background:rgba(255,255,255,0.15);border-radius:16px;padding:16px 18px;margin-bottom:12px;">
-      <div class="text-white text-sm opacity-80 mb-1">今週の残り予算</div>
-      <div class="remaining-big safe" id="weekRemaining">¥7,000</div>
-      <div class="text-white text-sm opacity-70 mt-1" id="weekSubtitle">今週はまだ使っていません</div>
+    <div style="background:rgba(255,255,255,0.18);border-radius:16px;padding:16px 18px;margin-bottom:12px;">
+      <div class="text-white text-sm mb-1" style="opacity:0.85;">今週の残り予算</div>
+      <div class="remaining-big" id="weekRemaining" style="color:white;">¥7,000</div>
+      <div class="text-white text-sm mt-1" id="weekSubtitle" style="opacity:0.75;">今週はまだ使っていません</div>
       <div class="budget-bar-bg mt-3">
         <div class="budget-bar-fill bar-ok" id="weekBar" style="width:0%"></div>
       </div>
-      <div class="flex justify-between text-white text-xs opacity-60 mt-1">
+      <div class="flex justify-between text-white text-xs mt-1" style="opacity:0.65;">
         <span id="weekUsed">使用: ¥0</span>
         <span id="weekBudgetLabel">週予算: ¥7,000</span>
       </div>
     </div>
 
     <!-- 今月の残り予算 -->
-    <div style="background:rgba(255,255,255,0.12);border-radius:12px;padding:12px 16px;">
+    <div style="background:rgba(255,255,255,0.14);border-radius:12px;padding:12px 16px;">
       <div class="flex justify-between items-center">
         <div>
-          <div class="text-white text-xs opacity-70">今月の残り予算</div>
+          <div class="text-white text-xs" style="opacity:0.75;">今月の残り予算</div>
           <div class="text-white font-bold text-2xl" id="monthRemaining">¥30,000</div>
         </div>
         <div class="text-right">
-          <div class="text-white text-xs opacity-70">使用済み</div>
+          <div class="text-white text-xs" style="opacity:0.75;">使用済み</div>
           <div class="text-white font-bold text-lg" id="monthUsed">¥0</div>
         </div>
       </div>
@@ -80,19 +79,19 @@
   <div style="margin-top: -16px; padding: 0 16px 24px;">
 
     <!-- 追加ボタン -->
-    <button onclick="openAdd()" class="btn-primary w-full mb-4" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;">
-      <span style="font-size:22px;">+</span> 買い物を記録する
+    <button onclick="openAdd()" class="btn-primary mb-4" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <span style="font-size:22px;">+</span> 外食を記録する
     </button>
 
-    <!-- 今週の買い物リスト -->
+    <!-- 今週のリスト -->
     <div class="card p-4 mb-4">
       <div class="flex justify-between items-center mb-3">
-        <h2 class="font-bold text-gray-700">今週の買い物</h2>
+        <h2 class="font-bold" style="color:#9f1239;">今週の外食</h2>
         <span class="text-sm text-gray-400" id="weekRange"></span>
       </div>
       <div id="weekList">
         <div class="text-center py-8 text-gray-400">
-          <div style="font-size:36px">🛒</div>
+          <div style="font-size:36px">🍽️</div>
           <p class="text-sm mt-2">まだ記録がありません</p>
         </div>
       </div>
@@ -101,7 +100,7 @@
     <!-- 過去のデータ（折りたたみ） -->
     <div class="card p-4 mb-4">
       <button onclick="togglePast()" class="flex justify-between items-center w-full" style="background:none;border:none;cursor:pointer;">
-        <h2 class="font-bold text-gray-700">📦 過去のデータ</h2>
+        <h2 class="font-bold text-gray-600">📦 過去のデータ</h2>
         <span id="pastToggleIcon" class="text-gray-400">▼</span>
       </button>
       <div id="pastSection" class="hidden mt-3">
@@ -118,7 +117,7 @@
 <div id="addModal" class="modal-overlay hidden" onclick="closeOverlay(event,'addModal')">
   <div class="modal-content fade-in" onclick="event.stopPropagation()">
     <div class="flex items-center justify-between mb-5">
-      <h3 class="text-lg font-bold text-gray-800">🛒 買い物を記録</h3>
+      <h3 class="text-lg font-bold" style="color:#9f1239;">🍽️ 外食を記録</h3>
       <button onclick="closeModal('addModal')" style="background:none;border:none;font-size:22px;color:#94a3b8;cursor:pointer;">×</button>
     </div>
     <div class="space-y-4">
@@ -127,20 +126,21 @@
         <input type="date" id="addDate">
       </div>
       <div>
-        <label class="text-sm font-semibold text-gray-600 block mb-1">金額（円） <span style="color:#ef4444">*</span></label>
-        <input type="number" id="addAmount" placeholder="例: 3200" inputmode="numeric" style="font-size:24px;font-weight:700;color:#6366f1;">
+        <label class="text-sm font-semibold text-gray-600 block mb-1">金額（円） <span style="color:#f43f5e">*</span></label>
+        <input type="number" id="addAmount" placeholder="例: 1800" inputmode="numeric" style="font-size:28px;font-weight:700;color:#f43f5e;">
       </div>
       <div>
-        <label class="text-sm font-semibold text-gray-600 block mb-1">店名</label>
+        <label class="text-sm font-semibold text-gray-600 block mb-1">種別</label>
         <select id="addStore">
-          <option value="スーパー">🏪 スーパー</option>
-          <option value="コンビニ">🏬 コンビニ</option>
-          <option value="その他">📍 その他</option>
+          <option value="レストラン">🍴 レストラン</option>
+          <option value="カフェ">☕ カフェ</option>
+          <option value="テイクアウト">🥡 テイクアウト</option>
+          <option value="その他">🍱 その他</option>
         </select>
       </div>
       <div>
         <label class="text-sm font-semibold text-gray-600 block mb-1">メモ（任意）</label>
-        <input type="text" id="addMemo" placeholder="例: 野菜まとめ買い">
+        <input type="text" id="addMemo" placeholder="例: 友達とランチ">
       </div>
     </div>
     <div class="flex gap-3 mt-6">
@@ -154,7 +154,7 @@
 <div id="settingsModal" class="modal-overlay hidden" onclick="closeOverlay(event,'settingsModal')">
   <div class="modal-content fade-in" onclick="event.stopPropagation()">
     <div class="flex items-center justify-between mb-5">
-      <h3 class="text-lg font-bold text-gray-800">⚙️ 予算設定</h3>
+      <h3 class="text-lg font-bold" style="color:#9f1239;">⚙️ 予算設定</h3>
       <button onclick="closeModal('settingsModal')" style="background:none;border:none;font-size:22px;color:#94a3b8;cursor:pointer;">×</button>
     </div>
     <div class="space-y-4">
@@ -176,18 +176,13 @@
 </div>
 
 <script>
-// ===== データ =====
-let records = JSON.parse(localStorage.getItem('supermarket_records') || '[]');
-let settings = JSON.parse(localStorage.getItem('supermarket_settings') || '{"weekBudget":7000,"monthBudget":30000}');
+let records = JSON.parse(localStorage.getItem('dining_records') || '[]');
+let settings = JSON.parse(localStorage.getItem('dining_settings') || '{"weekBudget":7000,"monthBudget":30000}');
 
-// ===== 日付ユーティリティ =====
-function toYMD(d) {
-  return d.toISOString().split('T')[0];
-}
+function toYMD(d) { return d.toISOString().split('T')[0]; }
 
-// 今週の月曜日と日曜日
 function getWeekRange(d) {
-  const day = d.getDay(); // 0=日, 1=月...
+  const day = d.getDay();
   const diffToMon = (day === 0) ? -6 : 1 - day;
   const mon = new Date(d);
   mon.setDate(d.getDate() + diffToMon);
@@ -198,7 +193,6 @@ function getWeekRange(d) {
   return { mon, sun };
 }
 
-// 今月の開始・終了
 function getMonthRange(d) {
   const start = new Date(d.getFullYear(), d.getMonth(), 1);
   const end = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59);
@@ -210,39 +204,21 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' });
 }
 
-function formatYMD(d) {
-  return `${d.getMonth()+1}/${d.getDate()}`;
-}
+function formatYMD(d) { return `${d.getMonth()+1}/${d.getDate()}`; }
 
-// ===== 集計 =====
 function getWeekTotal() {
-  const now = new Date();
-  const { mon, sun } = getWeekRange(now);
-  return records
-    .filter(r => {
-      const d = new Date(r.date + 'T00:00:00');
-      return d >= mon && d <= sun;
-    })
-    .reduce((s, r) => s + r.amount, 0);
+  const { mon, sun } = getWeekRange(new Date());
+  return records.filter(r => { const d = new Date(r.date+'T00:00:00'); return d>=mon && d<=sun; }).reduce((s,r)=>s+r.amount,0);
 }
 
 function getMonthTotal() {
-  const now = new Date();
-  const { start, end } = getMonthRange(now);
-  return records
-    .filter(r => {
-      const d = new Date(r.date + 'T00:00:00');
-      return d >= start && d <= end;
-    })
-    .reduce((s, r) => s + r.amount, 0);
+  const { start, end } = getMonthRange(new Date());
+  return records.filter(r => { const d = new Date(r.date+'T00:00:00'); return d>=start && d<=end; }).reduce((s,r)=>s+r.amount,0);
 }
 
-// ===== 描画 =====
 function render() {
   const now = new Date();
   const { mon, sun } = getWeekRange(now);
-  const { start: mStart, end: mEnd } = getMonthRange(now);
-
   const weekBudget = settings.weekBudget;
   const monthBudget = settings.monthBudget;
   const weekUsed = getWeekTotal();
@@ -252,15 +228,14 @@ function render() {
   const weekPct = Math.min(100, Math.round(weekUsed / weekBudget * 100));
   const monthPct = Math.min(100, Math.round(monthUsed / monthBudget * 100));
 
-  // 週残り
   const weekEl = document.getElementById('weekRemaining');
   weekEl.textContent = `¥${Math.max(0, weekLeft).toLocaleString()}`;
   if (weekLeft < 0) {
     weekEl.style.color = '#fca5a5';
     document.getElementById('weekSubtitle').textContent = `⚠️ ¥${Math.abs(weekLeft).toLocaleString()} オーバー！`;
   } else if (weekLeft < weekBudget * 0.2) {
-    weekEl.style.color = '#fde68a';
-    document.getElementById('weekSubtitle').textContent = `残り少ない！`;
+    weekEl.style.color = '#fed7aa';
+    document.getElementById('weekSubtitle').textContent = `残り少ない！気をつけて！`;
   } else {
     weekEl.style.color = 'white';
     document.getElementById('weekSubtitle').textContent = weekUsed === 0 ? '今週はまだ使っていません' : `今週 ${weekPct}% 使用`;
@@ -269,110 +244,86 @@ function render() {
   const weekBarEl = document.getElementById('weekBar');
   weekBarEl.style.width = weekPct + '%';
   weekBarEl.className = 'budget-bar-fill ' + (weekPct >= 80 ? 'bar-warn' : 'bar-ok');
-
   document.getElementById('weekUsed').textContent = `使用: ¥${weekUsed.toLocaleString()}`;
   document.getElementById('weekBudgetLabel').textContent = `週予算: ¥${weekBudget.toLocaleString()}`;
 
-  // 月残り
   document.getElementById('monthRemaining').textContent = `¥${Math.max(0, monthLeft).toLocaleString()}`;
-  if (monthLeft < 0) {
-    document.getElementById('monthRemaining').style.color = '#fca5a5';
-  } else {
-    document.getElementById('monthRemaining').style.color = 'white';
-  }
+  document.getElementById('monthRemaining').style.color = monthLeft < 0 ? '#fca5a5' : 'white';
   document.getElementById('monthUsed').textContent = `¥${monthUsed.toLocaleString()}`;
-
   const monthBarEl = document.getElementById('monthBar');
   monthBarEl.style.width = monthPct + '%';
   monthBarEl.className = 'budget-bar-fill ' + (monthPct >= 80 ? 'bar-warn' : 'bar-ok');
 
-  // 週範囲表示
   document.getElementById('weekRange').textContent = `${formatYMD(mon)}〜${formatYMD(sun)}`;
 
-  // 今週のリスト
+  // 今週リスト
   const weekRecords = records
-    .filter(r => {
-      const d = new Date(r.date + 'T00:00:00');
-      return d >= mon && d <= sun;
-    })
-    .sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+    .filter(r => { const d = new Date(r.date+'T00:00:00'); return d>=mon && d<=sun; })
+    .sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
 
   const weekListEl = document.getElementById('weekList');
   if (weekRecords.length === 0) {
-    weekListEl.innerHTML = `<div class="text-center py-8 text-gray-400"><div style="font-size:36px">🛒</div><p class="text-sm mt-2">まだ記録がありません</p></div>`;
+    weekListEl.innerHTML = `<div class="text-center py-8 text-gray-400"><div style="font-size:36px">🍽️</div><p class="text-sm mt-2">まだ記録がありません</p></div>`;
   } else {
-    // 累積残額を計算するため古い順でソート
     const ascending = [...weekRecords].reverse();
     let cumulative = 0;
-    const withBalance = ascending.map(r => {
-      cumulative += r.amount;
-      return { ...r, balance: weekBudget - cumulative };
-    });
-    // 表示は新しい順
+    const withBalance = ascending.map(r => { cumulative += r.amount; return { ...r, balance: weekBudget - cumulative }; });
     const displayList = [...withBalance].reverse();
-
     weekListEl.innerHTML = displayList.map(r => `
-      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f1f5f9;">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #fff1f2;">
         <div style="flex:1;min-width:0;">
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-            <span style="font-size:13px;color:#6b7280;">${formatDate(r.date)}</span>
-            <span class="store-badge store-${r.store}">${r.store}</span>
+            <span style="font-size:13px;color:#9ca3af;">${formatDate(r.date)}</span>
+            <span class="place-badge place-${r.store}">${r.store}</span>
           </div>
-          ${r.memo ? `<div style="font-size:12px;color:#94a3b8;margin-top:2px;">${escHtml(r.memo)}</div>` : ''}
+          ${r.memo ? `<div style="font-size:12px;color:#f9a8d4;margin-top:2px;">${escHtml(r.memo)}</div>` : ''}
         </div>
         <div style="text-align:right;flex-shrink:0;">
           <div style="font-weight:700;color:#1e293b;">¥${r.amount.toLocaleString()}</div>
-          <div style="font-size:11px;color:${r.balance < 0 ? '#ef4444' : '#6366f1'};">残¥${r.balance.toLocaleString()}</div>
+          <div style="font-size:11px;color:${r.balance < 0 ? '#ef4444' : '#f43f5e'};">残¥${r.balance.toLocaleString()}</div>
         </div>
-        <button onclick="deleteRecord(${r.id})" style="background:none;border:none;color:#cbd5e1;font-size:18px;cursor:pointer;padding:4px;flex-shrink:0;">×</button>
+        <button onclick="deleteRecord(${r.id})" style="background:none;border:none;color:#fecdd3;font-size:18px;cursor:pointer;padding:4px;flex-shrink:0;">×</button>
       </div>
     `).join('');
   }
 
   // 過去データ
   const pastRecords = records
-    .filter(r => {
-      const d = new Date(r.date + 'T00:00:00');
-      return d < mon;
-    })
-    .sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+    .filter(r => { const d = new Date(r.date+'T00:00:00'); return d < mon; })
+    .sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
 
   const pastListEl = document.getElementById('pastList');
   if (pastRecords.length === 0) {
     pastListEl.innerHTML = `<div class="text-center py-4 text-gray-400 text-sm">過去のデータはありません</div>`;
   } else {
-    // 週ごとにグループ化
     const weekGroups = {};
     pastRecords.forEach(r => {
-      const d = new Date(r.date + 'T00:00:00');
+      const d = new Date(r.date+'T00:00:00');
       const { mon: wMon, sun: wSun } = getWeekRange(d);
       const key = toYMD(wMon);
-      if (!weekGroups[key]) {
-        weekGroups[key] = { mon: wMon, sun: wSun, records: [], total: 0 };
-      }
+      if (!weekGroups[key]) weekGroups[key] = { mon: wMon, sun: wSun, records: [], total: 0 };
       weekGroups[key].records.push(r);
       weekGroups[key].total += r.amount;
     });
-
     pastListEl.innerHTML = Object.entries(weekGroups)
-      .sort((a, b) => b[0].localeCompare(a[0]))
+      .sort((a,b) => b[0].localeCompare(a[0]))
       .map(([key, wg]) => `
         <div style="margin-bottom:16px;">
-          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:#64748b;padding:4px 0;border-bottom:2px solid #e9d5ff;margin-bottom:6px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:#9f1239;padding:4px 0;border-bottom:2px solid #fecdd3;margin-bottom:6px;">
             <span>${formatYMD(wg.mon)}〜${formatYMD(wg.sun)}</span>
-            <span style="color:#6366f1;">合計 ¥${wg.total.toLocaleString()} / ¥${weekBudget.toLocaleString()}</span>
+            <span>合計 ¥${wg.total.toLocaleString()} / ¥${weekBudget.toLocaleString()}</span>
           </div>
           ${wg.records.map(r => `
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f8fafc;">
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #fff1f2;">
               <div style="flex:1;min-width:0;">
                 <div style="display:flex;align-items:center;gap:6px;">
-                  <span style="font-size:12px;color:#94a3b8;">${formatDate(r.date)}</span>
-                  <span class="store-badge store-${r.store}">${r.store}</span>
+                  <span style="font-size:12px;color:#9ca3af;">${formatDate(r.date)}</span>
+                  <span class="place-badge place-${r.store}">${r.store}</span>
                 </div>
-                ${r.memo ? `<div style="font-size:11px;color:#cbd5e1;">${escHtml(r.memo)}</div>` : ''}
+                ${r.memo ? `<div style="font-size:11px;color:#fda4af;">${escHtml(r.memo)}</div>` : ''}
               </div>
               <div style="font-weight:600;color:#475569;font-size:14px;flex-shrink:0;">¥${r.amount.toLocaleString()}</div>
-              <button onclick="deleteRecord(${r.id})" style="background:none;border:none;color:#e2e8f0;font-size:16px;cursor:pointer;padding:2px;flex-shrink:0;">×</button>
+              <button onclick="deleteRecord(${r.id})" style="background:none;border:none;color:#fecdd3;font-size:16px;cursor:pointer;padding:2px;flex-shrink:0;">×</button>
             </div>
           `).join('')}
         </div>
@@ -380,16 +331,13 @@ function render() {
   }
 }
 
-// ===== CRUD =====
 function addRecord() {
   const amount = parseInt(document.getElementById('addAmount').value);
   const date = document.getElementById('addDate').value;
   const store = document.getElementById('addStore').value;
   const memo = document.getElementById('addMemo').value.trim();
-
   if (!amount || amount <= 0) { alert('金額を入力してください'); return; }
   if (!date) { alert('日付を入力してください'); return; }
-
   records.push({ id: Date.now(), date, amount, store, memo });
   save();
   closeModal('addModal');
@@ -403,7 +351,6 @@ function deleteRecord(id) {
   render();
 }
 
-// ===== 設定 =====
 function openSettings() {
   document.getElementById('settingsWeek').value = settings.weekBudget;
   document.getElementById('settingsMonth').value = settings.monthBudget;
@@ -416,20 +363,17 @@ function saveSettings() {
   if (!w || !m || w <= 0 || m <= 0) { alert('正しい金額を入力してください'); return; }
   settings.weekBudget = w;
   settings.monthBudget = m;
-  localStorage.setItem('supermarket_settings', JSON.stringify(settings));
+  localStorage.setItem('dining_settings', JSON.stringify(settings));
   closeModal('settingsModal');
   render();
 }
 
-// ===== その他 =====
-function save() {
-  localStorage.setItem('supermarket_records', JSON.stringify(records));
-}
+function save() { localStorage.setItem('dining_records', JSON.stringify(records)); }
 
 function openAdd() {
   document.getElementById('addDate').value = new Date().toISOString().split('T')[0];
   document.getElementById('addAmount').value = '';
-  document.getElementById('addStore').value = 'スーパー';
+  document.getElementById('addStore').value = 'レストラン';
   document.getElementById('addMemo').value = '';
   openModal('addModal');
   setTimeout(() => document.getElementById('addAmount').focus(), 300);
@@ -438,31 +382,15 @@ function openAdd() {
 function togglePast() {
   const sec = document.getElementById('pastSection');
   const icon = document.getElementById('pastToggleIcon');
-  if (sec.classList.contains('hidden')) {
-    sec.classList.remove('hidden');
-    icon.textContent = '▲';
-  } else {
-    sec.classList.add('hidden');
-    icon.textContent = '▼';
-  }
+  if (sec.classList.contains('hidden')) { sec.classList.remove('hidden'); icon.textContent = '▲'; }
+  else { sec.classList.add('hidden'); icon.textContent = '▼'; }
 }
 
-function openModal(id) {
-  document.getElementById(id).classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-}
-function closeModal(id) {
-  document.getElementById(id).classList.add('hidden');
-  document.body.style.overflow = '';
-}
-function closeOverlay(e, id) {
-  if (e.target === document.getElementById(id)) closeModal(id);
-}
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.body.style.overflow = ''; }
+function closeOverlay(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// ===== 初期化 =====
 render();
 </script>
 </body>
