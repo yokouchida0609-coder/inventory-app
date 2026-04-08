@@ -349,6 +349,7 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbw8AFsEaLhYZP6FSBTB5Djx
 let trips = [];
 let currentTripId = null;
 let currentPayment = '現金';
+let collapsedMonths = new Set();
 let currentEditPayment = '現金';
 let currentEditExpenseId = null;
 let cameraStream = null;
@@ -381,6 +382,11 @@ async function loadFromCloud() {
   }
   document.getElementById('loadingState').classList.add('hidden');
   document.getElementById('tripList').classList.remove('hidden');
+
+  // 最新月以外は折りたたむ
+  const months = [...new Set(trips.map(t => t.date.slice(0, 7)))].sort().reverse();
+  collapsedMonths = new Set(months.slice(1));
+
   renderList();
 }
 
@@ -390,6 +396,16 @@ function getTrip(id) {
 
 function genId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+// ===== MONTH TOGGLE =====
+function toggleMonth(month) {
+  if (collapsedMonths.has(month)) {
+    collapsedMonths.delete(month);
+  } else {
+    collapsedMonths.add(month);
+  }
+  renderList();
 }
 
 // ===== RENDER LIST =====
@@ -418,32 +434,64 @@ function renderList() {
   document.getElementById('listMonthTotal').textContent = `¥${monthSum.toLocaleString()}`;
   document.getElementById('listAllTotal').textContent = `¥${allSum.toLocaleString()}`;
 
+  // 月ごとにグループ化
   const sorted = [...trips].sort((a, b) => new Date(b.date) - new Date(a.date));
-  list.innerHTML = sorted.map(trip => {
-    const total = trip.expenses.reduce((s, e) => s + e.amount, 0);
-    const cash = trip.expenses.filter(e => e.payment === '現金').reduce((s, e) => s + e.amount, 0);
-    const date = new Date(trip.date + 'T00:00:00');
-    const dateStr = date.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' });
-    const categories = [...new Set(trip.expenses.map(e => e.category))];
+  const groups = {};
+  sorted.forEach(trip => {
+    const month = trip.date.slice(0, 7);
+    if (!groups[month]) groups[month] = [];
+    groups[month].push(trip);
+  });
+
+  const months = Object.keys(groups).sort().reverse();
+
+  list.innerHTML = months.map((month, idx) => {
+    const [y, m] = month.split('-');
+    const monthLabel = `${y}年${parseInt(m)}月`;
+    const monthTrips = groups[month];
+    const monthTotal = monthTrips.reduce((s, t) => s + t.expenses.reduce((es, e) => es + e.amount, 0), 0);
+    const isOpen = !collapsedMonths.has(month);
+
+    const tripsHtml = monthTrips.map(trip => {
+      const total = trip.expenses.reduce((s, e) => s + e.amount, 0);
+      const cash = trip.expenses.filter(e => e.payment === '現金').reduce((s, e) => s + e.amount, 0);
+      const date = new Date(trip.date + 'T00:00:00');
+      const dateStr = date.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' });
+      const categories = [...new Set(trip.expenses.map(e => e.category))];
+      return `
+      <div class="card p-4 trip-card cursor-pointer mb-2" onclick="openTrip('${trip.id}')">
+        <div class="flex items-start justify-between">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-base font-bold text-gray-800 truncate">${escapeHtml(trip.name)}</span>
+            </div>
+            <div class="text-sm text-gray-500">${dateStr}　📍 ${escapeHtml(trip.destination)}</div>
+            <div class="flex flex-wrap gap-1 mt-2">
+              ${categories.map(c => `<span class="category-tag category-${c}">${c}</span>`).join('')}
+              ${trip.expenses.length === 0 ? '<span class="text-xs text-gray-400">支出なし</span>' : ''}
+            </div>
+          </div>
+          <div class="text-right ml-3 flex-shrink-0">
+            <div class="text-lg font-bold text-gray-800">¥${total.toLocaleString()}</div>
+            <div class="text-xs text-gray-400">現金 ¥${cash.toLocaleString()}</div>
+            <div class="text-xs text-gray-400 mt-1">${trip.expenses.length}件</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
 
     return `
-    <div class="card p-4 trip-card cursor-pointer" onclick="openTrip('${trip.id}')">
-      <div class="flex items-start justify-between">
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 mb-1">
-            <span class="text-base font-bold text-gray-800 truncate">${escapeHtml(trip.name)}</span>
-          </div>
-          <div class="text-sm text-gray-500">${dateStr}　📍 ${escapeHtml(trip.destination)}</div>
-          <div class="flex flex-wrap gap-1 mt-2">
-            ${categories.map(c => `<span class="category-tag category-${c}">${c}</span>`).join('')}
-            ${trip.expenses.length === 0 ? '<span class="text-xs text-gray-400">支出なし</span>' : ''}
-          </div>
+    <div class="mb-3">
+      <button onclick="toggleMonth('${month}')" class="w-full flex items-center justify-between px-2 py-2 rounded-xl mb-2" style="background:rgba(102,126,234,0.1)">
+        <div class="flex items-center gap-2">
+          <span style="font-size:16px">${isOpen ? '▼' : '▶'}</span>
+          <span class="font-bold text-gray-700">${monthLabel}</span>
+          <span class="text-xs text-gray-400">${monthTrips.length}件</span>
         </div>
-        <div class="text-right ml-3 flex-shrink-0">
-          <div class="text-lg font-bold text-gray-800">¥${total.toLocaleString()}</div>
-          <div class="text-xs text-gray-400">現金 ¥${cash.toLocaleString()}</div>
-          <div class="text-xs text-gray-400 mt-1">${trip.expenses.length}件</div>
-        </div>
+        <span class="font-bold text-purple-700">¥${monthTotal.toLocaleString()}</span>
+      </button>
+      <div id="month-${month}" class="${isOpen ? '' : 'hidden'}">
+        ${tripsHtml}
       </div>
     </div>`;
   }).join('');
