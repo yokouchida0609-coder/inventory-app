@@ -51,6 +51,16 @@
         <span class="text-white text-sm opacity-80" id="tripCountBadge"></span>
       </div>
       <p class="text-white text-sm opacity-70">旅行の支出を記録</p>
+      <div class="mt-3 grid grid-cols-2 gap-2">
+        <div style="background:rgba(255,255,255,0.2);border-radius:12px;padding:10px 14px;">
+          <div class="text-white text-xs opacity-70">今月の合計</div>
+          <div class="text-white font-bold text-xl" id="listMonthTotal">¥0</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.2);border-radius:12px;padding:10px 14px;">
+          <div class="text-white text-xs opacity-70">全期間の合計</div>
+          <div class="text-white font-bold text-xl" id="listAllTotal">¥0</div>
+        </div>
+      </div>
     </div>
 
     <div style="margin-top: -16px; padding: 0 16px;">
@@ -78,11 +88,14 @@
         ← 一覧に戻る
       </button>
       <div class="flex items-start justify-between">
-        <div>
+        <div class="flex-1 min-w-0 mr-2">
           <h2 class="text-white font-bold text-lg" id="detailTripName"></h2>
           <p class="text-white text-sm opacity-80" id="detailTripMeta"></p>
         </div>
-        <button onclick="deleteCurrentTrip()" class="text-white opacity-60 text-sm mt-1">削除</button>
+        <div class="flex gap-3 flex-shrink-0">
+          <button onclick="openEditTripModal()" class="text-white opacity-80 text-sm mt-1">✏️編集</button>
+          <button onclick="deleteCurrentTrip()" class="text-white opacity-60 text-sm mt-1">削除</button>
+        </div>
       </div>
 
       <!-- 合計表示 -->
@@ -134,6 +147,34 @@
 </div>
 
 <!-- ===== MODALS ===== -->
+
+<!-- 旅行編集モーダル -->
+<div id="editTripModal" class="modal-overlay hidden" onclick="closeModalOnOverlay(event, 'editTripModal')">
+  <div class="modal-content fade-in" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold text-gray-800">✏️ 旅行を編集</h3>
+      <button onclick="closeModal('editTripModal')" class="text-gray-400 text-xl">×</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">旅行名</label>
+        <input type="text" id="editTripName" placeholder="例：熱海旅行">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">日付</label>
+        <input type="date" id="editTripDate">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">行き先</label>
+        <input type="text" id="editTripDestination" placeholder="例：熱海">
+      </div>
+    </div>
+    <div class="flex gap-3 mt-5">
+      <button onclick="closeModal('editTripModal')" class="btn-secondary flex-1">キャンセル</button>
+      <button onclick="saveEditTrip()" class="btn-primary flex-1 text-center">保存</button>
+    </div>
+  </div>
+</div>
 
 <!-- 新規旅行モーダル -->
 <div id="newTripModal" class="modal-overlay hidden" onclick="closeModalOnOverlay(event, 'newTripModal')">
@@ -366,6 +407,17 @@ function renderList() {
   }
   empty.classList.add('hidden');
 
+  // 月別・全期間合計
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const monthSum = trips.reduce((s, t) => {
+    if (!t.date.startsWith(thisMonth)) return s;
+    return s + t.expenses.reduce((es, e) => es + e.amount, 0);
+  }, 0);
+  const allSum = trips.reduce((s, t) => s + t.expenses.reduce((es, e) => es + e.amount, 0), 0);
+  document.getElementById('listMonthTotal').textContent = `¥${monthSum.toLocaleString()}`;
+  document.getElementById('listAllTotal').textContent = `¥${allSum.toLocaleString()}`;
+
   const sorted = [...trips].sort((a, b) => new Date(b.date) - new Date(a.date));
   list.innerHTML = sorted.map(trip => {
     const total = trip.expenses.reduce((s, e) => s + e.amount, 0);
@@ -450,6 +502,30 @@ function backToList() {
   document.getElementById('listView').classList.remove('hidden');
   renderList();
   window.scrollTo(0, 0);
+}
+
+function openEditTripModal() {
+  const trip = getTrip(currentTripId);
+  if (!trip) return;
+  document.getElementById('editTripName').value = trip.name;
+  document.getElementById('editTripDate').value = trip.date;
+  document.getElementById('editTripDestination').value = trip.destination;
+  openModal('editTripModal');
+}
+
+function saveEditTrip() {
+  const name = document.getElementById('editTripName').value.trim();
+  const date = document.getElementById('editTripDate').value;
+  const destination = document.getElementById('editTripDestination').value.trim();
+  if (!name || !date) { alert('旅行名と日付は必須です'); return; }
+  const trip = getTrip(currentTripId);
+  if (!trip) return;
+  trip.name = name;
+  trip.date = date;
+  trip.destination = destination || '未設定';
+  save();
+  closeModal('editTripModal');
+  openTrip(currentTripId);
 }
 
 function deleteCurrentTrip() {
