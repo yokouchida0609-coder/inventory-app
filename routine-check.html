@@ -862,6 +862,7 @@ function renderMyTasks() {
     const card = document.createElement('div');
     card.className = 'my-task-card' + (t.done ? ' done' : '');
     card.dataset.section = t.section;
+    card.dataset.id = t.id;
     card.innerHTML = '<div class="my-task-checkbox" onclick="toggleMyTask(\'' + t.id + '\')"></div>'
       + '<span class="my-task-name" onclick="toggleMyTask(\'' + t.id + '\')">' + t.name + '</span>'
       + noteHtml
