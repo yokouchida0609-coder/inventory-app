@@ -440,7 +440,14 @@ const today = new Date(); // 実際の現在時刻（ヘッダー表示用）
 const logicalToday = new Date(today);
 if (logicalToday.getHours() < 6) logicalToday.setDate(logicalToday.getDate() - 1);
 
-const todayStr = logicalToday.toISOString().slice(0, 10);
+// toISOStringはUTCなので、ローカル日付を使う
+function toLocalDateStr(d) {
+  return d.getFullYear() + '-'
+    + String(d.getMonth() + 1).padStart(2, '0') + '-'
+    + String(d.getDate()).padStart(2, '0');
+}
+
+const todayStr = toLocalDateStr(logicalToday);
 const dayOfWeek = logicalToday.getDay(); // 0=日, 6=土
 const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
 const DAY_NAMES = ['日','月','火','水','木','金','土'];
@@ -448,7 +455,7 @@ const DAY_NAMES = ['日','月','火','水','木','金','土'];
 const weekStartStr = (() => {
   const d = new Date(logicalToday);
   d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // 月曜始まり
-  return d.toISOString().slice(0, 10);
+  return toLocalDateStr(d);
 })();
 const monthKeyStr = todayStr.slice(0, 7);
 const yearKeyStr  = todayStr.slice(0, 4);
