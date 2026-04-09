@@ -760,6 +760,7 @@ function render() {
   renderTaskList('tasks-monthly', MONTHLY_TASKS, state.monthlyChecked, state);
   renderTaskList('tasks-annual',  ANNUAL_TASKS,  state.annualChecked,  state);
 
+  renderMyTasks();
   if (typeof initSortable === 'function') initSortable();
 
   // 今月の年間タスクに赤枠
