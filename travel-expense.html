@@ -482,14 +482,17 @@ function renderList() {
 
     return `
     <div class="mb-3">
-      <button onclick="toggleMonth('${month}')" class="w-full flex items-center justify-between px-2 py-2 rounded-xl mb-2" style="background:rgba(102,126,234,0.1)">
-        <div class="flex items-center gap-2">
-          <span style="font-size:16px">${isOpen ? '▼' : '▶'}</span>
-          <span class="font-bold text-gray-700">${monthLabel}</span>
-          <span class="text-xs text-gray-400">${monthTrips.length}件</span>
-        </div>
-        <span class="font-bold text-purple-700">¥${monthTotal.toLocaleString()}</span>
-      </button>
+      <div class="flex items-center gap-2 mb-2">
+        <button onclick="toggleMonth('${month}')" class="flex-1 flex items-center justify-between px-3 py-2 rounded-xl" style="background:rgba(102,126,234,0.1)">
+          <div class="flex items-center gap-2">
+            <span style="font-size:16px">${isOpen ? '▼' : '▶'}</span>
+            <span class="font-bold text-gray-700">${monthLabel}</span>
+            <span class="text-xs text-gray-400">${monthTrips.length}件</span>
+          </div>
+          <span class="font-bold text-purple-700">¥${monthTotal.toLocaleString()}</span>
+        </button>
+        <button onclick="downloadMonthExcel('${month}')" class="flex-shrink-0 text-xs px-3 py-2 rounded-xl font-medium" style="background:rgba(102,126,234,0.15);color:#667eea;">📥 DL</button>
+      </div>
       <div id="month-${month}" class="${isOpen ? '' : 'hidden'}">
         ${tripsHtml}
       </div>
@@ -829,6 +832,42 @@ function downloadExcel(cashOnly) {
   const suffix = cashOnly ? '_現金のみ' : '';
   const filename = `旅行記録_${trip.name}${suffix}_${trip.date}.xlsx`;
   XLSX.writeFile(wb, filename);
+}
+
+// ===== MONTH EXCEL DOWNLOAD =====
+function downloadMonthExcel(month) {
+  const [y, m] = month.split('-');
+  const monthLabel = `${y}年${parseInt(m)}月`;
+  const monthTrips = trips.filter(t => t.date.startsWith(month));
+
+  if (monthTrips.length === 0) { alert('データがありません'); return; }
+
+  const rows = [];
+  monthTrips.sort((a, b) => a.date.localeCompare(b.date)).forEach(trip => {
+    trip.expenses.forEach(e => {
+      rows.push({
+        '日付': trip.date,
+        '旅行名': trip.name,
+        '行き先': trip.destination,
+        '店名・内容': e.shop,
+        '金額': e.amount,
+        'カテゴリ': e.category,
+        '支払方法': e.payment,
+        'メモ': e.note || ''
+      });
+    });
+  });
+
+  if (rows.length === 0) { alert('支出データがありません'); return; }
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws['!cols'] = [
+    { wch: 12 }, { wch: 20 }, { wch: 10 }, { wch: 25 },
+    { wch: 10 }, { wch: 10 }, { wch: 16 }, { wch: 20 }
+  ];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, monthLabel);
+  XLSX.writeFile(wb, `旅行記録_${monthLabel}.xlsx`);
 }
 
 // ===== CAMERA & OCR =====
