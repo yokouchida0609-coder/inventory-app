@@ -267,7 +267,6 @@ const STORE_COLORS = { 'まいばすけっと':'#e53935', 'トミヤ':'#1976d2',
       return `
       <div class="item-card" style="border-color: ${borderColor}" data-id="${item.id}">
         <div class="item-name">${escHtml(item.name)}${item.store ? `<span class="item-store">🏬 ${escHtml(item.store)}</span>` : ''}</div>
-        <span class="item-cat">${catLabel(item.cat)}</span>
         <span class="threshold-badge" onclick="changeThreshold(${item.id})" title="警告ラインを変更">警告:${item.threshold ?? 2}以下</span>
         <div class="qty-ctrl">
           <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
