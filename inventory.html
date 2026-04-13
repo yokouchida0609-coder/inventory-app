@@ -166,24 +166,24 @@
 </header>
 
 <div class="tabs" id="tabs">
-  <div class="tab active" data-cat="all">すべて</div>
-  <div class="tab" data-cat="要購入">要購入</div>
-  <div class="tab" data-cat="日用品">日用品</div>
-  <div class="tab" data-cat="食料品">食料品</div>
-  <div class="tab" data-cat="冷凍・冷蔵食品">冷凍・冷蔵</div>
-  <div class="tab" data-cat="飲み物">飲み物</div>
-  <div class="tab" data-cat="生協">生協</div>
+  <div class="tab active" data-cat="all">📋 すべて</div>
+  <div class="tab" data-cat="要購入">🛒 要購入</div>
+  <div class="tab" data-cat="日用品">🧴 日用品</div>
+  <div class="tab" data-cat="食料品">🥦 食料品</div>
+  <div class="tab" data-cat="冷凍・冷蔵食品">🧊 冷凍・冷蔵</div>
+  <div class="tab" data-cat="飲み物">🥤 飲み物</div>
+  <div class="tab" data-cat="生協">🏪 生協</div>
 </div>
 
 <div class="container">
   <div class="add-form">
     <input type="text" id="new-name" placeholder="商品名を入力..." />
     <select id="new-cat">
-      <option>食料品</option>
-      <option>日用品</option>
-      <option>冷凍・冷蔵食品</option>
-      <option>飲み物</option>
-      <option>生協</option>
+      <option value="食料品">🥦 食料品</option>
+      <option value="日用品">🧴 日用品</option>
+      <option value="冷凍・冷蔵食品">🧊 冷凍・冷蔵食品</option>
+      <option value="飲み物">🥤 飲み物</option>
+      <option value="生協">🏪 生協</option>
     </select>
     <input type="number" id="new-qty" value="1" min="0" max="99" />
     <input type="number" id="new-threshold" value="1" min="0" max="99" title="警告ライン（この数以下で残り少ない）" />
@@ -255,7 +255,7 @@ function render() {
       return `
       <div class="item-card ${s === 'out' ? 'out-of-stock' : s === 'low' ? 'low-stock' : 'in-stock'}" data-id="${item.id}">
         <div class="item-name">${escHtml(item.name)}</div>
-        <span class="item-cat">${escHtml(item.cat)}</span>
+        <span class="item-cat">${catLabel(item.cat)}</span>
         ${badgeHtml(item.qty, item.threshold)}
         <span class="threshold-badge" onclick="changeThreshold(${item.id})" title="警告ラインを変更">警告:${item.threshold ?? 2}以下</span>
         <div class="qty-ctrl">
@@ -276,6 +276,11 @@ function render() {
 
 function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+const CAT_ICONS = { '食料品':'🥦', '日用品':'🧴', '冷凍・冷蔵食品':'🧊', '飲み物':'🥤', '生協':'🏪' };
+function catLabel(cat) {
+  return (CAT_ICONS[cat] || '') + ' ' + escHtml(cat);
 }
 
 function addItem() {
