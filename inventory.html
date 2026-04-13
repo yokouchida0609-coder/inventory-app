@@ -177,13 +177,6 @@
 <div class="container">
   <div class="add-form">
     <input type="text" id="new-name" placeholder="商品名を入力..." />
-    <select id="new-cat">
-      <option value="食料品">🥦 食料品</option>
-      <option value="日用品">🧴 日用品</option>
-      <option value="冷凍・冷蔵食品">🧊 冷凍・冷蔵食品</option>
-      <option value="飲み物">🥤 飲み物</option>
-      <option value="生協">🏪 生協</option>
-    </select>
     <input type="number" id="new-qty" value="1" min="0" max="99" />
     <input type="number" id="new-threshold" value="1" min="0" max="99" title="警告ライン（この数以下で残り少ない）" />
     <select id="new-store">
@@ -296,7 +289,7 @@ function catLabel(cat) {
 function addItem() {
   const name = document.getElementById('new-name').value.trim();
   if (!name) { document.getElementById('new-name').focus(); return; }
-  const cat  = document.getElementById('new-cat').value;
+  const cat  = '';
   const qty       = parseInt(document.getElementById('new-qty').value) || 0;
   const threshold = parseInt(document.getElementById('new-threshold').value) ?? 2;
   const store     = document.getElementById('new-store').value.trim();
