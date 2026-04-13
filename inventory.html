@@ -114,9 +114,7 @@
     gap: 10px;
     transition: opacity .2s;
   }
-  .item-card.out-of-stock { border-left: 4px solid #f44336; }
-  .item-card.low-stock    { border-left: 4px solid #ff9800; }
-  .item-card.in-stock     { border-left: 4px solid #4caf50; }
+  .item-card { border-left: 4px solid #bdbdbd; }
 
   .item-name { flex: 1; font-size: 0.95rem; font-weight: 500; }
   .item-store { display: block; font-size: 0.75rem; color: #888; font-weight: 400; margin-top: 2px; }
@@ -196,6 +194,8 @@
       <option>生協</option>
       <option>マツキヨ</option>
       <option>トモズ</option>
+      <option>アマゾン</option>
+      <option>カクヤス</option>
     </select>
     <button class="btn-add" onclick="addItem()">追加</button>
   </div>
@@ -260,13 +260,14 @@ function render() {
   if (visible.length === 0) {
     list.innerHTML = '<div class="empty">アイテムがありません。上から追加してください。</div>';
   } else {
+const STORE_COLORS = { 'まいばすけっと':'#e53935', 'トミヤ':'#1976d2', 'シアル':'#7b1fa2', '生協':'#388e3c', 'マツキヨ':'#00acc1', 'トモズ':'#f57c00', 'アマゾン':'#ff9900', 'カクヤス':'#c62828' };
+
     list.innerHTML = visible.map(item => {
-      const s = getStatus(item.qty);
+      const borderColor = STORE_COLORS[item.store] || '#bdbdbd';
       return `
-      <div class="item-card ${s === 'out' ? 'out-of-stock' : s === 'low' ? 'low-stock' : 'in-stock'}" data-id="${item.id}">
+      <div class="item-card" style="border-left-color: ${borderColor}" data-id="${item.id}">
         <div class="item-name">${escHtml(item.name)}${item.store ? `<span class="item-store">🏬 ${escHtml(item.store)}</span>` : ''}</div>
         <span class="item-cat">${catLabel(item.cat)}</span>
-        ${badgeHtml(item.qty, item.threshold)}
         <span class="threshold-badge" onclick="changeThreshold(${item.id})" title="警告ラインを変更">警告:${item.threshold ?? 2}以下</span>
         <div class="qty-ctrl">
           <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
