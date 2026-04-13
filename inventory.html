@@ -119,6 +119,7 @@
   .item-card.in-stock     { border-left: 4px solid #4caf50; }
 
   .item-name { flex: 1; font-size: 0.95rem; font-weight: 500; }
+  .item-store { display: block; font-size: 0.75rem; color: #888; font-weight: 400; margin-top: 2px; }
   .item-cat  { font-size: 0.75rem; color: #888; background: #f0f0f0; padding: 2px 8px; border-radius: 10px; }
 
   .qty-ctrl { display: flex; align-items: center; gap: 6px; }
@@ -187,6 +188,7 @@
     </select>
     <input type="number" id="new-qty" value="1" min="0" max="99" />
     <input type="number" id="new-threshold" value="1" min="0" max="99" title="警告ライン（この数以下で残り少ない）" />
+    <input type="text" id="new-store" placeholder="購入店（任意）" style="min-width:100px;flex:1" />
     <button class="btn-add" onclick="addItem()">追加</button>
   </div>
 
@@ -254,7 +256,7 @@ function render() {
       const s = getStatus(item.qty);
       return `
       <div class="item-card ${s === 'out' ? 'out-of-stock' : s === 'low' ? 'low-stock' : 'in-stock'}" data-id="${item.id}">
-        <div class="item-name">${CAT_ICONS[item.cat] || ''} ${escHtml(item.name)}</div>
+        <div class="item-name">${escHtml(item.name)}${item.store ? `<span class="item-store">🏬 ${escHtml(item.store)}</span>` : ''}</div>
         <span class="item-cat">${catLabel(item.cat)}</span>
         ${badgeHtml(item.qty, item.threshold)}
         <span class="threshold-badge" onclick="changeThreshold(${item.id})" title="警告ラインを変更">警告:${item.threshold ?? 2}以下</span>
@@ -289,12 +291,14 @@ function addItem() {
   const cat  = document.getElementById('new-cat').value;
   const qty       = parseInt(document.getElementById('new-qty').value) || 0;
   const threshold = parseInt(document.getElementById('new-threshold').value) ?? 2;
+  const store     = document.getElementById('new-store').value.trim();
   const items = load();
   const newId = items.length ? Math.max(...items.map(i=>i.id)) + 1 : 1;
-  items.push({ id: newId, name, cat, qty, threshold });
+  items.push({ id: newId, name, cat, qty, threshold, store });
   save(items);
-  document.getElementById('new-name').value = '';
-  document.getElementById('new-qty').value  = '1';
+  document.getElementById('new-name').value  = '';
+  document.getElementById('new-qty').value   = '1';
+  document.getElementById('new-store').value = '';
   render();
 }
 
