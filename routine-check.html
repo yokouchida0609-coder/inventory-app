@@ -700,7 +700,36 @@ function renderTaskList(containerId, tasks, checkedArr, state) {
     });
   }
 
-  el.innerHTML = filtered.map(task => {
+  // カスタムタスクをこのセクションに統合
+  const myTasks = loadMyTasks().filter(t =>
+    (SECTION_TO_CONTAINER[t.section] || 'tasks-anytime') === containerId
+  );
+
+  const allItems = [
+    ...filtered.map(t => ({ ...t, _custom: false })),
+    ...myTasks.map(t => ({ ...t, _custom: true }))
+  ];
+
+  // 保存済み順番を全体に適用
+  if (order[containerId] && order[containerId].length) {
+    const ids = order[containerId];
+    allItems.sort((a, b) => {
+      const ai = ids.indexOf(a.id), bi = ids.indexOf(b.id);
+      if (ai === -1 && bi === -1) return 0;
+      if (ai === -1) return 1; if (bi === -1) return -1;
+      return ai - bi;
+    });
+  }
+
+  el.innerHTML = allItems.map(task => {
+    if (task._custom) {
+      const noteHtml = task.note ? '<span class="my-task-note">' + task.note + '</span>' : '';
+      const delBtn = '<button class="my-task-delete" onclick="event.stopPropagation();deleteMyTask(\'' + task.id + '\')">×</button>';
+      return '<div class="my-task-card' + (task.done ? ' done' : '') + '" data-id="' + task.id + '" data-section="' + task.section + '" onclick="toggleMyTask(\'' + task.id + '\')">'
+        + '<div class="my-task-checkbox"></div>'
+        + '<span class="my-task-name">' + task.name + '</span>'
+        + noteHtml + delBtn + '</div>';
+    }
     const inactive = task.weekdayOnly && !isWeekday;
     let done, noteText;
     if (task.intervalDays && state) {
@@ -767,7 +796,6 @@ function render() {
   renderTaskList('tasks-monthly', MONTHLY_TASKS, state.monthlyChecked, state);
   renderTaskList('tasks-annual',  ANNUAL_TASKS,  state.annualChecked,  state);
 
-  renderMyTasks();
   if (typeof initSortable === 'function') initSortable();
 
   // 今月の年間タスクに赤枠
@@ -832,13 +860,13 @@ function toggleMyTask(id) {
   const t = tasks.find(t => t.id === id);
   if (t) t.done = !t.done;
   saveMyTasks(tasks);
-  renderMyTasks();
+  render();
 }
 
 function deleteMyTask(id) {
   const tasks = loadMyTasks().filter(t => t.id !== id);
   saveMyTasks(tasks);
-  renderMyTasks();
+  render();
 }
 
 const SECTION_TO_CONTAINER = {
@@ -854,28 +882,7 @@ const SECTION_TO_CONTAINER = {
 };
 
 function renderMyTasks() {
-  const tasks = loadMyTasks();
-  // 各セクションにカスタムタスクを追記
-  Object.values(SECTION_TO_CONTAINER).forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.querySelectorAll('.my-task-card').forEach(c => c.remove());
-  });
-  tasks.forEach(t => {
-    const containerId = SECTION_TO_CONTAINER[t.section] || 'tasks-anytime';
-    const el = document.getElementById(containerId);
-    if (!el) return;
-    const noteHtml = t.note ? '<span class="my-task-note">' + t.note + '</span>' : '';
-    const card = document.createElement('div');
-    card.className = 'my-task-card' + (t.done ? ' done' : '');
-    card.dataset.section = t.section;
-    card.dataset.id = t.id;
-    card.innerHTML = '<div class="my-task-checkbox" onclick="toggleMyTask(\'' + t.id + '\')"></div>'
-      + '<span class="my-task-name" onclick="toggleMyTask(\'' + t.id + '\')">' + t.name + '</span>'
-      + noteHtml
-      + '<button class="my-task-delete" onclick="event.stopPropagation();deleteMyTask(\'' + t.id + '\')">×</button>';
-    el.appendChild(card);
-  });
+  render();
 }
 
 // Enterキーで追加
