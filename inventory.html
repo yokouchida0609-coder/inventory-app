@@ -254,7 +254,7 @@ function render() {
       const s = getStatus(item.qty);
       return `
       <div class="item-card ${s === 'out' ? 'out-of-stock' : s === 'low' ? 'low-stock' : 'in-stock'}" data-id="${item.id}">
-        <div class="item-name">${escHtml(item.name)}</div>
+        <div class="item-name">${CAT_ICONS[item.cat] || ''} ${escHtml(item.name)}</div>
         <span class="item-cat">${catLabel(item.cat)}</span>
         ${badgeHtml(item.qty, item.threshold)}
         <span class="threshold-badge" onclick="changeThreshold(${item.id})" title="警告ラインを変更">警告:${item.threshold ?? 2}以下</span>
