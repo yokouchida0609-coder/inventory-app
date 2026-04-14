@@ -148,12 +148,17 @@
   .badge-low  { background: #fff3e0; color: #e65100; }
   .badge-ok   { background: #e8f5e9; color: #2e7d32; }
 
-  .price-inline { font-size: 0.75rem; color: #555; white-space: nowrap; }
-  .price-input {
-    width: 64px; padding: 2px 4px; border: 1px solid #ddd; border-radius: 4px;
-    font-size: 0.75rem; text-align: right;
+  .item-card-price {
+    display: flex; align-items: center; gap: 8px; padding-top: 4px;
+    border-top: 1px solid #f0f0f0;
   }
-  .tax-price { font-weight: 600; color: #333; }
+  .price-label { font-size: 0.85rem; color: #777; white-space: nowrap; }
+  .price-input {
+    width: 90px; padding: 5px 8px; border: 1px solid #ddd; border-radius: 6px;
+    font-size: 0.95rem; text-align: right;
+  }
+  .price-arrow { font-size: 0.85rem; color: #555; white-space: nowrap; }
+  .tax-price { font-weight: 700; color: #333; }
 
   .threshold-badge {
     font-size: 0.7rem; color: #999; background: #f5f5f5; border: 1px solid #e0e0e0;
@@ -288,7 +293,6 @@ function render() {
         <div class="item-card-bottom">
           ${buying ? '<span class="buy-badge">🛒 要購入</span>' : ''}
           ${item.store ? `<span class="item-store" style="background:${borderColor}">${escHtml(item.store)}</span>` : ''}
-          <span class="price-inline">税抜¥<input type="number" class="price-input" value="${item.price || ''}" placeholder="未設定" min="0" onchange="changePrice(${item.id}, this.value)" /> → 税込¥<span class="tax-price">${item.price ? Math.ceil(item.price * 1.1) : '—'}</span></span>
           <span class="threshold-badge" onclick="changeThreshold(${item.id})" title="警告ラインを変更">警告:${item.threshold ?? 1}以下</span>
           <div class="qty-ctrl" style="margin-left:auto">
             <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
@@ -296,6 +300,11 @@ function render() {
             <button class="qty-btn" onclick="changeQty(${item.id}, +1)">+</button>
           </div>
           <button class="btn-del" onclick="deleteItem(${item.id})" title="削除">&#x2715;</button>
+        </div>
+        <div class="item-card-price">
+          <span class="price-label">税抜 ¥</span>
+          <input type="number" class="price-input" value="${item.price || ''}" placeholder="価格を入力" min="0" onchange="changePrice(${item.id}, this.value)" />
+          <span class="price-arrow">→ 税込 ¥<span class="tax-price">${item.price ? Math.ceil(item.price * 1.1) : '—'}</span></span>
         </div>
       </div>`;
     }).join('');
