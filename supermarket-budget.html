@@ -312,7 +312,7 @@ function render() {
         <div style="margin-bottom:16px;">
           <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:#9f1239;padding:4px 0;border-bottom:2px solid #fecdd3;margin-bottom:6px;">
             <span>${formatYMD(wg.mon)}〜${formatYMD(wg.sun)}</span>
-            <span>合計 ¥${wg.total.toLocaleString()} / ¥${weekBudget.toLocaleString()}</span>
+            <span>${wg.total <= weekBudget ? '🎉✨ ' : '⚠️ '}合計 ¥${wg.total.toLocaleString()} / ¥${weekBudget.toLocaleString()}</span>
           </div>
           ${wg.records.map(r => `
             <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #fff1f2;">
