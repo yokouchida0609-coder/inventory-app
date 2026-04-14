@@ -189,6 +189,7 @@
       <option>トモズ</option>
       <option>アマゾン</option>
       <option>カクヤス</option>
+      <option>100均</option>
     </select>
     <button class="btn-add" onclick="addItem()">追加</button>
   </div>
@@ -259,7 +260,7 @@ function render() {
   if (visible.length === 0) {
     list.innerHTML = '<div class="empty">アイテムがありません。上から追加してください。</div>';
   } else {
-const STORE_COLORS = { 'まいばす':'#e53935', 'まいばすけっと':'#e53935', 'トミヤ':'#1976d2', 'シアル':'#7b1fa2', '生協':'#388e3c', 'マツキヨ':'#00acc1', 'トモズ':'#f57c00', 'アマゾン':'#ff9900', 'カクヤス':'#c62828' };
+const STORE_COLORS = { 'まいばす':'#e53935', 'まいばすけっと':'#e53935', 'トミヤ':'#1976d2', 'シアル':'#7b1fa2', '生協':'#388e3c', 'マツキヨ':'#00acc1', 'トモズ':'#f57c00', 'アマゾン':'#ff9900', 'カクヤス':'#c62828', '100均':'#e91e8c' };
 
     list.innerHTML = visible.map(item => {
       const borderColor = STORE_COLORS[item.store] || '#bdbdbd';
