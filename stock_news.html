@@ -59,6 +59,14 @@
     .eval-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; padding: 8px 10px; background: #f7fafc; border-radius: 8px; }
     .eval-item { font-size: 12px; color: #718096; }
     .eval-value { color: #2d3748; font-size: 13px; }
+    .div-summary { display: flex; gap: 0; margin-bottom: 10px; border-radius: 8px; overflow: hidden; border: 1px solid #bee3f8; }
+    .div-summary-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px 4px; background: #ebf8ff; }
+    .div-summary-item:not(:last-child) { border-right: 1px solid #bee3f8; }
+    .div-summary-label { font-size: 10px; color: #2b6cb0; margin-bottom: 3px; }
+    .div-summary-item strong { font-size: 15px; color: #1a365d; }
+    .div-summary-month { font-size: 13px; font-weight: 600; color: #1a365d; }
+    .div-yield { color: #1a365d !important; }
+    .div-income { color: #1a365d !important; }
     .price-compare { background: #f7fafc; border-radius: 8px; padding: 8px 14px; margin-bottom: 10px; display: inline-flex; flex-direction: column; gap: 4px; min-width: 180px; border: 1px solid #e2e8f0; }
     .pc-row { display: flex; align-items: baseline; gap: 8px; }
     .pc-label { font-size: 11px; color: #a0aec0; width: 26px; }
@@ -80,7 +88,7 @@
     <div class='total-val'>保有評価額合計 <span id='total-val'>—</span></div>
     <button class='save-btn' onclick='saveUserData()'>💾 データを保存</button>
   </div>
-  <div class='date'>2026年04月14日 21:29 時点</div>
+  <div class='date'>2026年04月14日 21:35 時点</div>
 
   <div class='section-title' id='title-owned' style='display:none'>📦 保有銘柄</div>
   <div class='grid' id='grid-owned'></div>
@@ -92,6 +100,20 @@
     <span class='stock-code'>1928</span>
     <span class='sector'>建設</span>
     <a href='https://finance.yahoo.co.jp/quote/1928.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-1928'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-1928'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-1928'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -135,10 +157,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='1928' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-1928'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-1928'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='1928' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='4958' data-price='2908'>
   <div class='stock-header'>
@@ -147,6 +165,20 @@
     <span class='stock-code'>4958</span>
     <span class='sector'>化学</span>
     <a href='https://finance.yahoo.co.jp/quote/4958.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-4958'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-4958'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-4958'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -190,10 +222,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='4958' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-4958'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4958'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='4958' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='9757' data-price='1154'>
   <div class='stock-header'>
@@ -202,6 +230,20 @@
     <span class='stock-code'>9757</span>
     <span class='sector'>サービス</span>
     <a href='https://finance.yahoo.co.jp/quote/9757.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-9757'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-9757'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-9757'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -245,10 +287,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='9757' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-9757'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-9757'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='9757' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='2169' data-price='1825'>
   <div class='stock-header'>
@@ -257,6 +295,20 @@
     <span class='stock-code'>2169</span>
     <span class='sector'>サービス</span>
     <a href='https://finance.yahoo.co.jp/quote/2169.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-2169'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-2169'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-2169'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -300,10 +352,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='2169' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-2169'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-2169'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='2169' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='1925' data-price='4899'>
   <div class='stock-header'>
@@ -312,6 +360,20 @@
     <span class='stock-code'>1925</span>
     <span class='sector'>建設</span>
     <a href='https://finance.yahoo.co.jp/quote/1925.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-1925'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-1925'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-1925'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -355,10 +417,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='1925' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-1925'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-1925'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='1925' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='8725' data-price='4046'>
   <div class='stock-header'>
@@ -367,6 +425,20 @@
     <span class='stock-code'>8725</span>
     <span class='sector'>保険</span>
     <a href='https://finance.yahoo.co.jp/quote/8725.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-8725'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-8725'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-8725'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -410,10 +482,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='8725' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-8725'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-8725'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='8725' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='4540' data-price='3750'>
   <div class='stock-header'>
@@ -422,6 +490,20 @@
     <span class='stock-code'>4540</span>
     <span class='sector'>医薬品</span>
     <a href='https://finance.yahoo.co.jp/quote/4540.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-4540'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-4540'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-4540'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -465,10 +547,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='4540' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-4540'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4540'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='4540' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='9986' data-price='2679'>
   <div class='stock-header'>
@@ -477,6 +555,20 @@
     <span class='stock-code'>9986</span>
     <span class='sector'>卸売</span>
     <a href='https://finance.yahoo.co.jp/quote/9986.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-9986'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-9986'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-9986'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -520,10 +612,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='9986' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-9986'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-9986'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='9986' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='3076' data-price='2793'>
   <div class='stock-header'>
@@ -532,6 +620,20 @@
     <span class='stock-code'>3076</span>
     <span class='sector'>卸売</span>
     <a href='https://finance.yahoo.co.jp/quote/3076.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-3076'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-3076'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-3076'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -575,10 +677,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='3076' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-3076'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3076'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='3076' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='7820' data-price='801'>
   <div class='stock-header'>
@@ -587,6 +685,20 @@
     <span class='stock-code'>7820</span>
     <span class='sector'>その他製品</span>
     <a href='https://finance.yahoo.co.jp/quote/7820.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-7820'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-7820'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-7820'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -630,10 +742,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='7820' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-7820'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-7820'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='7820' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='2003' data-price='1844'>
   <div class='stock-header'>
@@ -642,6 +750,20 @@
     <span class='stock-code'>2003</span>
     <span class='sector'>食料品</span>
     <a href='https://finance.yahoo.co.jp/quote/2003.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-2003'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-2003'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-2003'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -685,10 +807,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='2003' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-2003'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-2003'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='2003' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='3333' data-price='1339'>
   <div class='stock-header'>
@@ -697,6 +815,20 @@
     <span class='stock-code'>3333</span>
     <span class='sector'>小売</span>
     <a href='https://finance.yahoo.co.jp/quote/3333.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-3333'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-3333'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-3333'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -740,10 +872,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='3333' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-3333'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3333'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='3333' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='9769' data-price='2374'>
   <div class='stock-header'>
@@ -752,6 +880,20 @@
     <span class='stock-code'>9769</span>
     <span class='sector'>サービス</span>
     <a href='https://finance.yahoo.co.jp/quote/9769.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-9769'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-9769'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-9769'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -795,10 +937,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='9769' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-9769'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-9769'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='9769' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='3901' data-price='1525'>
   <div class='stock-header'>
@@ -807,6 +945,20 @@
     <span class='stock-code'>3901</span>
     <span class='sector'>情報・通信</span>
     <a href='https://finance.yahoo.co.jp/quote/3901.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-3901'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-3901'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-3901'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -850,10 +1002,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='3901' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-3901'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3901'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='3901' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='4042' data-price='2382'>
   <div class='stock-header'>
@@ -862,6 +1010,20 @@
     <span class='stock-code'>4042</span>
     <span class='sector'>化学</span>
     <a href='https://finance.yahoo.co.jp/quote/4042.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-4042'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-4042'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-4042'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -905,10 +1067,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='4042' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-4042'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4042'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='4042' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='7723' data-price='2950'>
   <div class='stock-header'>
@@ -917,6 +1075,20 @@
     <span class='stock-code'>7723</span>
     <span class='sector'>精密機器</span>
     <a href='https://finance.yahoo.co.jp/quote/7723.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-7723'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-7723'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-7723'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -960,10 +1132,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='7723' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-7723'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-7723'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='7723' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='4746' data-price='4435'>
   <div class='stock-header'>
@@ -972,6 +1140,20 @@
     <span class='stock-code'>4746</span>
     <span class='sector'>情報・通信</span>
     <a href='https://finance.yahoo.co.jp/quote/4746.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-4746'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-4746'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-4746'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1015,10 +1197,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='4746' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-4746'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4746'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='4746' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='3817' data-price='4760'>
   <div class='stock-header'>
@@ -1027,6 +1205,20 @@
     <span class='stock-code'>3817</span>
     <span class='sector'>情報・通信</span>
     <a href='https://finance.yahoo.co.jp/quote/3817.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-3817'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-3817'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-3817'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1070,10 +1262,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='3817' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-3817'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3817'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='3817' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='6785' data-price='2832'>
   <div class='stock-header'>
@@ -1082,6 +1270,20 @@
     <span class='stock-code'>6785</span>
     <span class='sector'>電気機器</span>
     <a href='https://finance.yahoo.co.jp/quote/6785.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-6785'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-6785'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-6785'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1125,10 +1327,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='6785' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-6785'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-6785'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='6785' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='4641' data-price='2576'>
   <div class='stock-header'>
@@ -1137,6 +1335,20 @@
     <span class='stock-code'>4641</span>
     <span class='sector'>サービス</span>
     <a href='https://finance.yahoo.co.jp/quote/4641.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-4641'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-4641'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-4641'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1180,10 +1392,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='4641' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-4641'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4641'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='4641' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='8130' data-price='3055'>
   <div class='stock-header'>
@@ -1192,6 +1400,20 @@
     <span class='stock-code'>8130</span>
     <span class='sector'>卸売</span>
     <a href='https://finance.yahoo.co.jp/quote/8130.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-8130'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-8130'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-8130'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1235,10 +1457,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='8130' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-8130'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-8130'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='8130' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='7994' data-price='2586'>
   <div class='stock-header'>
@@ -1247,6 +1465,20 @@
     <span class='stock-code'>7994</span>
     <span class='sector'>その他製品</span>
     <a href='https://finance.yahoo.co.jp/quote/7994.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-7994'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-7994'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-7994'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1290,10 +1522,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='7994' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-7994'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-7994'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='7994' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='8584' data-price='4110'>
   <div class='stock-header'>
@@ -1302,6 +1530,20 @@
     <span class='stock-code'>8584</span>
     <span class='sector'>その他金融</span>
     <a href='https://finance.yahoo.co.jp/quote/8584.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-8584'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-8584'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-8584'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1345,10 +1587,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='8584' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-8584'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-8584'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='8584' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='4097' data-price='1109'>
   <div class='stock-header'>
@@ -1357,6 +1595,20 @@
     <span class='stock-code'>4097</span>
     <span class='sector'>化学</span>
     <a href='https://finance.yahoo.co.jp/quote/4097.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-4097'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-4097'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-4097'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1400,10 +1652,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='4097' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-4097'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4097'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='4097' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='9364' data-price='5453'>
   <div class='stock-header'>
@@ -1412,6 +1660,20 @@
     <span class='stock-code'>9364</span>
     <span class='sector'>倉庫・運輸</span>
     <a href='https://finance.yahoo.co.jp/quote/9364.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-9364'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-9364'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-9364'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1455,10 +1717,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='9364' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-9364'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-9364'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='9364' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='3003' data-price='1894'>
   <div class='stock-header'>
@@ -1467,6 +1725,20 @@
     <span class='stock-code'>3003</span>
     <span class='sector'>不動産</span>
     <a href='https://finance.yahoo.co.jp/quote/3003.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-3003'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-3003'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-3003'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1510,10 +1782,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='3003' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-3003'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3003'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='3003' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='2659' data-price='3375'>
   <div class='stock-header'>
@@ -1522,6 +1790,20 @@
     <span class='stock-code'>2659</span>
     <span class='sector'>小売</span>
     <a href='https://finance.yahoo.co.jp/quote/2659.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-2659'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-2659'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-2659'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1565,10 +1847,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='2659' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-2659'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-2659'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='2659' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='8309' data-price='5388'>
   <div class='stock-header'>
@@ -1577,6 +1855,20 @@
     <span class='stock-code'>8309</span>
     <span class='sector'>銀行</span>
     <a href='https://finance.yahoo.co.jp/quote/8309.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-8309'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-8309'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-8309'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1620,10 +1912,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='8309' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-8309'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-8309'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='8309' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='4674' data-price='1453'>
   <div class='stock-header'>
@@ -1632,6 +1920,20 @@
     <span class='stock-code'>4674</span>
     <span class='sector'>情報・通信</span>
     <a href='https://finance.yahoo.co.jp/quote/4674.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-4674'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-4674'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-4674'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1675,10 +1977,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='4674' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-4674'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4674'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='4674' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='3231' data-price='1050'>
   <div class='stock-header'>
@@ -1687,6 +1985,20 @@
     <span class='stock-code'>3231</span>
     <span class='sector'>不動産</span>
     <a href='https://finance.yahoo.co.jp/quote/3231.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-3231'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-3231'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-3231'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1730,10 +2042,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='3231' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-3231'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3231'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='3231' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='7989' data-price='2606'>
   <div class='stock-header'>
@@ -1742,6 +2050,20 @@
     <span class='stock-code'>7989</span>
     <span class='sector'>金属製品</span>
     <a href='https://finance.yahoo.co.jp/quote/7989.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-7989'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-7989'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-7989'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1785,10 +2107,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='7989' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-7989'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-7989'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='7989' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='1343' data-price='2098'>
   <div class='stock-header'>
@@ -1797,6 +2115,20 @@
     <span class='stock-code'>1343</span>
     <span class='sector'>J-REIT</span>
     <a href='https://finance.yahoo.co.jp/quote/1343.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-1343'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-1343'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-1343'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1840,10 +2172,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='1343' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-1343'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-1343'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='1343' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='4008' data-price='1274'>
   <div class='stock-header'>
@@ -1852,6 +2180,20 @@
     <span class='stock-code'>4008</span>
     <span class='sector'>化学</span>
     <a href='https://finance.yahoo.co.jp/quote/4008.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-4008'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-4008'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-4008'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1895,10 +2237,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='4008' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-4008'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4008'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='4008' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='9381' data-price='2269'>
   <div class='stock-header'>
@@ -1907,6 +2245,20 @@
     <span class='stock-code'>9381</span>
     <span class='sector'>倉庫・運輸</span>
     <a href='https://finance.yahoo.co.jp/quote/9381.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-9381'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-9381'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-9381'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -1950,10 +2302,6 @@
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='9381' placeholder='3・9月'>
   </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-9381'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-9381'>—</strong></span>
-  </div>
   <textarea class='memo-area' data-memo-code='9381' placeholder='メモを入力...'></textarea>
 </div><div class='stock-card' data-code='6345' data-price='1456'>
   <div class='stock-header'>
@@ -1962,6 +2310,20 @@
     <span class='stock-code'>6345</span>
     <span class='sector'>機械</span>
     <a href='https://finance.yahoo.co.jp/quote/6345.T/chart' target='_blank' class='chart-btn'>📈 チャート</a>
+  </div>
+  <div class='div-summary'>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当利回り</span>
+      <strong class='div-yield' id='yield-6345'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>受取配当金</span>
+      <strong class='div-income' id='income-6345'>—</strong>
+    </div>
+    <div class='div-summary-item'>
+      <span class='div-summary-label'>配当月</span>
+      <span class='div-summary-month' id='month-display-6345'>—</span>
+    </div>
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
@@ -2004,10 +2366,6 @@
   <div class='target-row'>
     <span class='target-label'>📅 配当月</span>
     <input class='divmonth-input' type='text' data-divmonth-code='6345' placeholder='3・9月'>
-  </div>
-  <div class='eval-row'>
-    <span class='eval-item'>配当利回り <strong class='div-yield' id='yield-6345'>—</strong></span>
-    <span class='eval-item'>受取配当金 <strong class='div-income' id='income-6345'>—</strong></span>
   </div>
   <textarea class='memo-area' data-memo-code='6345' placeholder='メモを入力...'></textarea>
 </div></div>
@@ -2246,6 +2604,12 @@
     if (div && shares) {
       incomeEl.textContent = Math.round(div * shares).toLocaleString() + '円/年';
     } else { incomeEl.textContent = '—'; }
+    // 配当月サマリー更新
+    const monthDispEl = document.getElementById('month-display-' + code);
+    if (monthDispEl) {
+      const divmonthInput = document.querySelector('.divmonth-input[data-divmonth-code="' + code + '"]');
+      monthDispEl.textContent = (divmonthInput && divmonthInput.value) ? divmonthInput.value : '—';
+    }
   }
 
   // チェックボックス初期化
@@ -2333,7 +2697,7 @@
   document.querySelectorAll('.divmonth-input').forEach(input => {
     const code = input.dataset.divmonthCode;
     if (divmonths[code]) input.value = divmonths[code];
-    input.addEventListener('input', () => saveDivMonth(code, input.value));
+    input.addEventListener('input', () => { saveDivMonth(code, input.value); calcEval(code); });
   });
 
   // 保有・ウォッチに仕分け＆評価額順にソート
