@@ -117,7 +117,7 @@
   .item-card { border: 2px solid #bdbdbd; }
 
   .item-name { flex: 1; font-size: 0.95rem; font-weight: 500; }
-  .item-store { display: block; font-size: 0.75rem; color: #888; font-weight: 400; margin-top: 2px; }
+  .item-store { font-size: 0.78rem; font-weight: 700; color: white; padding: 3px 10px; border-radius: 12px; white-space: nowrap; }
   .item-cat  { font-size: 0.75rem; color: #888; background: #f0f0f0; padding: 2px 8px; border-radius: 10px; }
 
   .qty-ctrl { display: flex; align-items: center; gap: 6px; }
@@ -259,7 +259,8 @@ const STORE_COLORS = { 'まいばすけっと':'#e53935', 'トミヤ':'#1976d2',
       const borderColor = STORE_COLORS[item.store] || '#bdbdbd';
       return `
       <div class="item-card" style="border-color: ${borderColor}" data-id="${item.id}">
-        <div class="item-name">${escHtml(item.name)}${item.store ? `<span class="item-store">🏬 ${escHtml(item.store)}</span>` : ''}</div>
+        <div class="item-name">${escHtml(item.name)}</div>
+        ${item.store ? `<span class="item-store" style="background:${borderColor}">${escHtml(item.store)}</span>` : ''}
         <span class="threshold-badge" onclick="changeThreshold(${item.id})" title="警告ラインを変更">警告:${item.threshold ?? 2}以下</span>
         <div class="qty-ctrl">
           <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
