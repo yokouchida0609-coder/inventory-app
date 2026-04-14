@@ -385,6 +385,9 @@ document.getElementById('tabs').addEventListener('click', e => {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   tab.classList.add('active');
   currentCat = tab.dataset.cat;
+  // 店タブなら追加フォームの購入店を自動セット
+  const storeSelect = document.getElementById('new-store');
+  storeSelect.value = currentCat === 'all' ? '' : currentCat;
   render();
   updateTabStyle();
 });
