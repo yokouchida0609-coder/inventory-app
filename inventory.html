@@ -148,12 +148,12 @@
   .badge-low  { background: #fff3e0; color: #e65100; }
   .badge-ok   { background: #e8f5e9; color: #2e7d32; }
 
-  .price-badge {
-    font-size: 0.75rem; color: #555; background: #f3f3f3; border: 1px solid #ddd;
-    padding: 2px 8px; border-radius: 10px; cursor: pointer; white-space: nowrap;
+  .price-inline { font-size: 0.75rem; color: #555; white-space: nowrap; }
+  .price-input {
+    width: 64px; padding: 2px 4px; border: 1px solid #ddd; border-radius: 4px;
+    font-size: 0.75rem; text-align: right;
   }
-  .price-badge:hover { background: #e8e8e8; }
-  .empty-price { color: #bbb; }
+  .tax-price { font-weight: 600; color: #333; }
 
   .threshold-badge {
     font-size: 0.7rem; color: #999; background: #f5f5f5; border: 1px solid #e0e0e0;
@@ -289,7 +289,7 @@ function render() {
         <div class="item-card-bottom">
           ${buying ? '<span class="buy-badge">🛒 要購入</span>' : ''}
           ${item.store ? `<span class="item-store" style="background:${borderColor}">${escHtml(item.store)}</span>` : ''}
-          ${item.price ? `<span class="price-badge" onclick="changePrice(${item.id})">税抜¥${item.price} → 税込¥${Math.ceil(item.price * 1.1)}</span>` : `<span class="price-badge empty-price" onclick="changePrice(${item.id})">価格未設定</span>`}
+          <span class="price-inline">税抜¥<input type="number" class="price-input" value="${item.price || ''}" placeholder="未設定" min="0" onchange="changePrice(${item.id}, this.value)" /> → 税込¥<span class="tax-price">${item.price ? Math.ceil(item.price * 1.1) : '—'}</span></span>
           <span class="threshold-badge" onclick="changeThreshold(${item.id})" title="警告ラインを変更">警告:${item.threshold ?? 1}以下</span>
           <div class="qty-ctrl" style="margin-left:auto">
             <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
@@ -342,16 +342,16 @@ function changeQty(id, delta) {
   if (item) { item.qty = Math.max(0, item.qty + delta); save(items); render(); }
 }
 
-function changePrice(id) {
+function changePrice(id, val) {
   const items = load();
   const item = items.find(i => i.id === id);
   if (!item) return;
-  const val = prompt(`「${item.name}」の税抜価格を入力（円）`, item.price || '');
-  if (val === null) return;
   const p = parseInt(val);
   item.price = isNaN(p) || p < 0 ? 0 : p;
   save(items);
-  render();
+  // 税込表示だけ更新（再renderせず入力欄を維持）
+  const card = document.querySelector(`.item-card[data-id="${id}"]`);
+  if (card) card.querySelector('.tax-price').textContent = item.price ? Math.ceil(item.price * 1.1) : '—';
 }
 
 function changeThreshold(id) {
