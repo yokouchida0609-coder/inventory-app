@@ -174,7 +174,6 @@
 </header>
 
 <div class="tabs" id="tabs">
-  <div class="tab active" data-cat="all">📋 すべて</div>
 </div>
 
 <div class="container">
@@ -356,9 +355,14 @@ STORE_LIST.forEach(store => {
   div.className = 'tab';
   div.dataset.cat = store;
   div.textContent = store;
-  div.style.borderBottomColor = STORE_COLORS[store] || '#bdbdbd';
   tabsEl.appendChild(div);
 });
+// すべてを一番右に追加
+const allTab = document.createElement('div');
+allTab.className = 'tab active';
+allTab.dataset.cat = 'all';
+allTab.textContent = '📋 すべて';
+tabsEl.appendChild(allTab);
 
 // アクティブタブの色を店舗色に合わせる
 function updateTabStyle() {
