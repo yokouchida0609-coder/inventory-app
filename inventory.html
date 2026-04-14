@@ -191,7 +191,6 @@
     <input type="text" id="new-name" placeholder="商品名を入力..." />
     <label style="display:flex;flex-direction:column;align-items:center;font-size:0.7rem;color:#888;gap:2px">在庫数<input type="number" id="new-qty" value="1" min="0" max="99" /></label>
     <label style="display:flex;flex-direction:column;align-items:center;font-size:0.7rem;color:#888;gap:2px">警告ライン<input type="number" id="new-threshold" value="1" min="0" max="99" /></label>
-    <label style="display:flex;flex-direction:column;align-items:center;font-size:0.7rem;color:#888;gap:2px">税抜価格<input type="number" id="new-price" value="" min="0" placeholder="任意" style="width:80px" /></label>
     <select id="new-store">
       <option value="">購入店（任意）</option>
       <option value="まいばす">まいばす</option>
@@ -324,7 +323,7 @@ function addItem() {
   const qty       = parseInt(document.getElementById('new-qty').value) || 0;
   const threshold = parseInt(document.getElementById('new-threshold').value) ?? 2;
   const store     = document.getElementById('new-store').value.trim();
-  const price     = parseInt(document.getElementById('new-price').value) || 0;
+  const price     = 0;
   const items = load();
   const newId = items.length ? Math.max(...items.map(i=>i.id)) + 1 : 1;
   items.push({ id: newId, name, cat, qty, threshold, store, price });
@@ -332,7 +331,6 @@ function addItem() {
   document.getElementById('new-name').value  = '';
   document.getElementById('new-qty').value   = '1';
   document.getElementById('new-store').value = '';
-  document.getElementById('new-price').value = '';
   render();
 }
 
