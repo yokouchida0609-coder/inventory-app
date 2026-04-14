@@ -246,9 +246,10 @@ function render() {
   const items = load();
   const list = document.getElementById('item-list');
 
-  const visible = currentCat === 'all' ? items
+  const filtered = currentCat === 'all' ? items
     : currentCat === '要購入' ? items.filter(i => i.qty <= (i.threshold ?? 2))
     : items.filter(i => i.cat === currentCat);
+  const visible = [...filtered].sort((a, b) => (a.store || 'zzz').localeCompare(b.store || 'zzz', 'ja'));
 
   if (visible.length === 0) {
     list.innerHTML = '<div class="empty">アイテムがありません。上から追加してください。</div>';
