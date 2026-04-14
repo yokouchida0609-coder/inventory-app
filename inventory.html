@@ -118,6 +118,9 @@
 
   .item-name { flex: 1; font-size: 0.95rem; font-weight: 500; }
   .item-store { font-size: 0.78rem; font-weight: 700; color: white; padding: 3px 10px; border-radius: 12px; white-space: nowrap; }
+  .needs-buying { background: #fff8e1; }
+  .needs-buying .item-name { font-weight: 700; }
+  .buy-badge { font-size: 0.75rem; font-weight: 700; color: #e65100; background: #ffe0b2; padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
   .item-cat  { font-size: 0.75rem; color: #888; background: #f0f0f0; padding: 2px 8px; border-radius: 10px; }
 
   .qty-ctrl { display: flex; align-items: center; gap: 6px; }
@@ -166,7 +169,6 @@
 
 <div class="tabs" id="tabs">
   <div class="tab active" data-cat="all">📋 すべて</div>
-  <div class="tab" data-cat="要購入">🛒 要購入</div>
 </div>
 
 <div class="container">
@@ -249,10 +251,14 @@ function render() {
   const items = load();
   const list = document.getElementById('item-list');
 
-  const filtered = currentCat === 'all' ? items
-    : currentCat === '要購入' ? items.filter(i => i.qty <= (i.threshold ?? 2))
-    : items.filter(i => i.store === currentCat);
-  const visible = [...filtered].sort((a, b) => (a.store || 'zzz').localeCompare(b.store || 'zzz', 'ja'));
+  const filtered = currentCat === 'all' ? items : items.filter(i => i.store === currentCat);
+  const needsBuying = i => i.qty <= (i.threshold ?? 1);
+  const visible = [...filtered].sort((a, b) => {
+    const aNeed = needsBuying(a) ? 0 : 1;
+    const bNeed = needsBuying(b) ? 0 : 1;
+    if (aNeed !== bNeed) return aNeed - bNeed;
+    return (a.store || 'zzz').localeCompare(b.store || 'zzz', 'ja');
+  });
 
   if (visible.length === 0) {
     list.innerHTML = '<div class="empty">アイテムがありません。上から追加してください。</div>';
@@ -260,9 +266,11 @@ function render() {
 
     list.innerHTML = visible.map(item => {
       const borderColor = STORE_COLORS[item.store] || '#bdbdbd';
+      const buying = needsBuying(item);
       return `
-      <div class="item-card" style="border-color: ${borderColor}" data-id="${item.id}">
+      <div class="item-card ${buying ? 'needs-buying' : ''}" style="border-color: ${borderColor}" data-id="${item.id}">
         <div class="item-name">${escHtml(item.name)}</div>
+        ${buying ? '<span class="buy-badge">🛒 要購入</span>' : ''}
         ${item.store ? `<span class="item-store" style="background:${borderColor}">${escHtml(item.store)}</span>` : ''}
         <span class="threshold-badge" onclick="changeThreshold(${item.id})" title="警告ラインを変更">警告:${item.threshold ?? 2}以下</span>
         <div class="qty-ctrl">
