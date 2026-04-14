@@ -378,9 +378,12 @@ function changeThreshold(id) {
 }
 
 function deleteItem(id) {
-  const items = load().filter(i => i.id !== id);
-  save(items);
+  const items = load();
+  const item = items.find(i => i.id === id);
+  if (!confirm(`「${item.name}」を削除しますか？`)) return;
+  save(items.filter(i => i.id !== id));
   render();
+  document.getElementById('new-store').value = currentCat === 'all' ? '' : currentCat;
 }
 
 // Store tabs を動的生成
