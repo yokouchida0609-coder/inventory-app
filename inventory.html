@@ -167,11 +167,6 @@
 <div class="tabs" id="tabs">
   <div class="tab active" data-cat="all">📋 すべて</div>
   <div class="tab" data-cat="要購入">🛒 要購入</div>
-  <div class="tab" data-cat="日用品">🧴 日用品</div>
-  <div class="tab" data-cat="食料品">🥦 食料品</div>
-  <div class="tab" data-cat="冷凍・冷蔵食品">🧊 冷凍・冷蔵</div>
-  <div class="tab" data-cat="飲み物">🥤 飲み物</div>
-  <div class="tab" data-cat="生協">🏪 生協</div>
 </div>
 
 <div class="container">
@@ -254,7 +249,7 @@ function render() {
 
   const filtered = currentCat === 'all' ? items
     : currentCat === '要購入' ? items.filter(i => i.qty <= (i.threshold ?? 2))
-    : items.filter(i => i.cat === currentCat);
+    : items.filter(i => i.store === currentCat);
   const visible = [...filtered].sort((a, b) => (a.store || 'zzz').localeCompare(b.store || 'zzz', 'ja'));
 
   if (visible.length === 0) {
@@ -336,6 +331,32 @@ function deleteItem(id) {
   render();
 }
 
+// Store tabs を動的生成
+const STORE_LIST = ['まいばす', 'トミヤ', 'シアル', '生協', 'マツキヨ', 'トモズ', 'アマゾン', 'カクヤス', '100均'];
+const tabsEl = document.getElementById('tabs');
+STORE_LIST.forEach(store => {
+  const div = document.createElement('div');
+  div.className = 'tab';
+  div.dataset.cat = store;
+  div.textContent = store;
+  div.style.borderBottomColor = STORE_COLORS[store] || '#bdbdbd';
+  tabsEl.appendChild(div);
+});
+
+// アクティブタブの色を店舗色に合わせる
+function updateTabStyle() {
+  document.querySelectorAll('.tab').forEach(t => {
+    const color = STORE_COLORS[t.dataset.cat];
+    if (t.classList.contains('active') && color) {
+      t.style.borderBottomColor = color;
+      t.style.color = color;
+    } else if (color) {
+      t.style.borderBottomColor = 'transparent';
+      t.style.color = '';
+    }
+  });
+}
+
 // Tabs
 document.getElementById('tabs').addEventListener('click', e => {
   const tab = e.target.closest('.tab');
@@ -344,6 +365,7 @@ document.getElementById('tabs').addEventListener('click', e => {
   tab.classList.add('active');
   currentCat = tab.dataset.cat;
   render();
+  updateTabStyle();
 });
 
 // Enter key in name field
