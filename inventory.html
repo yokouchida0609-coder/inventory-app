@@ -181,7 +181,7 @@
     <label style="display:flex;flex-direction:column;align-items:center;font-size:0.7rem;color:#888;gap:2px">警告ライン<input type="number" id="new-threshold" value="1" min="0" max="99" /></label>
     <select id="new-store">
       <option value="">購入店（任意）</option>
-      <option>まいばすけっと</option>
+      <option>まいばす</option>
       <option>トミヤ</option>
       <option>シアル</option>
       <option>生協</option>
@@ -254,7 +254,7 @@ function render() {
   if (visible.length === 0) {
     list.innerHTML = '<div class="empty">アイテムがありません。上から追加してください。</div>';
   } else {
-const STORE_COLORS = { 'まいばすけっと':'#e53935', 'トミヤ':'#1976d2', 'シアル':'#7b1fa2', '生協':'#388e3c', 'マツキヨ':'#00acc1', 'トモズ':'#f57c00', 'アマゾン':'#ff9900', 'カクヤス':'#c62828' };
+const STORE_COLORS = { 'まいばす':'#e53935', 'トミヤ':'#1976d2', 'シアル':'#7b1fa2', '生協':'#388e3c', 'マツキヨ':'#00acc1', 'トモズ':'#f57c00', 'アマゾン':'#ff9900', 'カクヤス':'#c62828' };
 
     list.innerHTML = visible.map(item => {
       const borderColor = STORE_COLORS[item.store] || '#bdbdbd';
