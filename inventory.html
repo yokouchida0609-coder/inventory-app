@@ -340,10 +340,10 @@ function addItem() {
   const newId = items.length ? Math.max(...items.map(i=>i.id)) + 1 : 1;
   items.push({ id: newId, name, cat, qty, threshold, store, price });
   save(items);
-  document.getElementById('new-name').value  = '';
-  document.getElementById('new-qty').value   = '1';
-  document.getElementById('new-store').value = currentCat === 'all' ? '' : currentCat;
+  document.getElementById('new-name').value = '';
+  document.getElementById('new-qty').value  = '1';
   render();
+  document.getElementById('new-store').value = currentCat === 'all' ? '' : currentCat;
 }
 
 function changeQty(id, delta) {
