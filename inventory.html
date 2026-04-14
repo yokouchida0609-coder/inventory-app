@@ -221,7 +221,12 @@ const DEFAULT_ITEMS = [
 
 function load() {
   const raw = localStorage.getItem(STORAGE_KEY);
-  return raw ? JSON.parse(raw) : DEFAULT_ITEMS;
+  const items = raw ? JSON.parse(raw) : DEFAULT_ITEMS;
+  // migrate old store name
+  let migrated = false;
+  items.forEach(i => { if (i.store === 'まいばすけっと') { i.store = 'まいばす'; migrated = true; } });
+  if (migrated) localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  return items;
 }
 function save(items) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
