@@ -125,7 +125,8 @@
   }
   .item-card { border: 2px solid #bdbdbd; }
 
-  .item-name { font-size: 0.95rem; font-weight: 500; }
+  .item-card-top { display: flex; align-items: center; gap: 6px; }
+  .item-name { font-size: 0.95rem; font-weight: 500; flex: 1; }
   .item-store { font-size: 0.78rem; font-weight: 700; color: white; padding: 3px 10px; border-radius: 12px; white-space: nowrap; }
   .needs-buying { background: #fff8e1; }
   .needs-buying .item-name { font-weight: 700; }
@@ -289,7 +290,10 @@ function render() {
       const buying = needsBuying(item);
       return `
       <div class="item-card ${buying ? 'needs-buying' : ''}" style="border-color: ${borderColor}" data-id="${item.id}">
-        <div class="item-name">${escHtml(item.name)}</div>
+        <div class="item-card-top">
+          <button class="btn-del" onclick="deleteItem(${item.id})" title="削除">&#x2715;</button>
+          <div class="item-name">${escHtml(item.name)}</div>
+        </div>
         <div class="item-card-bottom">
           ${buying ? '<span class="buy-badge">🛒 要購入</span>' : ''}
           ${item.store ? `<span class="item-store" style="background:${borderColor}">${escHtml(item.store)}</span>` : ''}
@@ -299,7 +303,6 @@ function render() {
             <span class="qty-val">${item.qty}</span>
             <button class="qty-btn" onclick="changeQty(${item.id}, +1)">+</button>
           </div>
-          <button class="btn-del" onclick="deleteItem(${item.id})" title="削除">&#x2715;</button>
         </div>
         <div class="item-card-price">
           <span class="price-label">税抜 ¥</span>
