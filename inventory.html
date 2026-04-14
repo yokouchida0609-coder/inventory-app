@@ -342,7 +342,7 @@ function addItem() {
   save(items);
   document.getElementById('new-name').value  = '';
   document.getElementById('new-qty').value   = '1';
-  document.getElementById('new-store').value = '';
+  document.getElementById('new-store').value = currentCat === 'all' ? '' : currentCat;
   render();
 }
 
