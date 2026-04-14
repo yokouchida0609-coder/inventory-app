@@ -107,16 +107,22 @@
   .item-card {
     background: white;
     border-radius: 8px;
-    padding: 12px 14px;
+    padding: 10px 14px;
     box-shadow: 0 1px 3px rgba(0,0,0,.1);
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-direction: column;
+    gap: 6px;
     transition: opacity .2s;
+  }
+  .item-card-bottom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
   }
   .item-card { border: 2px solid #bdbdbd; }
 
-  .item-name { flex: 1; font-size: 0.95rem; font-weight: 500; }
+  .item-name { font-size: 0.95rem; font-weight: 500; }
   .item-store { font-size: 0.78rem; font-weight: 700; color: white; padding: 3px 10px; border-radius: 12px; white-space: nowrap; }
   .needs-buying { background: #fff8e1; }
   .needs-buying .item-name { font-weight: 700; }
@@ -270,15 +276,17 @@ function render() {
       return `
       <div class="item-card ${buying ? 'needs-buying' : ''}" style="border-color: ${borderColor}" data-id="${item.id}">
         <div class="item-name">${escHtml(item.name)}</div>
-        ${buying ? '<span class="buy-badge">🛒 要購入</span>' : ''}
-        ${item.store ? `<span class="item-store" style="background:${borderColor}">${escHtml(item.store)}</span>` : ''}
-        <span class="threshold-badge" onclick="changeThreshold(${item.id})" title="警告ラインを変更">警告:${item.threshold ?? 2}以下</span>
-        <div class="qty-ctrl">
-          <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
-          <span class="qty-val">${item.qty}</span>
-          <button class="qty-btn" onclick="changeQty(${item.id}, +1)">+</button>
+        <div class="item-card-bottom">
+          ${buying ? '<span class="buy-badge">🛒 要購入</span>' : ''}
+          ${item.store ? `<span class="item-store" style="background:${borderColor}">${escHtml(item.store)}</span>` : ''}
+          <span class="threshold-badge" onclick="changeThreshold(${item.id})" title="警告ラインを変更">警告:${item.threshold ?? 1}以下</span>
+          <div class="qty-ctrl" style="margin-left:auto">
+            <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
+            <span class="qty-val">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${item.id}, +1)">+</button>
+          </div>
+          <button class="btn-del" onclick="deleteItem(${item.id})" title="削除">&#x2715;</button>
         </div>
-        <button class="btn-del" onclick="deleteItem(${item.id})" title="削除">&#x2715;</button>
       </div>`;
     }).join('');
   }
