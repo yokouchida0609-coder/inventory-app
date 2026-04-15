@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd.exe /c 'schtasks /Create /TN \"\"留守電確認リマインダー\"\" /TR \"\"powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File \\\\\"\"C:\\\\\\\\Users\\\\\\\\yoko7\\\\\\\\reminder-app\\\\\\\\remind_voicemail.ps1\\\\\"\"\"\" /SC WEEKLY /D MON,TUE,WED,THU,FRI /ST 09:00 /F')"
+    ]
+  }
+}
