@@ -69,7 +69,7 @@
     .div-yield { color: #1a365d; font-size: 15px; font-weight: 700; }
     .price-compare { background: #f7fafc; border-radius: 8px; padding: 8px 14px; margin-bottom: 10px; display: inline-flex; flex-direction: column; gap: 4px; min-width: 180px; border: 1px solid #e2e8f0; }
     .pc-row { display: flex; align-items: baseline; gap: 8px; }
-    .pc-label { font-size: 11px; color: #a0aec0; width: 26px; }
+    .pc-label { font-size: 11px; color: #a0aec0; white-space: nowrap; margin-right: 4px; }
     .pc-price { font-size: 18px; font-weight: 700; color: #2d3748; }
     .pc-change { font-size: 13px; font-weight: 600; }
     .pc-plr { font-size: 13px; font-weight: 600; }
@@ -85,7 +85,7 @@
     <div class='total-val'>保有評価額合計 <span id='total-val'>—</span></div>
     <button class='save-btn' onclick='saveUserData()'>💾 データを保存</button>
   </div>
-  <div class='date'>2026年04月16日 20:18 時点</div>
+  <div class='date'>2026年04月16日 20:27 時点</div>
 
   <div class='section-title' id='title-owned' style='display:none'>📦 保有銘柄</div>
   <div class='grid' id='grid-owned'></div>
@@ -114,12 +114,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>3,365円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼1.03%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='2659' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-2659'></span>
@@ -173,12 +173,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>1,448円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼1.03%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4674' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-4674'></span>
@@ -232,12 +232,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>2,246円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.88%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='9381' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-9381'></span>
@@ -291,12 +291,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>3,753円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.77%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4540' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-4540'></span>
@@ -350,12 +350,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>1,041円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.76%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='3231' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-3231'></span>
@@ -409,12 +409,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>4,105円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.73%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='8584' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-8584'></span>
@@ -468,12 +468,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>3,055円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.65%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='8130' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-8130'></span>
@@ -527,12 +527,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>4,725円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.63%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='3817' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-3817'></span>
@@ -586,12 +586,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>2,910円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.51%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4958' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-4958'></span>
@@ -645,12 +645,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>3,498円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.48%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='1928' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-1928'></span>
@@ -704,12 +704,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>2,371円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.46%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='9769' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-9769'></span>
@@ -763,12 +763,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>1,407円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.42%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='6345' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-6345'></span>
@@ -822,12 +822,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>2,588円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.42%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4641' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-4641'></span>
@@ -881,12 +881,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>5,358円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.37%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='9364' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-9364'></span>
@@ -940,12 +940,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>1,104円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.36%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4097' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-4097'></span>
@@ -999,12 +999,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>1,279円</span>
       <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.08%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4008' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-4008'></span>
@@ -1058,12 +1058,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>4,919円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.04%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='1925' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-1925'></span>
@@ -1117,12 +1117,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>1,337円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.07%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='3333' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-3333'></span>
@@ -1176,12 +1176,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>1,163円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.09%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='9757' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-9757'></span>
@@ -1235,12 +1235,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>2,617円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.11%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='7989' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-7989'></span>
@@ -1294,12 +1294,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>1,902円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.13%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='3003' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-3003'></span>
@@ -1353,12 +1353,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>2,675円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.15%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='9986' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-9986'></span>
@@ -1412,12 +1412,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>1,853円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.22%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='2003' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-2003'></span>
@@ -1471,12 +1471,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>1,542円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.26%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='3901' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-3901'></span>
@@ -1530,12 +1530,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>2,802円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.29%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='3076' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-3076'></span>
@@ -1589,12 +1589,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>2,104円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.33%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='1343' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-1343'></span>
@@ -1648,12 +1648,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>4,465円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.45%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4746' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-4746'></span>
@@ -1707,12 +1707,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>2,575円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.47%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='7994' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-7994'></span>
@@ -1766,12 +1766,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>806円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.50%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='7820' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-7820'></span>
@@ -1825,12 +1825,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>5,466円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.51%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='8309' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-8309'></span>
@@ -1884,12 +1884,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>2,967円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.58%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='7723' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-7723'></span>
@@ -1943,12 +1943,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>2,835円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.60%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='6785' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-6785'></span>
@@ -2002,12 +2002,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>1,832円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.77%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='2169' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-2169'></span>
@@ -2061,12 +2061,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>2,423円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲1.51%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4042' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-4042'></span>
@@ -2120,12 +2120,12 @@
   </div>
     <div class='price-compare'>
     <div class='pc-row'>
-      <span class='pc-label'>現在</span>
+      <span class='pc-label'>現在株価</span>
       <span class='pc-price'>4,121円</span>
       <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲1.85%</span>
     </div>
     <div class='pc-row'>
-      <span class='pc-label'>平均</span>
+      <span class='pc-label'>平均取得単価</span>
       <input class='avg-input' type='text' inputmode='numeric' data-avg-code='8725' placeholder='0'>
       <span class='pc-unit'>円</span>
       <span class='pc-plr' id='plr-display-8725'></span>
