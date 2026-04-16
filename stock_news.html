@@ -62,7 +62,9 @@
     .invest-compare-item:first-child { background: #fff5f5; border-right: 1px solid #e2e8f0; }
     .invest-compare-label { font-size: 10px; color: #718096; margin-bottom: 4px; }
     .invest-compare-val { font-size: 15px; font-weight: 700; color: #2d3748; }
-    .invest-compare-budget { color: #718096; }
+    .invest-compare-input { width: 100%; border: none; border-bottom: 1px dashed #cbd5e0; background: transparent; font-size: 15px; font-weight: 700; color: #718096; text-align: center; outline: none; padding: 2px 0; }
+    .invest-compare-input:focus { border-bottom-color: #90cdf4; color: #2d3748; }
+    .invest-compare-unit { font-size: 11px; color: #a0aec0; margin-top: 2px; }
     .eval-item { font-size: 12px; color: #718096; }
     .div-pershare { font-size: 15px; font-weight: 600; color: #1a365d; }
     .div-month-disp { font-size: 13px; font-weight: 600; color: #1a365d; }
@@ -100,7 +102,7 @@
     <div class='total-val'>保有評価額合計 <span id='total-val'>—</span></div>
     <button class='save-btn' onclick='saveUserData()'>💾 データを保存</button>
   </div>
-  <div class='date'>2026年04月16日 20:43 時点</div>
+  <div class='date'>2026年04月16日 20:45 時点</div>
 
   <div class='section-title' id='title-owned' style='display:none'>📦 保有銘柄</div>
   <div class='grid' id='grid-owned'></div>
@@ -155,18 +157,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-2659'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='2659' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='2659' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='2659' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='2659'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='2659'>
@@ -222,18 +220,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4674'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='4674' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='4674' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='4674' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='4674'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='4674'>
@@ -289,18 +283,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-9381'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='9381' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='9381' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='9381' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='9381'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='9381'>
@@ -356,18 +346,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4540'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='4540' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='4540' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='4540' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='4540'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='4540'>
@@ -423,18 +409,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-3231'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='3231' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='3231' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='3231' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='3231'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='3231'>
@@ -490,18 +472,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-8584'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='8584' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='8584' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='8584' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='8584'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='8584'>
@@ -557,18 +535,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-8130'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='8130' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='8130' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='8130' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='8130'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='8130'>
@@ -624,18 +598,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-3817'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='3817' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='3817' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='3817' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='3817'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='3817'>
@@ -691,18 +661,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4958'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='4958' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='4958' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='4958' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='4958'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='4958'>
@@ -758,18 +724,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-1928'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='1928' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='1928' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='1928' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='1928'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='1928'>
@@ -825,18 +787,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-9769'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='9769' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='9769' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='9769' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='9769'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='9769'>
@@ -892,18 +850,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-6345'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='6345' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='6345' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='6345' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='6345'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='6345'>
@@ -959,18 +913,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4641'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='4641' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='4641' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='4641' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='4641'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='4641'>
@@ -1026,18 +976,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-9364'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='9364' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='9364' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='9364' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='9364'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='9364'>
@@ -1093,18 +1039,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4097'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='4097' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='4097' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='4097' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='4097'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='4097'>
@@ -1160,18 +1102,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4008'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='4008' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='4008' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='4008' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='4008'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='4008'>
@@ -1227,18 +1165,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-1925'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='1925' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='1925' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='1925' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='1925'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='1925'>
@@ -1294,18 +1228,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-3333'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='3333' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='3333' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='3333' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='3333'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='3333'>
@@ -1361,18 +1291,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-9757'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='9757' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='9757' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='9757' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='9757'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='9757'>
@@ -1428,18 +1354,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-7989'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='7989' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='7989' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='7989' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='7989'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='7989'>
@@ -1495,18 +1417,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-3003'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='3003' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='3003' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='3003' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='3003'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='3003'>
@@ -1562,18 +1480,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-9986'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='9986' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='9986' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='9986' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='9986'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='9986'>
@@ -1629,18 +1543,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-2003'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='2003' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='2003' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='2003' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='2003'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='2003'>
@@ -1696,18 +1606,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-3901'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='3901' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='3901' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='3901' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='3901'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='3901'>
@@ -1763,18 +1669,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-3076'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='3076' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='3076' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='3076' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='3076'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='3076'>
@@ -1830,18 +1732,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-1343'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='1343' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='1343' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='1343' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='1343'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='1343'>
@@ -1897,18 +1795,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4746'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='4746' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='4746' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='4746' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='4746'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='4746'>
@@ -1964,18 +1858,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-7994'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='7994' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='7994' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='7994' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='7994'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='7994'>
@@ -2031,18 +1921,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-7820'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='7820' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='7820' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='7820' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='7820'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='7820'>
@@ -2098,18 +1984,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-8309'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='8309' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='8309' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='8309' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='8309'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='8309'>
@@ -2165,18 +2047,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-7723'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='7723' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='7723' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='7723' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='7723'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='7723'>
@@ -2232,18 +2110,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-6785'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='6785' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='6785' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='6785' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='6785'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='6785'>
@@ -2299,18 +2173,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-2169'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='2169' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='2169' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='2169' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='2169'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='2169'>
@@ -2366,18 +2236,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4042'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='4042' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='4042' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='4042' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='4042'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='4042'>
@@ -2433,18 +2299,14 @@
     </div>
     <div class='invest-compare-item'>
       <span class='invest-compare-label'>目標投資額</span>
-      <strong class='invest-compare-val invest-compare-budget' id='budget-display-8725'>—</strong>
+      <input class='budget-input invest-compare-input' type='text' inputmode='numeric' data-budget-code='8725' placeholder='—'>
+      <span class='invest-compare-unit'>円</span>
     </div>
   </div>
   <div class='target-row'>
     <span class='target-label'>📦 現在株数</span>
     <input class='current-input' type='text' inputmode='numeric' data-current-code='8725' placeholder='0'>
     <span class='target-unit'>株</span>
-  </div>
-  <div class='target-row'>
-    <span class='target-label'>💰 目標投資額</span>
-    <input class='budget-input' type='text' inputmode='numeric' data-budget-code='8725' placeholder='0'>
-    <span class='target-unit'>円</span>
   </div>
   <input class='div-input' type='hidden' data-div-code='8725'>
   <input class='divmonth-input' type='hidden' data-divmonth-code='8725'>
@@ -2700,15 +2562,9 @@
     const incomeEl = document.getElementById('income-' + code);
     if (incomeEl) incomeEl.textContent = (div && shares) ? Math.round(div * shares).toLocaleString() + '円/年' : '—';
 
-    // 評価額 vs 目標投資額 比較ブロック
+    // 評価額表示
     const valEl2 = document.getElementById('val-' + code);
-    const budgetDispEl = document.getElementById('budget-display-' + code);
     if (valEl2) valEl2.textContent = val.toLocaleString() + '円';
-    if (budgetDispEl) {
-      const budgetInput = document.querySelector('.budget-input[data-budget-code="' + code + '"]');
-      const budget = budgetInput ? parseNum(budgetInput.value) : 0;
-      budgetDispEl.textContent = budget ? budget.toLocaleString() + '円' : '—';
-    }
   }
 
   // チェックボックス初期化
