@@ -57,6 +57,12 @@
     .divmonth-input { width: 80px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 4px 8px; font-size: 13px; color: #2d3748; outline: none; }
     .divmonth-input:focus { border-color: #90cdf4; }
     .eval-block { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; padding: 8px 10px; background: #f7fafc; border-radius: 8px; }
+    .invest-compare { display: flex; gap: 0; margin-top: 8px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
+    .invest-compare-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px 6px; background: #f7fafc; }
+    .invest-compare-item:first-child { background: #fff5f5; border-right: 1px solid #e2e8f0; }
+    .invest-compare-label { font-size: 10px; color: #718096; margin-bottom: 4px; }
+    .invest-compare-val { font-size: 15px; font-weight: 700; color: #2d3748; }
+    .invest-compare-budget { color: #718096; }
     .eval-item { font-size: 12px; color: #718096; }
     .div-pershare { font-size: 15px; font-weight: 600; color: #1a365d; }
     .div-month-disp { font-size: 13px; font-weight: 600; color: #1a365d; }
@@ -85,7 +91,7 @@
     <div class='total-val'>保有評価額合計 <span id='total-val'>—</span></div>
     <button class='save-btn' onclick='saveUserData()'>💾 データを保存</button>
   </div>
-  <div class='date'>2026年04月16日 20:27 時点</div>
+  <div class='date'>2026年04月16日 20:29 時点</div>
 
   <div class='section-title' id='title-owned' style='display:none'>📦 保有銘柄</div>
   <div class='grid' id='grid-owned'></div>
@@ -126,9 +132,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-2659' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-2659'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-2659'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-2659'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-2659'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-2659'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-2659'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -185,9 +200,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-4674' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-4674'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4674'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4674'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-4674'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-4674'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4674'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -244,9 +268,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-9381' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-9381'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-9381'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-9381'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-9381'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-9381'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-9381'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -303,9 +336,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-4540' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-4540'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4540'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4540'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-4540'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-4540'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4540'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -362,9 +404,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-3231' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-3231'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-3231'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3231'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-3231'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-3231'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-3231'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -421,9 +472,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-8584' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-8584'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-8584'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-8584'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-8584'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-8584'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-8584'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -480,9 +540,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-8130' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-8130'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-8130'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-8130'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-8130'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-8130'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-8130'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -539,9 +608,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-3817' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-3817'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-3817'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3817'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-3817'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-3817'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-3817'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -598,9 +676,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-4958' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-4958'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4958'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4958'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-4958'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-4958'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4958'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -657,9 +744,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-1928' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-1928'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-1928'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-1928'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-1928'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-1928'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-1928'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -716,9 +812,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-9769' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-9769'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-9769'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-9769'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-9769'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-9769'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-9769'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -775,9 +880,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-6345' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-6345'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-6345'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-6345'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-6345'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-6345'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-6345'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -834,9 +948,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-4641' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-4641'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4641'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4641'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-4641'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-4641'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4641'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -893,9 +1016,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-9364' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-9364'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-9364'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-9364'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-9364'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-9364'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-9364'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -952,9 +1084,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-4097' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-4097'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4097'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4097'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-4097'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-4097'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4097'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1011,9 +1152,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-4008' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-4008'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4008'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4008'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-4008'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-4008'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4008'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1070,9 +1220,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-1925' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-1925'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-1925'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-1925'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-1925'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-1925'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-1925'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1129,9 +1288,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-3333' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-3333'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-3333'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3333'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-3333'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-3333'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-3333'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1188,9 +1356,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-9757' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-9757'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-9757'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-9757'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-9757'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-9757'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-9757'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1247,9 +1424,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-7989' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-7989'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-7989'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-7989'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-7989'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-7989'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-7989'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1306,9 +1492,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-3003' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-3003'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-3003'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3003'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-3003'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-3003'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-3003'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1365,9 +1560,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-9986' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-9986'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-9986'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-9986'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-9986'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-9986'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-9986'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1424,9 +1628,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-2003' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-2003'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-2003'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-2003'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-2003'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-2003'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-2003'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1483,9 +1696,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-3901' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-3901'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-3901'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3901'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-3901'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-3901'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-3901'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1542,9 +1764,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-3076' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-3076'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-3076'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3076'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-3076'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-3076'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-3076'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1601,9 +1832,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-1343' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-1343'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-1343'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-1343'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-1343'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-1343'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-1343'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1660,9 +1900,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-4746' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-4746'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4746'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4746'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-4746'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-4746'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4746'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1719,9 +1968,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-7994' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-7994'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-7994'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-7994'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-7994'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-7994'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-7994'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1778,9 +2036,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-7820' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-7820'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-7820'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-7820'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-7820'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-7820'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-7820'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1837,9 +2104,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-8309' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-8309'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-8309'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-8309'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-8309'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-8309'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-8309'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1896,9 +2172,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-7723' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-7723'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-7723'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-7723'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-7723'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-7723'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-7723'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -1955,9 +2240,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-6785' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-6785'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-6785'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-6785'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-6785'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-6785'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-6785'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -2014,9 +2308,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-2169' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-2169'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-2169'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-2169'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-2169'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-2169'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-2169'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -2073,9 +2376,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-4042' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-4042'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4042'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4042'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-4042'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-4042'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-4042'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -2132,9 +2444,18 @@
     </div>
   </div>
   <div class='eval-block' id='eval-block-8725' style='display:none'>
-    <span class='eval-item'>評価額 <strong id='val-8725'>—</strong></span>
     <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-8725'>—</strong></span>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-8725'>—</strong></span>
+  </div>
+  <div class='invest-compare' id='invest-compare-8725'>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>評価額</span>
+      <strong class='invest-compare-val' id='val-8725'>—</strong>
+    </div>
+    <div class='invest-compare-item'>
+      <span class='invest-compare-label'>目標投資額</span>
+      <strong class='invest-compare-val invest-compare-budget' id='budget-display-8725'>—</strong>
+    </div>
   </div>
   <ul class='news-list'><li class='no-news'>ニュースなし</li></ul>
   <div class='target-row'>
@@ -2404,6 +2725,16 @@
 
     const incomeEl = document.getElementById('income-' + code);
     if (incomeEl) incomeEl.textContent = (div && shares) ? Math.round(div * shares).toLocaleString() + '円/年' : '—';
+
+    // 評価額 vs 目標投資額 比較ブロック
+    const valEl2 = document.getElementById('val-' + code);
+    const budgetDispEl = document.getElementById('budget-display-' + code);
+    if (valEl2) valEl2.textContent = val.toLocaleString() + '円';
+    if (budgetDispEl) {
+      const budgetInput = document.querySelector('.budget-input[data-budget-code="' + code + '"]');
+      const budget = budgetInput ? parseNum(budgetInput.value) : 0;
+      budgetDispEl.textContent = budget ? budget.toLocaleString() + '円' : '—';
+    }
   }
 
   // チェックボックス初期化
@@ -2477,7 +2808,7 @@
   document.querySelectorAll('.budget-input').forEach(input => {
     const code = input.dataset.budgetCode;
     if (budgets[code]) input.value = budgets[code];
-    attachNumInput(input, val => saveBudget(code, val), null);
+    attachNumInput(input, val => { saveBudget(code, val); calcEval(code); }, code);
   });
 
   // 配当金初期化・自動保存
