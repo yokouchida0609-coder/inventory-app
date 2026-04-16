@@ -73,7 +73,16 @@
     .div-summary-label { font-size: 10px; color: #2b6cb0; margin-bottom: 3px; }
     .div-summary-item strong { font-size: 15px; color: #1a365d; }
     .div-yield { color: #1a365d; font-size: 15px; font-weight: 700; }
-    .price-compare { background: #f7fafc; border-radius: 8px; padding: 8px 14px; margin-bottom: 10px; display: inline-flex; flex-direction: column; gap: 4px; min-width: 180px; border: 1px solid #e2e8f0; }
+    .metrics-block { background: #f7fafc; border-radius: 8px; padding: 4px 14px; margin-bottom: 8px; border: 1px solid #e2e8f0; }
+    .metric-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid #edf2f7; }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-label { font-size: 12px; color: #a0aec0; width: 88px; flex-shrink: 0; }
+    .metric-val { font-size: 16px; font-weight: 700; color: #2d3748; }
+    .metric-sub { font-size: 16px; font-weight: 600; margin-left: auto; }
+    .metric-tiny { font-size: 11px; color: #a0aec0; font-weight: 400; }
+    .metric-unit { font-size: 12px; color: #a0aec0; }
+    .metric-input { width: 110px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 3px 8px; font-size: 16px; font-weight: 700; color: #718096; outline: none; text-align: right; background: white; }
+    .metric-input:focus { border-color: #90cdf4; }
     .pc-row { display: flex; align-items: baseline; gap: 8px; }
     .pc-label { font-size: 11px; color: #a0aec0; white-space: nowrap; margin-right: 4px; }
     .pc-price { font-size: 18px; font-weight: 700; color: #2d3748; }
@@ -91,7 +100,7 @@
     <div class='total-val'>保有評価額合計 <span id='total-val'>—</span></div>
     <button class='save-btn' onclick='saveUserData()'>💾 データを保存</button>
   </div>
-  <div class='date'>2026年04月16日 20:32 時点</div>
+  <div class='date'>2026年04月16日 20:35 時点</div>
 
   <div class='section-title' id='title-owned' style='display:none'>📦 保有銘柄</div>
   <div class='grid' id='grid-owned'></div>
@@ -118,21 +127,24 @@
       <span class='div-month-disp' id='month-display-2659'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>3,365円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼1.03%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>3,365円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼1.03%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='2659' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='2659' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-2659'></span>
     </div>
+    <div class='metric-row' id='eval-block-2659' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-2659'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-2659' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-2659'>—</strong></span>
+  <div class='eval-block' id='income-block-2659' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-2659'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-2659'>
@@ -177,21 +189,24 @@
       <span class='div-month-disp' id='month-display-4674'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>1,448円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼1.03%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>1,448円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼1.03%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4674' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='4674' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-4674'></span>
     </div>
+    <div class='metric-row' id='eval-block-4674' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-4674'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-4674' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4674'>—</strong></span>
+  <div class='eval-block' id='income-block-4674' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4674'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-4674'>
@@ -236,21 +251,24 @@
       <span class='div-month-disp' id='month-display-9381'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>2,246円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.88%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>2,246円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼0.88%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='9381' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='9381' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-9381'></span>
     </div>
+    <div class='metric-row' id='eval-block-9381' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-9381'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-9381' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-9381'>—</strong></span>
+  <div class='eval-block' id='income-block-9381' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-9381'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-9381'>
@@ -295,21 +313,24 @@
       <span class='div-month-disp' id='month-display-4540'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>3,753円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.77%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>3,753円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼0.77%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4540' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='4540' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-4540'></span>
     </div>
+    <div class='metric-row' id='eval-block-4540' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-4540'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-4540' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4540'>—</strong></span>
+  <div class='eval-block' id='income-block-4540' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4540'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-4540'>
@@ -354,21 +375,24 @@
       <span class='div-month-disp' id='month-display-3231'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>1,041円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.76%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>1,041円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼0.76%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='3231' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='3231' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-3231'></span>
     </div>
+    <div class='metric-row' id='eval-block-3231' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-3231'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-3231' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-3231'>—</strong></span>
+  <div class='eval-block' id='income-block-3231' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3231'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-3231'>
@@ -413,21 +437,24 @@
       <span class='div-month-disp' id='month-display-8584'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>4,105円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.73%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>4,105円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼0.73%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='8584' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='8584' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-8584'></span>
     </div>
+    <div class='metric-row' id='eval-block-8584' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-8584'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-8584' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-8584'>—</strong></span>
+  <div class='eval-block' id='income-block-8584' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-8584'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-8584'>
@@ -472,21 +499,24 @@
       <span class='div-month-disp' id='month-display-8130'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>3,055円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.65%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>3,055円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼0.65%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='8130' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='8130' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-8130'></span>
     </div>
+    <div class='metric-row' id='eval-block-8130' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-8130'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-8130' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-8130'>—</strong></span>
+  <div class='eval-block' id='income-block-8130' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-8130'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-8130'>
@@ -531,21 +561,24 @@
       <span class='div-month-disp' id='month-display-3817'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>4,725円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.63%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>4,725円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼0.63%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='3817' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='3817' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-3817'></span>
     </div>
+    <div class='metric-row' id='eval-block-3817' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-3817'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-3817' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-3817'>—</strong></span>
+  <div class='eval-block' id='income-block-3817' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3817'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-3817'>
@@ -590,21 +623,24 @@
       <span class='div-month-disp' id='month-display-4958'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>2,910円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.51%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>2,910円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼0.51%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4958' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='4958' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-4958'></span>
     </div>
+    <div class='metric-row' id='eval-block-4958' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-4958'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-4958' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4958'>—</strong></span>
+  <div class='eval-block' id='income-block-4958' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4958'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-4958'>
@@ -649,21 +685,24 @@
       <span class='div-month-disp' id='month-display-1928'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>3,498円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.48%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>3,498円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼0.48%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='1928' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='1928' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-1928'></span>
     </div>
+    <div class='metric-row' id='eval-block-1928' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-1928'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-1928' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-1928'>—</strong></span>
+  <div class='eval-block' id='income-block-1928' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-1928'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-1928'>
@@ -708,21 +747,24 @@
       <span class='div-month-disp' id='month-display-9769'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>2,371円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.46%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>2,371円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼0.46%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='9769' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='9769' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-9769'></span>
     </div>
+    <div class='metric-row' id='eval-block-9769' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-9769'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-9769' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-9769'>—</strong></span>
+  <div class='eval-block' id='income-block-9769' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-9769'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-9769'>
@@ -767,21 +809,24 @@
       <span class='div-month-disp' id='month-display-6345'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>1,407円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.42%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>1,407円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼0.42%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='6345' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='6345' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-6345'></span>
     </div>
+    <div class='metric-row' id='eval-block-6345' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-6345'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-6345' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-6345'>—</strong></span>
+  <div class='eval-block' id='income-block-6345' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-6345'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-6345'>
@@ -826,21 +871,24 @@
       <span class='div-month-disp' id='month-display-4641'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>2,588円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.42%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>2,588円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼0.42%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4641' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='4641' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-4641'></span>
     </div>
+    <div class='metric-row' id='eval-block-4641' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-4641'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-4641' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4641'>—</strong></span>
+  <div class='eval-block' id='income-block-4641' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4641'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-4641'>
@@ -885,21 +933,24 @@
       <span class='div-month-disp' id='month-display-9364'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>5,358円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.37%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>5,358円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼0.37%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='9364' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='9364' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-9364'></span>
     </div>
+    <div class='metric-row' id='eval-block-9364' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-9364'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-9364' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-9364'>—</strong></span>
+  <div class='eval-block' id='income-block-9364' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-9364'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-9364'>
@@ -944,21 +995,24 @@
       <span class='div-month-disp' id='month-display-4097'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>1,104円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.36%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>1,104円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼0.36%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4097' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='4097' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-4097'></span>
     </div>
+    <div class='metric-row' id='eval-block-4097' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-4097'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-4097' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4097'>—</strong></span>
+  <div class='eval-block' id='income-block-4097' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4097'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-4097'>
@@ -1003,21 +1057,24 @@
       <span class='div-month-disp' id='month-display-4008'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>1,279円</span>
-      <span class='pc-change' style='color:#3182ce'><span class='pc-sublabel'>前日比 </span>▼0.08%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>1,279円</span>
+      <span class='metric-sub' style='color:#3182ce'><span class='metric-tiny'>前日比 </span>▼0.08%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4008' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='4008' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-4008'></span>
     </div>
+    <div class='metric-row' id='eval-block-4008' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-4008'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-4008' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4008'>—</strong></span>
+  <div class='eval-block' id='income-block-4008' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4008'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-4008'>
@@ -1062,21 +1119,24 @@
       <span class='div-month-disp' id='month-display-1925'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>4,919円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.04%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>4,919円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.04%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='1925' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='1925' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-1925'></span>
     </div>
+    <div class='metric-row' id='eval-block-1925' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-1925'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-1925' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-1925'>—</strong></span>
+  <div class='eval-block' id='income-block-1925' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-1925'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-1925'>
@@ -1121,21 +1181,24 @@
       <span class='div-month-disp' id='month-display-3333'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>1,337円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.07%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>1,337円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.07%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='3333' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='3333' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-3333'></span>
     </div>
+    <div class='metric-row' id='eval-block-3333' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-3333'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-3333' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-3333'>—</strong></span>
+  <div class='eval-block' id='income-block-3333' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3333'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-3333'>
@@ -1180,21 +1243,24 @@
       <span class='div-month-disp' id='month-display-9757'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>1,163円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.09%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>1,163円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.09%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='9757' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='9757' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-9757'></span>
     </div>
+    <div class='metric-row' id='eval-block-9757' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-9757'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-9757' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-9757'>—</strong></span>
+  <div class='eval-block' id='income-block-9757' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-9757'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-9757'>
@@ -1239,21 +1305,24 @@
       <span class='div-month-disp' id='month-display-7989'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>2,617円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.11%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>2,617円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.11%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='7989' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='7989' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-7989'></span>
     </div>
+    <div class='metric-row' id='eval-block-7989' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-7989'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-7989' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-7989'>—</strong></span>
+  <div class='eval-block' id='income-block-7989' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-7989'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-7989'>
@@ -1298,21 +1367,24 @@
       <span class='div-month-disp' id='month-display-3003'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>1,902円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.13%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>1,902円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.13%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='3003' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='3003' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-3003'></span>
     </div>
+    <div class='metric-row' id='eval-block-3003' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-3003'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-3003' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-3003'>—</strong></span>
+  <div class='eval-block' id='income-block-3003' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3003'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-3003'>
@@ -1357,21 +1429,24 @@
       <span class='div-month-disp' id='month-display-9986'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>2,675円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.15%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>2,675円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.15%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='9986' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='9986' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-9986'></span>
     </div>
+    <div class='metric-row' id='eval-block-9986' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-9986'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-9986' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-9986'>—</strong></span>
+  <div class='eval-block' id='income-block-9986' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-9986'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-9986'>
@@ -1416,21 +1491,24 @@
       <span class='div-month-disp' id='month-display-2003'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>1,853円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.22%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>1,853円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.22%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='2003' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='2003' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-2003'></span>
     </div>
+    <div class='metric-row' id='eval-block-2003' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-2003'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-2003' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-2003'>—</strong></span>
+  <div class='eval-block' id='income-block-2003' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-2003'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-2003'>
@@ -1475,21 +1553,24 @@
       <span class='div-month-disp' id='month-display-3901'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>1,542円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.26%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>1,542円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.26%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='3901' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='3901' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-3901'></span>
     </div>
+    <div class='metric-row' id='eval-block-3901' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-3901'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-3901' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-3901'>—</strong></span>
+  <div class='eval-block' id='income-block-3901' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3901'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-3901'>
@@ -1534,21 +1615,24 @@
       <span class='div-month-disp' id='month-display-3076'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>2,802円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.29%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>2,802円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.29%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='3076' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='3076' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-3076'></span>
     </div>
+    <div class='metric-row' id='eval-block-3076' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-3076'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-3076' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-3076'>—</strong></span>
+  <div class='eval-block' id='income-block-3076' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-3076'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-3076'>
@@ -1593,21 +1677,24 @@
       <span class='div-month-disp' id='month-display-1343'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>2,104円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.33%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>2,104円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.33%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='1343' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='1343' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-1343'></span>
     </div>
+    <div class='metric-row' id='eval-block-1343' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-1343'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-1343' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-1343'>—</strong></span>
+  <div class='eval-block' id='income-block-1343' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-1343'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-1343'>
@@ -1652,21 +1739,24 @@
       <span class='div-month-disp' id='month-display-4746'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>4,465円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.45%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>4,465円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.45%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4746' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='4746' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-4746'></span>
     </div>
+    <div class='metric-row' id='eval-block-4746' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-4746'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-4746' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4746'>—</strong></span>
+  <div class='eval-block' id='income-block-4746' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4746'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-4746'>
@@ -1711,21 +1801,24 @@
       <span class='div-month-disp' id='month-display-7994'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>2,575円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.47%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>2,575円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.47%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='7994' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='7994' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-7994'></span>
     </div>
+    <div class='metric-row' id='eval-block-7994' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-7994'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-7994' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-7994'>—</strong></span>
+  <div class='eval-block' id='income-block-7994' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-7994'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-7994'>
@@ -1770,21 +1863,24 @@
       <span class='div-month-disp' id='month-display-7820'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>806円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.50%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>806円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.50%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='7820' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='7820' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-7820'></span>
     </div>
+    <div class='metric-row' id='eval-block-7820' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-7820'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-7820' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-7820'>—</strong></span>
+  <div class='eval-block' id='income-block-7820' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-7820'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-7820'>
@@ -1829,21 +1925,24 @@
       <span class='div-month-disp' id='month-display-8309'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>5,466円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.51%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>5,466円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.51%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='8309' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='8309' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-8309'></span>
     </div>
+    <div class='metric-row' id='eval-block-8309' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-8309'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-8309' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-8309'>—</strong></span>
+  <div class='eval-block' id='income-block-8309' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-8309'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-8309'>
@@ -1888,21 +1987,24 @@
       <span class='div-month-disp' id='month-display-7723'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>2,967円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.58%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>2,967円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.58%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='7723' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='7723' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-7723'></span>
     </div>
+    <div class='metric-row' id='eval-block-7723' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-7723'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-7723' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-7723'>—</strong></span>
+  <div class='eval-block' id='income-block-7723' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-7723'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-7723'>
@@ -1947,21 +2049,24 @@
       <span class='div-month-disp' id='month-display-6785'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>2,835円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.60%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>2,835円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.60%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='6785' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='6785' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-6785'></span>
     </div>
+    <div class='metric-row' id='eval-block-6785' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-6785'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-6785' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-6785'>—</strong></span>
+  <div class='eval-block' id='income-block-6785' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-6785'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-6785'>
@@ -2006,21 +2111,24 @@
       <span class='div-month-disp' id='month-display-2169'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>1,832円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲0.77%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>1,832円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲0.77%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='2169' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='2169' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-2169'></span>
     </div>
+    <div class='metric-row' id='eval-block-2169' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-2169'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-2169' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-2169'>—</strong></span>
+  <div class='eval-block' id='income-block-2169' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-2169'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-2169'>
@@ -2065,21 +2173,24 @@
       <span class='div-month-disp' id='month-display-4042'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>2,423円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲1.51%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>2,423円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲1.51%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='4042' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='4042' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-4042'></span>
     </div>
+    <div class='metric-row' id='eval-block-4042' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-4042'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-4042' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-4042'>—</strong></span>
+  <div class='eval-block' id='income-block-4042' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-4042'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-4042'>
@@ -2124,21 +2235,24 @@
       <span class='div-month-disp' id='month-display-8725'>—</span>
     </div>
   </div>
-    <div class='price-compare'>
-    <div class='pc-row'>
-      <span class='pc-label'>現在株価</span>
-      <span class='pc-price'>4,121円</span>
-      <span class='pc-change' style='color:#e53e3e'><span class='pc-sublabel'>前日比 </span>▲1.85%</span>
+    <div class='metrics-block'>
+    <div class='metric-row'>
+      <span class='metric-label'>現在株価</span>
+      <span class='metric-val'>4,121円</span>
+      <span class='metric-sub' style='color:#e53e3e'><span class='metric-tiny'>前日比 </span>▲1.85%</span>
     </div>
-    <div class='pc-row'>
-      <span class='pc-label'>平均取得単価</span>
-      <input class='avg-input' type='text' inputmode='numeric' data-avg-code='8725' placeholder='0'>
-      <span class='pc-unit'>円</span>
+    <div class='metric-row'>
+      <span class='metric-label'>平均取得単価</span>
+      <input class='avg-input metric-input' type='text' inputmode='numeric' data-avg-code='8725' placeholder='—'>
+      <span class='metric-unit'>円</span>
       <span class='pc-plr' id='plr-display-8725'></span>
     </div>
+    <div class='metric-row' id='eval-block-8725' style='display:none'>
+      <span class='metric-label'>評価損益</span>
+      <strong class='eval-pl metric-val' id='pl-8725'>—</strong>
+    </div>
   </div>
-  <div class='eval-block' id='eval-block-8725' style='display:none'>
-    <span class='eval-item'>評価損益 <strong class='eval-pl' id='pl-8725'>—</strong></span>
+  <div class='eval-block' id='income-block-8725' style='display:none'>
     <span class='eval-item'>受取配当金 <strong class='div-income' id='income-8725'>—</strong></span>
   </div>
   <div class='invest-compare' id='invest-compare-8725'>
@@ -2390,12 +2504,15 @@
     }
 
     // 評価ブロック（保有のみ）
-    const evalBlock = document.getElementById('eval-block-' + code);
+    const evalBlock   = document.getElementById('eval-block-' + code);
+    const incomeBlock = document.getElementById('income-block-' + code);
     if (!shares || !price) {
-      if (evalBlock) evalBlock.style.display = 'none';
+      if (evalBlock)   evalBlock.style.display = 'none';
+      if (incomeBlock) incomeBlock.style.display = 'none';
       return;
     }
-    if (evalBlock) evalBlock.style.display = 'flex';
+    if (evalBlock)   evalBlock.style.display = 'flex';
+    if (incomeBlock) incomeBlock.style.display = 'flex';
 
     const val = price * shares;
     document.getElementById('val-' + code).textContent = val.toLocaleString() + '円';
