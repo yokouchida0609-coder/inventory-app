@@ -100,9 +100,10 @@
   <div class='title-row'>
     <h1>📊 高配当株 ダッシュボード</h1>
     <div class='total-val'>保有評価額合計 <span id='total-val'>—</span></div>
+    <div class='total-val'>評価損益合計 <span id='total-pl'>—</span></div>
     <button class='save-btn' onclick='saveUserData()'>💾 データを保存</button>
   </div>
-  <div class='date'>2026年04月16日 20:47 時点</div>
+  <div class='date'>2026年04月16日 20:50 時点</div>
 
   <div class='section-title' id='title-owned' style='display:none'>📦 保有銘柄</div>
   <div class='grid' id='grid-owned'></div>
@@ -2678,15 +2679,24 @@
 
   // 評価額を初期計算＆合計を表示
   let totalVal = 0;
+  let totalPl  = 0;
   document.querySelectorAll('.stock-card').forEach(card => {
     const code   = card.dataset.code;
     const price  = parseFloat(card.dataset.price) || 0;
     const shares = parseFloat(currents[code]) || 0;
+    const avg    = parseFloat(avgs[code]) || 0;
     totalVal += price * shares;
+    if (avg && shares) totalPl += (price - avg) * shares;
     calcEval(code);
   });
   if (totalVal > 0) {
     document.getElementById('total-val').textContent = totalVal.toLocaleString() + '円';
+  }
+  if (totalPl !== 0) {
+    const plEl = document.getElementById('total-pl');
+    const sign = totalPl >= 0 ? '+' : '';
+    plEl.textContent = sign + Math.round(totalPl).toLocaleString() + '円';
+    plEl.style.color = totalPl >= 0 ? '#e53e3e' : '#3182ce';
   }
 
   // メモ初期化・自動保存
