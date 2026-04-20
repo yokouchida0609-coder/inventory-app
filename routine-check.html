@@ -562,7 +562,7 @@ const ANNUAL_TASKS = [
 
 function getDefaultState() {
   return {
-    date: todayStr, checked: [],
+    date: todayStr, checked: [], myTaskChecked: [],
     weekStart: weekStartStr, weeklyChecked: [],
     monthKey: monthKeyStr, monthlyChecked: [],
     yearKey: yearKeyStr, annualChecked: [],
@@ -584,6 +584,7 @@ function loadState() {
   if (state.date !== todayStr) {
     state.date = todayStr;
     state.checked = [];
+    state.myTaskChecked = [];
   }
   if (state.weekStart !== weekStartStr) {
     state.weekStart = weekStartStr;
@@ -601,6 +602,7 @@ function loadState() {
   if (!state.monthlyChecked) state.monthlyChecked = [];
   if (!state.annualChecked)  state.annualChecked  = [];
   if (!state.lastDone)       state.lastDone       = {};
+  if (!state.myTaskChecked)  state.myTaskChecked  = [];
 
   return state;
 }
@@ -723,9 +725,10 @@ function renderTaskList(containerId, tasks, checkedArr, state) {
 
   el.innerHTML = allItems.map(task => {
     if (task._custom) {
+      const done = state && state.myTaskChecked && state.myTaskChecked.includes(task.id);
       const noteHtml = task.note ? '<span class="my-task-note">' + task.note + '</span>' : '';
       const delBtn = '<button class="my-task-delete" onclick="event.stopPropagation();deleteMyTask(\'' + task.id + '\')">×</button>';
-      return '<div class="my-task-card' + (task.done ? ' done' : '') + '" data-id="' + task.id + '" data-section="' + task.section + '" onclick="toggleMyTask(\'' + task.id + '\')">'
+      return '<div class="my-task-card' + (done ? ' done' : '') + '" data-id="' + task.id + '" data-section="' + task.section + '" onclick="toggleMyTask(\'' + task.id + '\')">'
         + '<div class="my-task-checkbox"></div>'
         + '<span class="my-task-name">' + task.name + '</span>'
         + noteHtml + delBtn + '</div>';
@@ -856,10 +859,11 @@ function addMyTask() {
 }
 
 function toggleMyTask(id) {
-  const tasks = loadMyTasks();
-  const t = tasks.find(t => t.id === id);
-  if (t) t.done = !t.done;
-  saveMyTasks(tasks);
+  const state = loadState();
+  const idx = state.myTaskChecked.indexOf(id);
+  if (idx === -1) state.myTaskChecked.push(id);
+  else state.myTaskChecked.splice(idx, 1);
+  saveState(state);
   render();
 }
 
