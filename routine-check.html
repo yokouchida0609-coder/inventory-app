@@ -180,8 +180,7 @@
   .ref-name { flex: 1; font-size: 0.9rem; }
   .ref-note { font-size: 0.75rem; color: #bbb; }
 
-  #tasks-morning .task-card, #tasks-noon .task-card,
-  #tasks-anytime .task-card { background: #e1f5fe; }
+  #tasks-morning .task-card, #tasks-noon .task-card { background: #e1f5fe; }
   #tasks-day .task-card { background: #ede7f6; }
   #tasks-evening .task-card { background: #ede7f6; }
   #tasks-weekly .task-card  { background: #fff3e0; }
@@ -320,7 +319,6 @@
     <div class="section">
       <div class="section-title">昼</div>
       <div class="task-list" id="tasks-noon"></div>
-      <div class="task-list" id="tasks-anytime" style="margin-top:6px"></div>
     </div>
     <div class="section">
       <div class="section-title">夜</div>
@@ -781,9 +779,8 @@ function render() {
   document.getElementById('progress-fill').style.width = pct + '%';
 
   renderTaskList('tasks-morning',  MORNING_TASKS,  state.checked, state);
-  renderTaskList('tasks-noon',     NOON_TASKS,     state.checked, state);
+  renderTaskList('tasks-noon',     [...NOON_TASKS, ...ANYTIME_TASKS], state.checked, state);
   renderTaskList('tasks-evening',  EVENING_TASKS,  state.checked, state);
-  renderTaskList('tasks-anytime',  ANYTIME_TASKS,  state.checked, state);
 
   // 曜日タスク（今日の分だけ表示）
   const todayDayTasks = WEEKLY_DAY_TASKS.filter(t => t.days.includes(dayOfWeek));
@@ -812,7 +809,7 @@ function render() {
 
 // ---- ソート ----
 const SORTABLE_CONTAINERS = [
-  'tasks-morning','tasks-noon','tasks-evening','tasks-anytime',
+  'tasks-morning','tasks-noon','tasks-evening',
   'tasks-day','tasks-weekly','tasks-monthly','tasks-annual'
 ];
 let _sortables = {};
@@ -877,7 +874,7 @@ const SECTION_TO_CONTAINER = {
   '朝':   'tasks-morning',
   '昼':   'tasks-noon',
   '夜':   'tasks-evening',
-  '随時': 'tasks-anytime',  // 後方互換（既存データ）
+  '随時': 'tasks-noon',  // 後方互換（既存データ）
 
   '曜日': 'tasks-day',
   '週間': 'tasks-weekly',
