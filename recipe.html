@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美味しかったレシピ</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; }
+
+  header {
+    background: #ff7043;
+    color: white;
+    padding: 16px 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,.2);
+  }
+  header h1 { font-size: 1.4rem; }
+
+  .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+
+  .form-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.1);
+  }
+
+  .form-card h2 { font-size: 1rem; margin-bottom: 14px; color: #ff7043; }
+
+  label { display: block; font-size: 0.85rem; color: #666; margin-bottom: 4px; margin-top: 12px; }
+  label:first-of-type { margin-top: 0; }
+
+  input[type="text"], input[type="url"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color .2s;
+  }
+  input:focus { border-color: #ff7043; }
+
+  .upload-area {
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    position: relative;
+  }
+  .upload-area:hover { border-color: #ff7043; background: #fff3f0; }
+  .upload-area input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .upload-area .icon { font-size: 2rem; }
+  .upload-area p { font-size: 0.85rem; color: #999; margin-top: 6px; }
+
+  #preview-wrap { margin-top: 10px; display: none; }
+  #preview-wrap img { width: 100%; border-radius: 8px; max-height: 200px; object-fit: cover; }
+  #preview-wrap button {
+    margin-top: 6px; font-size: 0.8rem; background: none; border: none;
+    color: #f44336; cursor: pointer;
+  }
+
+  .btn-add {
+    width: 100%;
+    padding: 12px;
+    background: #ff7043;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: background .2s;
+  }
+  .btn-add:hover { background: #e64a19; }
+
+  .recipe-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .recipe-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.1);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .recipe-thumb {
+    width: 80px; height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #f5f5f5;
+  }
+  .recipe-thumb-placeholder {
+    width: 80px; height: 80px;
+    border-radius: 8px;
+    background: #ffe0d6;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+  }
+
+  .recipe-info { flex: 1; min-width: 0; }
+  .recipe-info h3 { font-size: 1rem; margin-bottom: 4px; }
+  .recipe-info a {
+    font-size: 0.8rem; color: #ff7043; word-break: break-all;
+    text-decoration: none;
+  }
+  .recipe-info a:hover { text-decoration: underline; }
+  .recipe-date { font-size: 0.75rem; color: #aaa; margin-top: 4px; }
+
+  .btn-delete {
+    background: none; border: none; color: #ccc; cursor: pointer;
+    font-size: 1.2rem; flex-shrink: 0;
+    transition: color .2s;
+  }
+  .btn-delete:hover { color: #f44336; }
+
+  .empty { text-align: center; color: #aaa; padding: 40px 0; font-size: 0.9rem; }
+
+  .search-wrap { margin-bottom: 16px; }
+  .search-wrap input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+  }
+  .search-wrap input:focus { border-color: #ff7043; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🍽️ 美味しかったレシピ</h1>
+</header>
+
+<div class="container">
+
+  <!-- 追加フォーム -->
+  <div class="form-card">
+    <h2>レシピを追加</h2>
+
+    <label>料理名 *</label>
+    <input type="text" id="dish-name" placeholder="例：鶏むね肉のガーリックソテー">
+
+    <label>レシピURL（任意）</label>
+    <input type="url" id="recipe-url" placeholder="https://...">
+
+    <label>スクショ（任意）</label>
+    <div class="upload-area" id="upload-area">
+      <input type="file" id="file-input" accept="image/*">
+      <div class="icon">📷</div>
+      <p>タップして画像を選択</p>
+    </div>
+    <div id="preview-wrap">
+      <img id="preview-img" src="" alt="プレビュー">
+      <button onclick="clearImage()">✕ 画像を削除</button>
+    </div>
+
+    <button class="btn-add" onclick="addRecipe()">追加する</button>
+  </div>
+
+  <!-- 検索 -->
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="🔍 料理名で検索..." oninput="renderList()">
+  </div>
+
+  <!-- 一覧 -->
+  <div class="recipe-list" id="recipe-list"></div>
+
+</div>
+
+<script>
+const KEY = 'recipes_v1';
+let imageDataUrl = null;
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || []; }
+  catch { return []; }
+}
+
+function save(data) {
+  localStorage.setItem(KEY, JSON.stringify(data));
+}
+
+document.getElementById('file-input').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    imageDataUrl = ev.target.result;
+    document.getElementById('preview-img').src = imageDataUrl;
+    document.getElementById('preview-wrap').style.display = 'block';
+    document.getElementById('upload-area').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+});
+
+function clearImage() {
+  imageDataUrl = null;
+  document.getElementById('file-input').value = '';
+  document.getElementById('preview-wrap').style.display = 'none';
+  document.getElementById('upload-area').style.display = 'block';
+}
+
+function addRecipe() {
+  const name = document.getElementById('dish-name').value.trim();
+  if (!name) { alert('料理名を入力してください！'); return; }
+
+  const url = document.getElementById('recipe-url').value.trim();
+  if (!imageDataUrl && !url) {
+    if (!confirm('URLもスクショもないけど追加する？')) return;
+  }
+
+  const recipes = load();
+  recipes.unshift({
+    id: Date.now(),
+    name,
+    url: url || null,
+    image: imageDataUrl || null,
+    date: new Date().toLocaleDateString('ja-JP')
+  });
+  save(recipes);
+
+  // リセット
+  document.getElementById('dish-name').value = '';
+  document.getElementById('recipe-url').value = '';
+  clearImage();
+  renderList();
+}
+
+function deleteRecipe(id) {
+  if (!confirm('削除する？')) return;
+  save(load().filter(r => r.id !== id));
+  renderList();
+}
+
+function renderList() {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const recipes = load().filter(r => !q || r.name.toLowerCase().includes(q));
+  const el = document.getElementById('recipe-list');
+
+  if (recipes.length === 0) {
+    el.innerHTML = '<div class="empty">まだレシピがないよ！<br>美味しかった料理を追加しよう🍴</div>';
+    return;
+  }
+
+  el.innerHTML = recipes.map(r => `
+    <div class="recipe-card">
+      ${r.image
+        ? `<img class="recipe-thumb" src="${r.image}" alt="${r.name}">`
+        : `<div class="recipe-thumb-placeholder">🍽️</div>`
+      }
+      <div class="recipe-info">
+        <h3>${escHtml(r.name)}</h3>
+        ${r.url ? `<a href="${escHtml(r.url)}" target="_blank" rel="noopener">🔗 レシピを見る</a>` : ''}
+        <div class="recipe-date">${r.date}</div>
+      </div>
+      <button class="btn-delete" onclick="deleteRecipe(${r.id})">🗑️</button>
+    </div>
+  `).join('');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+renderList();
+</script>
+</body>
+</html>
