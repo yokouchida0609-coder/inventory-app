@@ -269,14 +269,21 @@ async function deleteRecipe(id) {
 }
 
 function startEdit(id, currentName) {
-  const h3 = document.getElementById('title-' + id);
-  h3.innerHTML = `<input type="text" class="edit-input" value="${escHtml(currentName)}" onblur="saveEdit(${id}, this.value)" onkeydown="if(event.key==='Enter')this.blur()">`;
-  h3.querySelector('input').focus();
+  const wrap = document.getElementById('title-wrap-' + id);
+  wrap.innerHTML = `
+    <div style="display:flex;gap:6px;align-items:center">
+      <input type="text" class="edit-input" id="edit-input-${id}" value="${escHtml(currentName)}">
+      <button onclick="saveEdit(${id})" style="background:#ff7043;color:white;border:none;border-radius:6px;padding:4px 10px;cursor:pointer;white-space:nowrap">保存</button>
+      <button onclick="loadFromServer()" style="background:#eee;border:none;border-radius:6px;padding:4px 8px;cursor:pointer">✕</button>
+    </div>`;
+  document.getElementById('edit-input-' + id).focus();
 }
 
-async function saveEdit(id, newName) {
-  newName = newName.trim();
-  if (!newName) { await loadFromServer(); return; }
+async function saveEdit(id) {
+  const input = document.getElementById('edit-input-' + id);
+  const newName = input.value.trim();
+  if (!newName) return;
+  input.disabled = true;
   const params = new URLSearchParams({action: 'edit', id, name: newName});
   await fetch(API + '?' + params);
   await loadFromServer();
@@ -300,7 +307,9 @@ function renderList() {
         : `<div class="recipe-thumb-placeholder">🍽️</div>`
       }
       <div class="recipe-info">
-        <h3 id="title-${r.id}" onclick="startEdit(${r.id}, '${escHtml(r.name)}')" style="cursor:pointer" title="タップで編集">${escHtml(r.name)} ✏️</h3>
+        <div id="title-wrap-${r.id}">
+          <h3 style="display:flex;align-items:center;gap:6px">${escHtml(r.name)} <button onclick="startEdit(${r.id}, '${escHtml(r.name)}')" style="background:none;border:none;cursor:pointer;font-size:0.9rem;padding:0">✏️</button></h3>
+        </div>
         ${r.url ? `<a href="${escHtml(r.url)}" target="_blank" rel="noopener">🔗 レシピを見る</a>` : ''}
         <div class="recipe-date">${escHtml(r.date)}</div>
       </div>
