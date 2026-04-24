@@ -223,6 +223,16 @@ function clearImage() {
   document.getElementById('upload-area').style.display = 'block';
 }
 
+async function postData(payload) {
+  await fetch(API, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify(payload)
+  });
+  await new Promise(r => setTimeout(r, 1500));
+  await loadFromServer();
+}
+
 async function addRecipe() {
   const name = document.getElementById('dish-name').value.trim();
   if (!name) { alert('料理名を入力してください！'); return; }
@@ -235,41 +245,25 @@ async function addRecipe() {
   btn.textContent = '保存中...';
   btn.disabled = true;
 
-  try {
-    await fetch(API, {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'add',
-        id: Date.now(),
-        name,
-        url: url || '',
-        image: imageDataUrl || '',
-        date: new Date().toLocaleDateString('ja-JP')
-      })
-    });
-    document.getElementById('dish-name').value = '';
-    document.getElementById('recipe-url').value = '';
-    clearImage();
-    await loadFromServer();
-  } catch(e) {
-    alert('保存に失敗したよ！');
-  }
+  await postData({
+    action: 'add',
+    id: Date.now(),
+    name,
+    url: url || '',
+    image: imageDataUrl || '',
+    date: new Date().toLocaleDateString('ja-JP')
+  });
 
+  document.getElementById('dish-name').value = '';
+  document.getElementById('recipe-url').value = '';
+  clearImage();
   btn.textContent = '追加する';
   btn.disabled = false;
 }
 
 async function deleteRecipe(id) {
   if (!confirm('削除する？')) return;
-  try {
-    await fetch(API, {
-      method: 'POST',
-      body: JSON.stringify({action: 'delete', id})
-    });
-    await loadFromServer();
-  } catch(e) {
-    alert('削除に失敗したよ！');
-  }
+  await postData({action: 'delete', id});
 }
 
 function renderList() {
