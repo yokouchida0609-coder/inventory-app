@@ -223,47 +223,43 @@ function clearImage() {
   document.getElementById('upload-area').style.display = 'block';
 }
 
-async function postData(payload) {
-  await fetch(API, {
-    method: 'POST',
-    mode: 'no-cors',
-    body: JSON.stringify(payload)
-  });
-  await new Promise(r => setTimeout(r, 1500));
-  await loadFromServer();
-}
-
 async function addRecipe() {
   const name = document.getElementById('dish-name').value.trim();
   if (!name) { alert('料理名を入力してください！'); return; }
   const url = document.getElementById('recipe-url').value.trim();
-  if (!imageDataUrl && !url) {
-    if (!confirm('URLもスクショもないけど追加する？')) return;
-  }
 
   const btn = document.querySelector('.btn-add');
   btn.textContent = '保存中...';
   btn.disabled = true;
 
-  await postData({
-    action: 'add',
-    id: Date.now(),
-    name,
-    url: url || '',
-    image: imageDataUrl || '',
-    date: new Date().toLocaleDateString('ja-JP')
-  });
+  const id = Date.now();
+  const date = new Date().toLocaleDateString('ja-JP');
+
+  if (imageDataUrl) {
+    const localCache = JSON.parse(localStorage.getItem('recipe_images') || '{}');
+    localCache[id] = imageDataUrl;
+    localStorage.setItem('recipe_images', JSON.stringify(localCache));
+  }
+
+  const params = new URLSearchParams({action: 'add', id, name, url: url || '', date});
+  await fetch(API + '?' + params);
 
   document.getElementById('dish-name').value = '';
   document.getElementById('recipe-url').value = '';
   clearImage();
+  await loadFromServer();
   btn.textContent = '追加する';
   btn.disabled = false;
 }
 
 async function deleteRecipe(id) {
   if (!confirm('削除する？')) return;
-  await postData({action: 'delete', id});
+  const localCache = JSON.parse(localStorage.getItem('recipe_images') || '{}');
+  delete localCache[id];
+  localStorage.setItem('recipe_images', JSON.stringify(localCache));
+  const params = new URLSearchParams({action: 'delete', id});
+  await fetch(API + '?' + params);
+  await loadFromServer();
 }
 
 function renderList() {
@@ -276,10 +272,11 @@ function renderList() {
     return;
   }
 
+  const imgCache = JSON.parse(localStorage.getItem('recipe_images') || '{}');
   el.innerHTML = filtered.map(r => `
     <div class="recipe-card">
-      ${r.image
-        ? `<img class="recipe-thumb" src="${escHtml(r.image)}" alt="${escHtml(r.name)}">`
+      ${imgCache[r.id]
+        ? `<img class="recipe-thumb" src="${escHtml(imgCache[r.id])}" alt="${escHtml(r.name)}">`
         : `<div class="recipe-thumb-placeholder">🍽️</div>`
       }
       <div class="recipe-info">
