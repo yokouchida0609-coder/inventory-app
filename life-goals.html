@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>人生の重要6項目</title>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; min-height: 100vh; }
@@ -145,6 +146,19 @@
     display: none;
   }
   .complete-msg.show { display: block; }
+
+  .goal-card.sortable-ghost  { opacity: 0.3; }
+  .goal-card.sortable-chosen { box-shadow: 0 4px 12px rgba(0,0,0,.2); transform: scale(1.02); }
+
+  .drag-handle {
+    color: #ccc;
+    font-size: 1rem;
+    flex-shrink: 0;
+    cursor: grab;
+    padding: 0 4px;
+    touch-action: none;
+    letter-spacing: -1px;
+  }
 </style>
 </head>
 <body>
@@ -168,8 +182,9 @@
     </div>
   </div>
 
-  <div class="goal-list">
+  <div class="goal-list" id="goal-list">
     <div class="goal-card" data-id="english" onclick="toggle('english')">
+      <div class="drag-handle">⠿</div>
       <div class="goal-icon">🇬🇧</div>
       <div style="flex:1">
         <div class="goal-name">英語</div>
@@ -179,6 +194,7 @@
     </div>
 
     <div class="goal-card" data-id="stocks" onclick="toggle('stocks')">
+      <div class="drag-handle">⠿</div>
       <div class="goal-icon">📈</div>
       <div style="flex:1">
         <div class="goal-name">株</div>
@@ -188,6 +204,7 @@
     </div>
 
     <div class="goal-card" data-id="ribedai" onclick="toggle('ribedai')">
+      <div class="drag-handle">⠿</div>
       <div class="goal-icon">🏫</div>
       <div style="flex:1">
         <div class="goal-name">りべ大</div>
@@ -197,6 +214,7 @@
     </div>
 
     <div class="goal-card" data-id="ai" onclick="toggle('ai')">
+      <div class="drag-handle">⠿</div>
       <div class="goal-icon">🤖</div>
       <div style="flex:1">
         <div class="goal-name">AI</div>
@@ -206,6 +224,7 @@
     </div>
 
     <div class="goal-card" data-id="divorce" onclick="toggle('divorce')">
+      <div class="drag-handle">⠿</div>
       <div class="goal-icon">💬</div>
       <div style="flex:1">
         <div class="goal-name">離婚カウンセリング</div>
@@ -215,6 +234,7 @@
     </div>
 
     <div class="goal-card" data-id="bookkeep" onclick="toggle('bookkeep')">
+      <div class="drag-handle">⠿</div>
       <div class="goal-icon">📒</div>
       <div style="flex:1">
         <div class="goal-name">簿記</div>
@@ -229,6 +249,7 @@
 
 <script>
 const STORAGE_KEY = 'life_goals_v1';
+const ORDER_KEY   = 'life_goals_order_v1';
 const GOALS = ['english','stocks','ribedai','ai','divorce','bookkeep'];
 const DAY_NAMES = ['日','月','火','水','木','金','土'];
 
@@ -258,6 +279,23 @@ function loadState() {
 
 function saveState(s) {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch(e) {}
+}
+
+function loadOrder() {
+  try { return JSON.parse(localStorage.getItem(ORDER_KEY)) || GOALS; } catch(e) { return GOALS; }
+}
+
+function saveOrder(arr) {
+  try { localStorage.setItem(ORDER_KEY, JSON.stringify(arr)); } catch(e) {}
+}
+
+function applyOrder() {
+  const order = loadOrder();
+  const list = document.getElementById('goal-list');
+  order.forEach(id => {
+    const card = list.querySelector('[data-id="' + id + '"]');
+    if (card) list.appendChild(card);
+  });
 }
 
 function toggle(id) {
@@ -295,7 +333,19 @@ function render() {
   else msg.classList.remove('show');
 }
 
+applyOrder();
 render();
+
+Sortable.create(document.getElementById('goal-list'), {
+  handle: '.drag-handle',
+  animation: 150,
+  delay: 100,
+  delayOnTouchOnly: true,
+  onEnd: function() {
+    const ids = [...document.querySelectorAll('#goal-list [data-id]')].map(c => c.dataset.id);
+    saveOrder(ids);
+  }
+});
 </script>
 </body>
 </html>
