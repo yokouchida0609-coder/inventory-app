@@ -186,11 +186,7 @@
 
 <header>
   <h1>在庫チェック表</h1>
-  <div style="display:flex;gap:8px;align-items:center">
-    <span id="last-updated"></span>
-    <button onclick="exportData()" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.5);color:white;padding:4px 10px;border-radius:8px;cursor:pointer;font-size:0.8rem">エクスポート</button>
-    <label style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.5);color:white;padding:4px 10px;border-radius:8px;cursor:pointer;font-size:0.8rem">インポート<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
-  </div>
+  <span id="last-updated"></span>
 </header>
 
 <div class="tabs" id="tabs">
@@ -441,30 +437,6 @@ document.getElementById('new-name').addEventListener('keydown', e => {
 });
 
 render();
-
-function exportData() {
-  const data = localStorage.getItem(STORAGE_KEY);
-  const blob = new Blob([data || '[]'], {type: 'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'inventory_backup.json';
-  a.click();
-}
-
-function importData(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      const data = JSON.parse(ev.target.result);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      alert('インポート完了！');
-      location.reload();
-    } catch { alert('ファイルが正しくありません'); }
-  };
-  reader.readAsText(file);
-}
 </script>
 </body>
 </html>
