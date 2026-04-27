@@ -180,6 +180,8 @@
   .ref-name { flex: 1; font-size: 0.9rem; }
   .ref-note { font-size: 0.75rem; color: #bbb; }
 
+  #tasks-special .task-card { background: #fff9c4; }
+  .my-task-card[data-section="特別"] { background: #fff9c4; }
   #tasks-morning .task-card, #tasks-noon .task-card { background: #e1f5fe; }
   #tasks-day .task-card { background: #ede7f6; }
   #tasks-evening .task-card { background: #ede7f6; }
@@ -286,6 +288,7 @@
       <div class="my-task-form-title">タスクを追加</div>
       <div class="my-task-row1">
         <select class="my-task-select" id="my-task-section">
+          <option>特別</option>
           <option>朝</option>
           <option>昼</option>
           <option>夜</option>
@@ -312,6 +315,10 @@
       </div>
     </div>
 
+    <div class="section" id="section-special">
+      <div class="section-title">特別</div>
+      <div class="task-list" id="tasks-special"></div>
+    </div>
     <div class="section">
       <div class="section-title">朝</div>
       <div class="task-list" id="tasks-morning"></div>
@@ -778,6 +785,12 @@ function render() {
   document.getElementById('progress-text').textContent = doneCount + ' / ' + total + ' 完了';
   document.getElementById('progress-fill').style.width = pct + '%';
 
+  // 特別セクション（カスタムタスクのみ、空なら非表示）
+  renderTaskList('tasks-special', [], state.checked, state);
+  const specialEl = document.getElementById('section-special');
+  if (specialEl) specialEl.style.display =
+    document.getElementById('tasks-special').children.length > 0 ? '' : 'none';
+
   renderTaskList('tasks-morning',  MORNING_TASKS,  state.checked, state);
   renderTaskList('tasks-noon',     [...NOON_TASKS, ...ANYTIME_TASKS], state.checked, state);
   renderTaskList('tasks-evening',  EVENING_TASKS,  state.checked, state);
@@ -809,7 +822,7 @@ function render() {
 
 // ---- ソート ----
 const SORTABLE_CONTAINERS = [
-  'tasks-morning','tasks-noon','tasks-evening',
+  'tasks-special','tasks-morning','tasks-noon','tasks-evening',
   'tasks-day','tasks-weekly','tasks-monthly','tasks-annual'
 ];
 let _sortables = {};
@@ -871,6 +884,7 @@ function deleteMyTask(id) {
 }
 
 const SECTION_TO_CONTAINER = {
+  '特別': 'tasks-special',
   '朝':   'tasks-morning',
   '昼':   'tasks-noon',
   '夜':   'tasks-evening',
