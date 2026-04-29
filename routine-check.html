@@ -737,7 +737,10 @@ function renderTaskList(containerId, tasks, checkedArr, state) {
 
   el.innerHTML = allItems.map(task => {
     if (task._custom) {
-      const done = state && state.myTaskChecked && state.myTaskChecked.includes(task.id);
+      const isPersist = PERSIST_SECTIONS.includes(task.section);
+      const done = isPersist
+        ? loadPersistChecked().includes(task.id)
+        : (state && state.myTaskChecked && state.myTaskChecked.includes(task.id));
       const noteHtml = task.note ? '<span class="my-task-note">' + task.note + '</span>' : '';
       const delBtn = '<button class="my-task-delete" onclick="event.stopPropagation();deleteMyTask(\'' + task.id + '\')">×</button>';
       return '<div class="my-task-card' + (done ? ' done' : '') + '" data-id="' + task.id + '" data-section="' + task.section + '" onclick="toggleMyTask(\'' + task.id + '\')">'
@@ -859,6 +862,15 @@ function initSortable() {
 
 // ---- マイタスク ----
 const MY_TASKS_KEY = 'my_tasks_v1';
+const MY_PERSIST_KEY = 'my_persist_checked_v1';
+const PERSIST_SECTIONS = ['今日やる', '特別']; // リセットしないセクション
+
+function loadPersistChecked() {
+  try { return JSON.parse(localStorage.getItem(MY_PERSIST_KEY)) || []; } catch(e) { return []; }
+}
+function savePersistChecked(arr) {
+  try { localStorage.setItem(MY_PERSIST_KEY, JSON.stringify(arr)); } catch(e) {}
+}
 
 function loadMyTasks() {
   try { return JSON.parse(localStorage.getItem(MY_TASKS_KEY)) || []; }
@@ -882,11 +894,21 @@ function addMyTask() {
 }
 
 function toggleMyTask(id) {
-  const state = loadState();
-  const idx = state.myTaskChecked.indexOf(id);
-  if (idx === -1) state.myTaskChecked.push(id);
-  else state.myTaskChecked.splice(idx, 1);
-  saveState(state);
+  const tasks = loadMyTasks();
+  const task = tasks.find(t => t.id === id);
+  const isPersist = task && PERSIST_SECTIONS.includes(task.section);
+  if (isPersist) {
+    const arr = loadPersistChecked();
+    const idx = arr.indexOf(id);
+    if (idx === -1) arr.push(id); else arr.splice(idx, 1);
+    savePersistChecked(arr);
+  } else {
+    const state = loadState();
+    const idx = state.myTaskChecked.indexOf(id);
+    if (idx === -1) state.myTaskChecked.push(id);
+    else state.myTaskChecked.splice(idx, 1);
+    saveState(state);
+  }
   render();
 }
 
