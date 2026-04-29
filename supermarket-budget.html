@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>陽子外食予算</title>
+<link rel="manifest" href="manifest-dining.json">
+<meta name="theme-color" content="#f43f5e">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
@@ -454,6 +456,10 @@ function closeOverlay(e, id) { if (e.target === document.getElementById(id)) clo
 function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 render();
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/inventory-app/sw.js').catch(() => {});
+}
 </script>
 </body>
 </html>
