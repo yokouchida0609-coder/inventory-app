@@ -174,6 +174,19 @@
 
   .empty { text-align: center; padding: 40px; color: #aaa; font-size: 0.95rem; }
 
+  .backup-section {
+    margin-top: 24px; background: white; border-radius: 10px;
+    padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  }
+  .backup-title { font-size: 0.85rem; font-weight: 700; color: #555; margin-bottom: 10px; }
+  .backup-row { display: flex; gap: 8px; }
+  .btn-backup {
+    flex: 1; padding: 10px 8px; background: #4caf50; color: white;
+    border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+  }
+  .btn-backup:hover { opacity: .85; }
+  .btn-import { background: #1976d2; }
+
   .need-buy-section { margin-top: 24px; }
   .need-buy-section h2 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; color: #e65100; }
 
@@ -219,6 +232,22 @@
   </div>
 
   <div class="item-list" id="item-list"></div>
+
+  <div class="backup-section">
+    <div class="backup-title">💾 データバックアップ</div>
+    <div class="backup-row">
+      <button class="btn-backup" onclick="exportData()">📤 エクスポート（コピー）</button>
+      <button class="btn-backup btn-import" onclick="showImport()">📥 インポート（貼付）</button>
+    </div>
+    <div id="import-area" style="display:none; margin-top:8px">
+      <textarea id="import-text" placeholder="エクスポートしたデータをここに貼り付け..." rows="4" style="width:100%;font-size:0.85rem;padding:8px;border:1px solid #ddd;border-radius:6px;resize:vertical"></textarea>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <button class="btn-backup" style="flex:1" onclick="importData()">✅ 復元する</button>
+        <button class="btn-backup" style="flex:1;background:#aaa" onclick="hideImport()">キャンセル</button>
+      </div>
+    </div>
+    <div id="backup-msg" style="font-size:0.8rem;color:#4caf50;margin-top:6px;display:none"></div>
+  </div>
 </div>
 
 <script>
@@ -430,6 +459,48 @@ document.getElementById('tabs').addEventListener('click', e => {
   render();
   updateTabStyle();
 });
+
+// バックアップ
+function exportData() {
+  const data = localStorage.getItem(STORAGE_KEY) || JSON.stringify(load());
+  navigator.clipboard.writeText(data).then(() => {
+    showMsg('クリップボードにコピーしました！メモ帳等に貼り付けて保存してください。');
+  }).catch(() => {
+    // clipboard APIが使えない場合はテキストエリアで表示
+    document.getElementById('import-area').style.display = 'block';
+    document.getElementById('import-text').value = data;
+    showMsg('上のテキストをコピーして保存してください。');
+  });
+}
+function showImport() {
+  document.getElementById('import-area').style.display = 'block';
+  document.getElementById('import-text').value = '';
+  document.getElementById('import-text').focus();
+}
+function hideImport() {
+  document.getElementById('import-area').style.display = 'none';
+}
+function importData() {
+  const text = document.getElementById('import-text').value.trim();
+  try {
+    const items = JSON.parse(text);
+    if (!Array.isArray(items)) throw new Error();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    hideImport();
+    render();
+    document.getElementById('new-store').value = currentCat === 'all' ? '' : currentCat;
+    showMsg('✅ データを復元しました！');
+  } catch(e) {
+    showMsg('❌ データの形式が正しくありません。', true);
+  }
+}
+function showMsg(msg, isError) {
+  const el = document.getElementById('backup-msg');
+  el.textContent = msg;
+  el.style.color = isError ? '#e53935' : '#4caf50';
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
 
 // Enter key in name field
 document.getElementById('new-name').addEventListener('keydown', e => {
