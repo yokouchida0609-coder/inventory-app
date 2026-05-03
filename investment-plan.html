@@ -361,13 +361,13 @@
     </div>
 
     <div style="font-size:.78rem;font-weight:700;color:var(--text-light);margin:14px 0 6px;letter-spacing:.05em">▌ オルカン取り崩し</div>
-    <div class="info-row"><span class="info-label">1,000万 × 年4% 取り崩し</span><span class="info-val">約40,000円/月</span></div>
-    <div class="note-box" style="margin-bottom:8px">年5%運用 ＞ 取り崩し4% のため、理論上残高は枯渇しない</div>
+    <div class="info-row"><span class="info-label">1,000万 × 年4% ÷ 12ヶ月</span><span class="info-val">約33,000円/月</span></div>
+    <div class="note-box" style="margin-bottom:8px">年5%運用 ＞ 取り崩し4% のため、残高は増え続ける（理論上枯渇しない）</div>
 
     <div style="background:linear-gradient(135deg,#1a3a5c,#2d5a8e);border-radius:10px;padding:14px;margin-top:8px;color:white">
       <div style="font-size:.78rem;opacity:.8;margin-bottom:4px">月収合計（年金除く）</div>
-      <div style="font-size:1.8rem;font-weight:700">約90,000円/月</div>
-      <div style="font-size:.72rem;opacity:.7;margin-top:4px">+ 年金・DB・DC 約35万円/月 = <span style="font-weight:700">合計 約44万円/月</span></div>
+      <div style="font-size:1.8rem;font-weight:700">約83,000円/月</div>
+      <div style="font-size:.72rem;opacity:.7;margin-top:4px">+ 年金・DB・DC 約35万円/月 = <span style="font-weight:700">合計 約43万円/月</span></div>
     </div>
   </div>
 
@@ -387,28 +387,29 @@
 
   <hr class="div">
   <div class="sub-title">🔮 オルカン 将来シミュレーション</div>
-  <div class="note-box">夫＋Yoko合算 ／ 年5%想定</div>
+  <div class="note-box">年5%運用・年4%取り崩し想定 ／ 取り崩し開始：2037年（65歳）</div>
 
   <div class="card">
-    <div class="input-row">
-      <label>年間運用利回り</label>
-      <input type="number" id="sim-rate" min="1" max="20" step="0.5" onchange="saveAndRender()">
-      <span>%</span>
-    </div>
-    <div class="input-row">
-      <label>年間積立額（合算）</label>
-      <input type="number" id="sim-annual" min="0" step="10000" onchange="saveAndRender()">
-      <span>円/年</span>
-    </div>
+    <div class="sub-title" style="font-size:.88rem">パターンB：取り崩しあり（開始残高 1,000万円）</div>
+    <div class="note-box mb-2" style="margin-bottom:10px">実質成長率 年1%（5%運用 − 4%取り崩し）。取り崩し額は残高の4%</div>
     <div style="overflow-x:auto">
       <table class="sim-table">
-        <thead><tr><th>年</th><th>夫の年齢</th><th>評価額（概算）</th></tr></thead>
-        <tbody id="sim-tbody"></tbody>
+        <thead><tr><th>年齢</th><th>残高</th><th>年間取り崩し</th><th>月額</th></tr></thead>
+        <tbody id="sim-b-tbody"></tbody>
       </table>
     </div>
-    <div class="note-box mt-3" style="margin-bottom:0">
-      65歳→約1,200万 ／ 75歳→約1,955万 ／ 85歳→約3,185万 ／ 90歳→約4,065万（年5%・売却なし）
+  </div>
+
+  <div class="card">
+    <div class="sub-title" style="font-size:.88rem">パターンA：取り崩しなし（開始残高 1,200万円）</div>
+    <div class="note-box mb-2" style="margin-bottom:10px">売却せずに運用継続。残高の4%を「潜在的月収」として表示</div>
+    <div style="overflow-x:auto">
+      <table class="sim-table">
+        <thead><tr><th>年齢</th><th>残高</th><th>年間4%相当</th><th>月額</th></tr></thead>
+        <tbody id="sim-a-tbody"></tbody>
+      </table>
     </div>
+    <div class="note-box mt-3" style="margin-bottom:0">パターンAは緊急予備軍・相続資産として残す想定</div>
   </div>
 </div>
 
@@ -513,7 +514,8 @@ const DEFAULT_STATE={
   assets:{
     dh_special:918, dh_nisa:0, dh_price:4837, dh_div:168,
     orc_cost_h:719472, orc_val_h:919472,
-    topix_cost_h:28810, gold_cost_h:36396,
+    topix_cost_h:28810, topix_val_h:20585,
+    gold_cost_h:36396,  gold_val_h:19024,
     hd_stocks:[
       {name:'ヒューリック（3003）',shares:5,cost:9600,div_per_share:0},
       {name:'あさひ（3333）',shares:2,cost:2590,div_per_share:0},
@@ -521,7 +523,9 @@ const DEFAULT_STATE={
       {name:'三井住友トラストG（8309）',shares:2,cost:9870,div_per_share:0},
     ],
     orc_monthly_y:10000,
-    sp500_cost_y:40000, topix_cost_y:16000, gold_cost_y:8000,
+    sp500_cost_y:40000, sp500_val_y:0,
+    topix_cost_y:16000, topix_val_y:0,
+    gold_cost_y:8000,   gold_val_y:0,
   },
   surplus:{initial:3800000, history:[]},
   settings:{sim_rate:5, sim_annual:600000, sim_yield:4, retire_fund:7000000},
@@ -562,9 +566,12 @@ function readInputs(){
   a.dh_special=g('a-dh-sp'); a.dh_nisa=g('a-dh-ni');
   a.dh_price=g('a-dh-pr'); a.dh_div=g('a-dh-dv');
   a.orc_cost_h=g('a-orc-ch'); a.orc_val_h=g('a-orc-vh');
-  a.topix_cost_h=g('a-topix-h'); a.gold_cost_h=g('a-gold-h');
+  a.topix_cost_h=g('a-topix-ch'); a.topix_val_h=g('a-topix-vh');
+  a.gold_cost_h=g('a-gold-ch');   a.gold_val_h=g('a-gold-vh');
   a.orc_monthly_y=g('a-orc-y');
-  a.sp500_cost_y=g('a-sp500-y'); a.topix_cost_y=g('a-topix-y'); a.gold_cost_y=g('a-gold-y');
+  a.sp500_cost_y=g('a-sp500-cy'); a.sp500_val_y=g('a-sp500-vy');
+  a.topix_cost_y=g('a-topix-cy'); a.topix_val_y=g('a-topix-vy');
+  a.gold_cost_y=g('a-gold-cy');   a.gold_val_y=g('a-gold-vy');
   STATE.surplus.initial=g('surplus-initial');
   STATE.settings.sim_rate=g('sim-rate');
   STATE.settings.sim_annual=g('sim-annual');
@@ -779,10 +786,16 @@ function renderAssets(){
         <div class="note-box mt-3" style="margin-bottom:0">積立設定 月4万円 ／ 売却せず長期保有</div>
       </div>
       <div class="card">
-        <div class="sub-title">売却予定資産（NISA）</div>
-        <div class="input-row"><label>TOPIX 取得額</label><input type="number" id="a-topix-h" value="${a.topix_cost_h}" min="0" onchange="saveAndRender()"><span>円</span></div>
-        <div class="input-row"><label>金ETF 取得額</label><input type="number" id="a-gold-h" value="${a.gold_cost_h}" min="0" onchange="saveAndRender()"><span>円</span></div>
-        <div class="note-box mt-2" style="margin-bottom:0">タイミングを見て売却予定。売却後の枠は翌年以降に復活</div>
+        <div class="sub-title">売却予定資産（NISA・随時更新）</div>
+        <div style="font-size:.78rem;color:var(--text-light);margin-bottom:10px">eMAXIS Slim 国内株式（TOPIX）</div>
+        <div class="input-row"><label>TOPIX 取得額</label><input type="number" id="a-topix-ch" value="${a.topix_cost_h}" min="0" onchange="saveAndRender()"><span>円</span></div>
+        <div class="input-row"><label>TOPIX 評価額</label><input type="number" id="a-topix-vh" value="${a.topix_val_h}" min="0" onchange="saveAndRender()"><span>円</span></div>
+        <div class="info-row mb-2"><span class="info-label">含み損益</span><span class="info-val" style="color:${a.topix_val_h-a.topix_cost_h>=0?'var(--secondary)':'var(--danger)'}">${a.topix_val_h-a.topix_cost_h>=0?'+':''}${fmt(a.topix_val_h-a.topix_cost_h)}</span></div>
+        <div style="font-size:.78rem;color:var(--text-light);margin:10px 0 6px">Smart-i ゴールドファンド（為替ヘッジなし）</div>
+        <div class="input-row"><label>金ETF 取得額</label><input type="number" id="a-gold-ch" value="${a.gold_cost_h}" min="0" onchange="saveAndRender()"><span>円</span></div>
+        <div class="input-row"><label>金ETF 評価額</label><input type="number" id="a-gold-vh" value="${a.gold_val_h}" min="0" onchange="saveAndRender()"><span>円</span></div>
+        <div class="info-row"><span class="info-label">含み損益</span><span class="info-val" style="color:${a.gold_val_h-a.gold_cost_h>=0?'var(--secondary)':'var(--danger)'}">${a.gold_val_h-a.gold_cost_h>=0?'+':''}${fmt(a.gold_val_h-a.gold_cost_h)}</span></div>
+        <div class="note-box mt-3" style="margin-bottom:0">タイミングを見て売却予定。売却後の枠は翌年以降に復活</div>
       </div>
       <div class="card">
         <div class="sub-title">高配当株 ミニ株（NISA成長枠）</div>
@@ -804,11 +817,20 @@ function renderAssets(){
         <div class="note-box mt-2" style="margin-bottom:0">売却せず長期保有</div>
       </div>
       <div class="card">
-        <div class="sub-title">売却予定資産（NISA）</div>
-        <div class="input-row"><label>S&P500 取得額</label><input type="number" id="a-sp500-y" value="${a.sp500_cost_y}" min="0" onchange="saveAndRender()"><span>円</span></div>
-        <div class="input-row"><label>TOPIX 取得額</label><input type="number" id="a-topix-y" value="${a.topix_cost_y}" min="0" onchange="saveAndRender()"><span>円</span></div>
-        <div class="input-row"><label>金ETF 取得額（成長枠）</label><input type="number" id="a-gold-y" value="${a.gold_cost_y}" min="0" onchange="saveAndRender()"><span>円</span></div>
-        <div class="note-box mt-2" style="margin-bottom:0">タイミングを見て売却予定。成長枠の金ETFは翌年以降枠が復活</div>
+        <div class="sub-title">売却予定資産（NISA・随時更新）</div>
+        <div style="font-size:.78rem;color:var(--text-light);margin-bottom:6px">eMAXIS Slim 米国株式（S&P500）</div>
+        <div class="input-row"><label>S&P500 取得額</label><input type="number" id="a-sp500-cy" value="${a.sp500_cost_y}" min="0" onchange="saveAndRender()"><span>円</span></div>
+        <div class="input-row"><label>S&P500 評価額</label><input type="number" id="a-sp500-vy" value="${a.sp500_val_y}" min="0" onchange="saveAndRender()"><span>円</span></div>
+        <div class="info-row mb-2"><span class="info-label">含み損益</span><span class="info-val" style="color:${a.sp500_val_y-a.sp500_cost_y>=0?'var(--secondary)':'var(--danger)'}">${a.sp500_val_y?((a.sp500_val_y-a.sp500_cost_y>=0?'+':'')+fmt(a.sp500_val_y-a.sp500_cost_y)):'— 評価額を入力'}</span></div>
+        <div style="font-size:.78rem;color:var(--text-light);margin:8px 0 6px">eMAXIS Slim 国内株式（TOPIX）</div>
+        <div class="input-row"><label>TOPIX 取得額</label><input type="number" id="a-topix-cy" value="${a.topix_cost_y}" min="0" onchange="saveAndRender()"><span>円</span></div>
+        <div class="input-row"><label>TOPIX 評価額</label><input type="number" id="a-topix-vy" value="${a.topix_val_y}" min="0" onchange="saveAndRender()"><span>円</span></div>
+        <div class="info-row mb-2"><span class="info-label">含み損益</span><span class="info-val" style="color:${a.topix_val_y-a.topix_cost_y>=0?'var(--secondary)':'var(--danger)'}">${a.topix_val_y?((a.topix_val_y-a.topix_cost_y>=0?'+':'')+fmt(a.topix_val_y-a.topix_cost_y)):'— 評価額を入力'}</span></div>
+        <div style="font-size:.78rem;color:var(--text-light);margin:8px 0 6px">Smart-i ゴールドファンド（成長枠・為替ヘッジなし）</div>
+        <div class="input-row"><label>金ETF 取得額</label><input type="number" id="a-gold-cy" value="${a.gold_cost_y}" min="0" onchange="saveAndRender()"><span>円</span></div>
+        <div class="input-row"><label>金ETF 評価額</label><input type="number" id="a-gold-vy" value="${a.gold_val_y}" min="0" onchange="saveAndRender()"><span>円</span></div>
+        <div class="info-row"><span class="info-label">含み損益</span><span class="info-val" style="color:${a.gold_val_y-a.gold_cost_y>=0?'var(--secondary)':'var(--danger)'}">${a.gold_val_y?((a.gold_val_y-a.gold_cost_y>=0?'+':'')+fmt(a.gold_val_y-a.gold_cost_y)):'— 評価額を入力'}</span></div>
+        <div class="note-box mt-3" style="margin-bottom:0">タイミングを見て売却予定。成長枠の金ETFは翌年以降枠が復活</div>
       </div>
       <div class="note-box">2037〜2039年：退職金700万円を成長枠で高配当株に投入予定</div>`;
   }
@@ -861,27 +883,38 @@ function renderDividend(){
 }
 
 function renderSimTable(){
-  const tbody=document.getElementById('sim-tbody');
-  if(!tbody) return;
-  const a=STATE.assets;
-  const base=a.orc_val_h+(a.orc_monthly_y*12*1); // rough Yoko estimate
-  const rate=(STATE.settings.sim_rate||5)/100;
-  const annual=STATE.settings.sim_annual||600000;
-  const years=[2026,2027,2028,2029,2030,2031,2032,2033,2035,2037,2042,2047,2052,2057];
-  let val=base; let prev=2026;
-  tbody.innerHTML='';
-  const seen=new Set();
-  for(const y of years){
-    if(seen.has(y)) continue; seen.add(y);
-    const diff=y-prev;
-    if(diff>0) val=val*Math.pow(1+rate,diff)+annual*((Math.pow(1+rate,diff)-1)/rate);
-    prev=y;
-    const age=54+(y-2026);
-    const tr=document.createElement('tr');
-    if(y===2037) tr.className='retire';
-    else if(y===2026) tr.className='hl';
-    tr.innerHTML=`<td>${y}${y===2026?' (現在)':''}</td><td>${age}歳${y===2037?' 定年':''}</td><td>${fmt(Math.round(val))}</td>`;
-    tbody.appendChild(tr);
+  // パターンB: 1,000万スタート、実質1%成長(5%-4%)、取り崩しは残高×4%
+  const tbB=document.getElementById('sim-b-tbody');
+  // パターンA: 1,200万スタート、実質1%成長、売却なし（4%相当を表示）
+  const tbA=document.getElementById('sim-a-tbody');
+  if(!tbB||!tbA) return;
+
+  const ages=[65,75,85,90]; // 夫の年齢
+  const startYear=2037;
+
+  function simRow(startBalance, age){
+    const yearsElapsed=age-65;
+    const bal=startBalance*Math.pow(1.01, yearsElapsed);
+    const annualDraw=Math.round(bal*0.04/10000)*10000; // 残高×4%（万円丸め）
+    const monthly=Math.round(annualDraw/12/1000)*1000;
+    return {age, year:startYear+(age-65), bal:Math.round(bal), annualDraw, monthly};
+  }
+
+  tbB.innerHTML='';
+  tbA.innerHTML='';
+  for(const age of ages){
+    const b=simRow(10000000, age);
+    const a=simRow(12000000, age);
+    const isRetire=age===65;
+    const trB=document.createElement('tr');
+    if(isRetire) trB.className='hl';
+    trB.innerHTML=`<td>${age}歳<span style="font-size:.72rem;color:var(--text-light)">（${b.year}年）</span></td><td>${fmt(b.bal)}</td><td>${fmt(b.annualDraw)}</td><td class="fw-bold text-green">約${(b.monthly/1000).toFixed(0)}千円</td>`;
+    tbB.appendChild(trB);
+
+    const trA=document.createElement('tr');
+    if(isRetire) trA.className='hl';
+    trA.innerHTML=`<td>${age}歳<span style="font-size:.72rem;color:var(--text-light)">（${a.year}年）</span></td><td>${fmt(a.bal)}</td><td>${fmt(a.annualDraw)}</td><td class="fw-bold text-green">約${(a.monthly/1000).toFixed(0)}千円</td>`;
+    tbA.appendChild(trA);
   }
 }
 
