@@ -513,6 +513,10 @@ const DEFAULT_STATE={
   },
   assets:{
     dh_special:918, dh_nisa:0, dh_price:4837, dh_div:168,
+    mochikabu:{
+      contributed:1175000, current_value:2860000,
+      monthly:5000, bonus:15000, incentive:5, sim_price:5100,
+    },
     orc_cost_h:719472, orc_val_h:919472,
     topix_cost_h:28810, topix_val_h:20585,
     gold_cost_h:36396,  gold_val_h:19024,
@@ -564,6 +568,10 @@ function readInputs(){
   n.y_s_life=g('n-y-s-life'); n.y_s_year=g('n-y-s-year');
   const a=STATE.assets;
   a.dh_special=g('a-dh-sp'); a.dh_nisa=g('a-dh-ni');
+  const mk=a.mochikabu;
+  mk.contributed=g('mk-contributed'); mk.current_value=g('mk-value');
+  mk.monthly=g('mk-monthly'); mk.bonus=g('mk-bonus');
+  mk.incentive=g('mk-incentive'); mk.sim_price=g('mk-price');
   a.dh_price=g('a-dh-pr'); a.dh_div=g('a-dh-dv');
   a.orc_cost_h=g('a-orc-ch'); a.orc_val_h=g('a-orc-vh');
   a.topix_cost_h=g('a-topix-ch'); a.topix_val_h=g('a-topix-vh');
@@ -754,6 +762,59 @@ function renderNisa(){
 // ========================================
 // RENDER ASSETS
 // ========================================
+function renderMochikabuCard(mk){
+  const YEARS_LEFT = 2037 - 2026; // 11年
+  const annualContrib = (mk.monthly*12 + mk.bonus*2) * (1 + mk.incentive/100);
+  const totalFuture = annualContrib * YEARS_LEFT;
+  const currentShares = Math.round(mk.current_value / mk.sim_price);
+  const gain = mk.current_value - mk.contributed;
+
+  // シナリオ別シミュレーション
+  function calcScenario(rate){
+    const retirePrice = mk.sim_price * Math.pow(1+rate, YEARS_LEFT);
+    const existingAtRetire = mk.current_value * Math.pow(1+rate, YEARS_LEFT);
+    const avgPrice = rate===0 ? mk.sim_price : mk.sim_price * Math.pow(1+rate, YEARS_LEFT/2);
+    const futureShares = totalFuture / avgPrice;
+    const futureVal = futureShares * retirePrice;
+    return {
+      price: Math.round(retirePrice),
+      shares: Math.round(currentShares + futureShares),
+      value: Math.round(existingAtRetire + futureVal),
+    };
+  }
+  const s0 = calcScenario(0);
+  const s3 = calcScenario(0.03);
+  const s5 = calcScenario(0.05);
+
+  return `
+  <div class="card">
+    <div class="sub-title">大和ハウス 持株会</div>
+    <div class="note-box mb-2">積立開始 2013年4月 ／ 定年（2037年）まで継続予定</div>
+    <div class="input-row"><label>現在の総拠出額</label><input type="number" id="mk-contributed" value="${mk.contributed}" min="0" step="10000" onchange="saveAndRender()"><span>円</span></div>
+    <div class="input-row"><label>現在の推定評価額</label><input type="number" id="mk-value" value="${mk.current_value}" min="0" step="10000" onchange="saveAndRender()"><span>円</span></div>
+    <div class="input-row"><label>月次積立額</label><input type="number" id="mk-monthly" value="${mk.monthly}" min="0" step="1000" onchange="saveAndRender()"><span>円/月</span></div>
+    <div class="input-row"><label>ボーナス積立（1回）</label><input type="number" id="mk-bonus" value="${mk.bonus}" min="0" step="1000" onchange="saveAndRender()"><span>円×年2回</span></div>
+    <div class="input-row"><label>奨励金</label><input type="number" id="mk-incentive" value="${mk.incentive}" min="0" max="20" step="0.5" onchange="saveAndRender()"><span>%</span></div>
+    <div class="input-row"><label>シミュレーション株価</label><input type="number" id="mk-price" value="${mk.sim_price}" min="0" step="100" onchange="saveAndRender()"><span>円</span></div>
+    <div style="background:#f8fafc;border-radius:8px;padding:10px;margin:10px 0;font-size:.85rem">
+      <div class="info-row mb-1"><span class="info-label">現在の推定株数</span><span class="info-val fw-bold">${currentShares.toLocaleString()}株</span></div>
+      <div class="info-row"><span class="info-label">含み益（概算）</span><span class="info-val" style="color:${gain>=0?'var(--secondary)':'var(--danger)'}">${gain>=0?'+':''}${fmt(gain)}</span></div>
+    </div>
+    <div style="font-size:.82rem;font-weight:700;color:var(--primary);margin:12px 0 8px">📊 定年時（2037年）の推定評価額</div>
+    <div class="note-box mb-2">追加拠出 約${fmt(Math.round(totalFuture/10000)*10000)}（奨励金込み）／ 定年後に1,000株をNISA移管予定</div>
+    <div style="overflow-x:auto">
+      <table class="sim-table">
+        <thead><tr><th>シナリオ</th><th>株価</th><th>株数</th><th>推定評価額</th></tr></thead>
+        <tbody>
+          <tr class="hl"><td>現状維持</td><td>${s0.price.toLocaleString()}円</td><td>${s0.shares.toLocaleString()}株</td><td class="fw-bold text-green">${fmt(s0.value)}</td></tr>
+          <tr><td>年3%成長</td><td>${s3.price.toLocaleString()}円</td><td>${s3.shares.toLocaleString()}株</td><td class="fw-bold text-green">${fmt(s3.value)}</td></tr>
+          <tr><td>年5%成長</td><td>${s5.price.toLocaleString()}円</td><td>${s5.shares.toLocaleString()}株</td><td class="fw-bold text-green">${fmt(s5.value)}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
 function renderAssets(){
   const a=STATE.assets;
   const p=currentAssetPerson;
@@ -785,6 +846,7 @@ function renderAssets(){
         <div class="info-row"><span class="info-label">含み益</span><span class="info-val text-green">${fmt(a.orc_val_h-a.orc_cost_h)}</span></div>
         <div class="note-box mt-3" style="margin-bottom:0">積立設定 月4万円 ／ 売却せず長期保有</div>
       </div>
+      ${renderMochikabuCard(a.mochikabu)}
       <div class="card">
         <div class="sub-title">売却予定資産（NISA・随時更新）</div>
         <div style="font-size:.78rem;color:var(--text-light);margin-bottom:10px">eMAXIS Slim 国内株式（TOPIX）</div>
