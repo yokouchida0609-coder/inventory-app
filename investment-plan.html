@@ -285,15 +285,8 @@
 
 <!-- ===== NISA ===== -->
 <div id="tab-nisa" class="section">
-  <div class="section-title">💹 NISA枠 管理</div>
-  <div class="person-toggle">
-    <button class="person-btn husband active" onclick="setNisaPerson('husband')" id="npbtn-husband">夫</button>
-    <button class="person-btn yoko" onclick="setNisaPerson('yoko')" id="npbtn-yoko">Yoko</button>
-  </div>
-  <div id="nisa-content"></div>
-  <button onclick="showNisaChart()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a3a5c,#2d5a8e);color:white;border:none;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer;margin-top:4px;margin-bottom:14px">
-    📊 積立シミュレーション（夫）を見る
-  </button>
+  <div class="section-title">📊 NISA積立シミュレーション（夫）</div>
+  <div id="nisa-sim-content"></div>
 </div>
 
 <!-- ===== ASSETS ===== -->
@@ -724,42 +717,89 @@ function renderActionItem(a){
 // RENDER NISA
 // ========================================
 function renderNisa(){
-  const n=STATE.nisa;
-  const p=currentNisaPerson;
-  const isH=p==='husband';
+  const yearsH = [2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037];
+  const tsumiH = [120,120,120,48,48,48,48,0,0,0,0,0];
+  const seichouH = [240,240,240,0,0,0,0,48,48,48,48,198];
+  const notesH = [
+    '積立120（月4万+スポット）/ 成長240（移管+オルカン）',
+    '積立120（月4万+スポット）/ 成長240（移管+オルカン）',
+    '積立120（月4万+スポット）/ 成長240（移管+オルカン）',
+    '月4万×12 / 成長枠温存','月4万×12 / 成長枠温存','月4万×12 / 成長枠温存',
+    '月4万×12 / 積立600万満額達成',
+    '積立停止 / 成長 月4万×12','積立停止 / 成長 月4万×12',
+    '積立停止 / 成長 月4万×12','積立停止 / 成長 月4万×12',
+    '定年 / 成長枠残198万（相場次第）',
+  ];
+  const totalH = yearsH.map((_,i)=>tsumiH[i]+seichouH[i]);
+  let cumT=[],cumS=[],st=0,ss=0;
+  yearsH.forEach((_,i)=>{ st+=tsumiH[i]; ss+=seichouH[i]; cumT.push(st); cumS.push(ss); });
 
-  const tLife=isH?n.h_t_life:n.y_t_life;
-  const tYear=isH?n.h_t_year:n.y_t_year;
-  const sLife=isH?n.h_s_life:n.y_s_life;
-  const sYear=isH?n.h_s_year:n.y_s_year;
-  const color=isH?'text-husband':'text-yoko';
+  function stackedSVG(dataA, dataB, max, labels, ticks){
+    const w=Math.min(window.innerWidth-56, 380), h=160, pad={l:40,r:8,t:14,b:26};
+    const bw=(w-pad.l-pad.r)/dataA.length - 3;
+    let s='';
+    dataA.forEach((a,i)=>{
+      const b=dataB[i], total=a+b;
+      const x=pad.l+i*(bw+3);
+      const bhA=(a/max)*(h-pad.t-pad.b), bhB=(b/max)*(h-pad.t-pad.b);
+      const yB=h-pad.b-bhA-bhB, yA=h-pad.b-bhA;
+      if(bhB>0) s+=`<rect x="${x}" y="${yB}" width="${bw}" height="${bhB}" fill="#e8874a" rx="2"/>`;
+      if(bhA>0) s+=`<rect x="${x}" y="${yA}" width="${bw}" height="${bhA}" fill="#4f87c5" rx="2"/>`;
+      if(total>0) s+=`<text x="${x+bw/2}" y="${yB-2}" font-size="7.5" text-anchor="middle" fill="#333" font-weight="bold">${total}</text>`;
+      if(b>0&&bhB>14) s+=`<text x="${x+bw/2}" y="${yB+bhB/2+3}" font-size="7" text-anchor="middle" fill="white" font-weight="bold">${b}</text>`;
+      if(a>0&&bhA>14) s+=`<text x="${x+bw/2}" y="${yA+bhA/2+3}" font-size="7" text-anchor="middle" fill="white" font-weight="bold">${a}</text>`;
+      s+=`<text x="${x+bw/2}" y="${h-pad.b+13}" font-size="8" text-anchor="middle" fill="#666">${String(labels[i]).slice(2)}</text>`;
+    });
+    s+=`<line x1="${pad.l}" y1="${pad.t}" x2="${pad.l}" y2="${h-pad.b}" stroke="#ccc" stroke-width="1"/>`;
+    ticks.forEach(v=>{
+      const yy=h-pad.b-(v/max)*(h-pad.t-pad.b);
+      s+=`<text x="${pad.l-4}" y="${yy+3}" font-size="8" text-anchor="end" fill="#999">${v}</text>`;
+      if(v>0) s+=`<line x1="${pad.l}" y1="${yy}" x2="${w-pad.r}" y2="${yy}" stroke="#eee" stroke-width="0.5"/>`;
+    });
+    return `<svg width="${w}" height="${h}">${s}</svg>`;
+  }
 
-  const c=document.getElementById('nisa-content');
-  c.innerHTML=`
+  const tableRows = yearsH.map((y,i)=>{
+    const bg=i<3?'background:#eff6ff':i<=6?'':i<=10?'background:#fff3e8':'background:#fef9c3';
+    return `<tr style="${bg}">
+      <td style="padding:4px 6px;font-weight:bold">${y}</td>
+      <td style="padding:4px 6px;text-align:right;color:#4f87c5">${tsumiH[i]>0?tsumiH[i]+'万':'—'}</td>
+      <td style="padding:4px 6px;text-align:right;color:#e8874a">${seichouH[i]>0?seichouH[i]+'万':'—'}</td>
+      <td style="padding:4px 6px;text-align:right;font-weight:bold">${totalH[i]+'万'}</td>
+      <td style="padding:4px 6px;color:#666;font-size:10px">${notesH[i]}</td>
+    </tr>`;
+  }).join('');
+
+  const c = document.getElementById('nisa-sim-content');
+  c.innerHTML = `
     <div class="card">
-      <div class="sub-title">積立枠 <small style="font-size:.75rem;font-weight:400">年間上限120万 ／ 生涯600万</small></div>
-      <div class="input-row"><label>生涯 使用済み</label>
-        <input type="number" id="n-${isH?'h':'y'}-t-life" value="${tLife}" min="0" max="6000000" step="1000" onchange="saveAndRender()"><span>円</span></div>
-      <div class="input-row"><label>今年（2026）使用済み</label>
-        <input type="number" id="n-${isH?'h':'y'}-t-year" value="${tYear}" min="0" max="1200000" step="1000" onchange="saveAndRender()"><span>円</span></div>
-      <div class="info-row"><span class="info-label">生涯 残り</span><span class="info-val ${color}">${fmt(Math.max(0,6000000-tLife))}</span></div>
-      <div class="info-row"><span class="info-label">今年 残り</span><span class="info-val text-amber">${fmt(Math.max(0,1200000-tYear))}</span></div>
-      <div class="progress-bar mt-2"><div class="progress-fill blue" style="width:${pct(tLife,6000000)}%"></div></div>
-      <div class="progress-label"><span>${pct(tLife,6000000)}%</span><span>600万</span></div>
+      <div style="display:flex;gap:14px;font-size:11px;margin-bottom:8px">
+        <span><span style="display:inline-block;width:10px;height:10px;background:#4f87c5;border-radius:2px;vertical-align:middle"></span> 積立枠</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:#e8874a;border-radius:2px;vertical-align:middle"></span> 成長投資枠</span>
+      </div>
+      <p style="font-size:12px;color:var(--text-light);margin:0 0 4px;font-weight:600">■ 年別投資額（万円）</p>
+      <div style="overflow-x:auto">${stackedSVG(tsumiH,seichouH,400,yearsH,[0,100,200,300,400])}</div>
     </div>
     <div class="card">
-      <div class="sub-title">成長投資枠 <small style="font-size:.75rem;font-weight:400">年間上限240万 ／ 生涯1,200万</small></div>
-      <div class="input-row"><label>生涯 使用済み</label>
-        <input type="number" id="n-${isH?'h':'y'}-s-life" value="${sLife}" min="0" max="12000000" step="1000" onchange="saveAndRender()"><span>円</span></div>
-      <div class="input-row"><label>今年（2026）使用済み</label>
-        <input type="number" id="n-${isH?'h':'y'}-s-year" value="${sYear}" min="0" max="2400000" step="1000" onchange="saveAndRender()"><span>円</span></div>
-      <div class="info-row"><span class="info-label">生涯 残り</span><span class="info-val ${color}">${fmt(Math.max(0,12000000-sLife))}</span></div>
-      <div class="info-row"><span class="info-label">今年 残り</span><span class="info-val text-amber">${fmt(Math.max(0,2400000-sYear))}</span></div>
-      <div class="progress-bar mt-2"><div class="progress-fill amber" style="width:${pct(sLife,12000000)}%"></div></div>
-      <div class="progress-label"><span>${pct(sLife,12000000)}%</span><span>1,200万</span></div>
+      <p style="font-size:12px;color:var(--text-light);margin:0 0 4px;font-weight:600">■ 累計投資額（万円）</p>
+      <div style="overflow-x:auto">${stackedSVG(cumT,cumS,2000,yearsH,[0,500,1000,1500,2000])}</div>
+    </div>
+    <div class="card">
+      <p style="font-size:12px;color:var(--text-light);margin:0 0 6px;font-weight:600">■ 内訳・根拠（年別）</p>
+      <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:320px">
+        <thead><tr style="background:#f0f4ff">
+          <th style="padding:4px 6px;text-align:left">年</th>
+          <th style="padding:4px 6px;text-align:right;color:#4f87c5">積立枠</th>
+          <th style="padding:4px 6px;text-align:right;color:#e8874a">成長枠</th>
+          <th style="padding:4px 6px;text-align:right">合計</th>
+          <th style="padding:4px 6px;text-align:left">根拠</th>
+        </tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+      </div>
+      <p style="font-size:10px;color:#999;margin:8px 0 0">※生涯上限：積立枠600万・成長枠1,200万　※夫のみ</p>
     </div>`;
-
-  // Reconnect inputs (already in HTML via id)
 }
 
 // ========================================
@@ -1094,100 +1134,6 @@ function addSurplus(){
 function delSurplus(i){
   STATE.surplus.history.splice(i,1);
   saveState(); renderAll();
-}
-
-// ========================================
-// NISA CHART
-// ========================================
-function showNisaChart(){
-  const existing = document.getElementById('nisa-chart-overlay');
-  if(existing) existing.remove();
-
-  const yearsH = [2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037];
-  const tsumiH = [120,120,120,48,48,48,48,0,0,0,0,0];
-  const seichouH = [240,240,240,0,0,0,0,48,48,48,48,198];
-  const notesH = [
-    '積立120（月4万+スポット）/ 成長240（移管+オルカン）',
-    '積立120（月4万+スポット）/ 成長240（移管+オルカン）',
-    '積立120（月4万+スポット）/ 成長240（移管+オルカン）',
-    '月4万×12 / 成長枠温存','月4万×12 / 成長枠温存','月4万×12 / 成長枠温存',
-    '月4万×12 / 積立600万満額達成',
-    '積立停止 / 成長 月4万×12','積立停止 / 成長 月4万×12',
-    '積立停止 / 成長 月4万×12','積立停止 / 成長 月4万×12',
-    '定年 / 成長枠残198万（相場次第）',
-  ];
-  const totalH = yearsH.map((_,i)=>tsumiH[i]+seichouH[i]);
-  let cumT=[],cumS=[],st=0,ss=0;
-  yearsH.forEach((_,i)=>{ st+=tsumiH[i]; ss+=seichouH[i]; cumT.push(st); cumS.push(ss); });
-
-  function stackedSVG(dataA, dataB, max, labels, ticks){
-    const w=320, h=160, pad={l:40,r:8,t:14,b:26};
-    const bw=(w-pad.l-pad.r)/dataA.length - 3;
-    let s='';
-    dataA.forEach((a,i)=>{
-      const b=dataB[i], total=a+b;
-      const x=pad.l+i*(bw+3);
-      const bhA=(a/max)*(h-pad.t-pad.b), bhB=(b/max)*(h-pad.t-pad.b);
-      const yB=h-pad.b-bhA-bhB, yA=h-pad.b-bhA;
-      if(bhB>0) s+=`<rect x="${x}" y="${yB}" width="${bw}" height="${bhB}" fill="#e8874a" rx="2"/>`;
-      if(bhA>0) s+=`<rect x="${x}" y="${yA}" width="${bw}" height="${bhA}" fill="#4f87c5" rx="2"/>`;
-      if(total>0) s+=`<text x="${x+bw/2}" y="${yB-2}" font-size="7.5" text-anchor="middle" fill="#333" font-weight="bold">${total}</text>`;
-      if(b>0&&bhB>14) s+=`<text x="${x+bw/2}" y="${yB+bhB/2+3}" font-size="7" text-anchor="middle" fill="white" font-weight="bold">${b}</text>`;
-      if(a>0&&bhA>14) s+=`<text x="${x+bw/2}" y="${yA+bhA/2+3}" font-size="7" text-anchor="middle" fill="white" font-weight="bold">${a}</text>`;
-      s+=`<text x="${x+bw/2}" y="${h-pad.b+13}" font-size="8" text-anchor="middle" fill="#666">${String(labels[i]).slice(2)}</text>`;
-    });
-    s+=`<line x1="${pad.l}" y1="${pad.t}" x2="${pad.l}" y2="${h-pad.b}" stroke="#ccc" stroke-width="1"/>`;
-    ticks.forEach(v=>{
-      const yy=h-pad.b-(v/max)*(h-pad.t-pad.b);
-      s+=`<text x="${pad.l-4}" y="${yy+3}" font-size="8" text-anchor="end" fill="#999">${v}</text>`;
-      if(v>0) s+=`<line x1="${pad.l}" y1="${yy}" x2="${w-pad.r}" y2="${yy}" stroke="#eee" stroke-width="0.5"/>`;
-    });
-    return `<svg width="${w}" height="${h}">${s}</svg>`;
-  }
-
-  const tableRows = yearsH.map((y,i)=>{
-    const bg=i<3?'background:#eff6ff':i<=6?'':i<=10?'background:#fff3e8':'background:#fef9c3';
-    return `<tr style="${bg}">
-      <td style="padding:4px 6px;font-weight:bold">${y}</td>
-      <td style="padding:4px 6px;text-align:right;color:#4f87c5">${tsumiH[i]>0?tsumiH[i]+'万':'—'}</td>
-      <td style="padding:4px 6px;text-align:right;color:#e8874a">${seichouH[i]>0?seichouH[i]+'万':'—'}</td>
-      <td style="padding:4px 6px;text-align:right;font-weight:bold">${totalH[i]+'万'}</td>
-      <td style="padding:4px 6px;color:#666;font-size:10px">${notesH[i]}</td>
-    </tr>`;
-  }).join('');
-
-  const html=`
-  <div id="nisa-chart-overlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.75);z-index:9999;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;box-sizing:border-box;">
-    <div style="background:#fff;border-radius:12px;padding:16px;max-width:440px;margin:0 auto;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <h3 style="margin:0;font-size:15px">📊 NISA積立シミュレーション（夫）</h3>
-        <button onclick="document.getElementById('nisa-chart-overlay').remove()" style="border:none;background:#eee;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:14px">✕</button>
-      </div>
-      <div style="display:flex;gap:14px;font-size:11px;margin-bottom:6px">
-        <span><span style="display:inline-block;width:10px;height:10px;background:#4f87c5;border-radius:2px;vertical-align:middle"></span> 積立枠</span>
-        <span><span style="display:inline-block;width:10px;height:10px;background:#e8874a;border-radius:2px;vertical-align:middle"></span> 成長投資枠</span>
-      </div>
-      <p style="font-size:12px;color:#555;margin:0 0 4px">■ 年別投資額（万円）</p>
-      ${stackedSVG(tsumiH,seichouH,400,yearsH,[0,100,200,300,400])}
-      <p style="font-size:12px;color:#555;margin:8px 0 4px">■ 累計投資額（万円）</p>
-      ${stackedSVG(cumT,cumS,2000,yearsH,[0,500,1000,1500,2000])}
-      <p style="font-size:12px;color:#555;margin:8px 0 4px">■ 内訳・根拠（年別）</p>
-      <div style="overflow-x:auto">
-      <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:360px">
-        <thead><tr style="background:#f0f4ff">
-          <th style="padding:4px 6px;text-align:left">年</th>
-          <th style="padding:4px 6px;text-align:right;color:#4f87c5">積立枠</th>
-          <th style="padding:4px 6px;text-align:right;color:#e8874a">成長枠</th>
-          <th style="padding:4px 6px;text-align:right">合計</th>
-          <th style="padding:4px 6px;text-align:left">根拠</th>
-        </tr></thead>
-        <tbody>${tableRows}</tbody>
-      </table>
-      </div>
-      <p style="font-size:10px;color:#999;margin:8px 0 0">※生涯上限：積立枠600万・成長枠1,200万　※夫のみ</p>
-    </div>
-  </div>`;
-  document.body.insertAdjacentHTML('beforeend', html);
 }
 
 // ========================================
