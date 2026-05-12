@@ -185,6 +185,8 @@
   #tasks-special .task-card { background: #fff9c4; }
   .my-task-card[data-section="特別"] { background: #fff9c4; }
   #tasks-morning .task-card, #tasks-noon .task-card { background: #e1f5fe; }
+  #tasks-cleaning .task-card { background: #c8e6c9; }
+  #tasks-learning .task-card { background: #e3f2fd; }
   #tasks-day .task-card { background: #ede7f6; }
   #tasks-evening .task-card { background: #ede7f6; }
   #tasks-weekly .task-card  { background: #fff3e0; }
@@ -242,6 +244,8 @@
   .my-task-card[data-section="昼"]   { background: #e1f5fe; }
   .my-task-card[data-section="夜"]   { background: #ede7f6; }
   .my-task-card[data-section="随時"] { background: #e1f5fe; }
+  .my-task-card[data-section="掃除"] { background: #c8e6c9; }
+  .my-task-card[data-section="学び"] { background: #e3f2fd; }
   .my-task-card[data-section="曜日"] { background: #ede7f6; }
   .my-task-card[data-section="週間"] { background: #fff3e0; }
   .my-task-card[data-section="月間"] { background: #e8f5e9; }
@@ -295,6 +299,8 @@
           <option>朝</option>
           <option>昼</option>
           <option>夜</option>
+          <option>掃除</option>
+          <option>学び</option>
           <option>曜日</option>
           <option>週間</option>
           <option>月間</option>
@@ -339,6 +345,15 @@
       <div class="task-list" id="tasks-evening"></div>
     </div>
 
+
+    <div class="section" id="section-cleaning">
+      <div class="section-title">掃除</div>
+      <div class="task-list" id="tasks-cleaning"></div>
+    </div>
+    <div class="section" id="section-learning">
+      <div class="section-title">学び</div>
+      <div class="task-list" id="tasks-learning"></div>
+    </div>
 
     <div class="section" id="section-day-tasks">
       <div class="section-title">曜日タスク</div>
@@ -811,6 +826,18 @@ function render() {
   renderTaskList('tasks-noon',     [...NOON_TASKS, ...ANYTIME_TASKS], state.checked, state);
   renderTaskList('tasks-evening',  EVENING_TASKS,  state.checked, state);
 
+  // 掃除セクション（空なら非表示）
+  renderTaskList('tasks-cleaning', [], state.checked, state);
+  const cleaningEl = document.getElementById('section-cleaning');
+  if (cleaningEl) cleaningEl.style.display =
+    document.getElementById('tasks-cleaning').children.length > 0 ? '' : 'none';
+
+  // 学びセクション（空なら非表示）
+  renderTaskList('tasks-learning', [], state.checked, state);
+  const learningEl = document.getElementById('section-learning');
+  if (learningEl) learningEl.style.display =
+    document.getElementById('tasks-learning').children.length > 0 ? '' : 'none';
+
   // 曜日タスク（今日の分だけ表示）
   const todayDayTasks = WEEKLY_DAY_TASKS.filter(t => t.days.includes(dayOfWeek));
   const daySection = document.getElementById('section-day-tasks');
@@ -839,6 +866,7 @@ function render() {
 // ---- ソート ----
 const SORTABLE_CONTAINERS = [
   'tasks-today-todo','tasks-special','tasks-morning','tasks-noon','tasks-evening',
+  'tasks-cleaning','tasks-learning',
   'tasks-day','tasks-weekly','tasks-monthly','tasks-annual'
 ];
 let _sortables = {};
@@ -925,6 +953,8 @@ const SECTION_TO_CONTAINER = {
   '昼':   'tasks-noon',
   '夜':   'tasks-evening',
   '随時': 'tasks-noon',  // 後方互換（既存データ）
+  '掃除': 'tasks-cleaning',
+  '学び': 'tasks-learning',
 
   '曜日': 'tasks-day',
   '週間': 'tasks-weekly',
