@@ -328,6 +328,14 @@
       <div class="section-title">今日やる</div>
       <div class="task-list" id="tasks-today-todo"></div>
     </div>
+    <div class="section" id="section-cleaning">
+      <div class="section-title">掃除</div>
+      <div class="task-list" id="tasks-cleaning"></div>
+    </div>
+    <div class="section" id="section-learning">
+      <div class="section-title">学び</div>
+      <div class="task-list" id="tasks-learning"></div>
+    </div>
     <div class="section" id="section-special">
       <div class="section-title">特別</div>
       <div class="task-list" id="tasks-special"></div>
@@ -343,16 +351,6 @@
     <div class="section">
       <div class="section-title">夜</div>
       <div class="task-list" id="tasks-evening"></div>
-    </div>
-
-
-    <div class="section" id="section-cleaning">
-      <div class="section-title">掃除</div>
-      <div class="task-list" id="tasks-cleaning"></div>
-    </div>
-    <div class="section" id="section-learning">
-      <div class="section-title">学び</div>
-      <div class="task-list" id="tasks-learning"></div>
     </div>
 
     <div class="section" id="section-day-tasks">
@@ -816,16 +814,6 @@ function render() {
   if (todayTodoEl) todayTodoEl.style.display =
     document.getElementById('tasks-today-todo').children.length > 0 ? '' : 'none';
 
-  // 特別セクション（空なら非表示）
-  renderTaskList('tasks-special', [], state.checked, state);
-  const specialEl = document.getElementById('section-special');
-  if (specialEl) specialEl.style.display =
-    document.getElementById('tasks-special').children.length > 0 ? '' : 'none';
-
-  renderTaskList('tasks-morning',  MORNING_TASKS,  state.checked, state);
-  renderTaskList('tasks-noon',     [...NOON_TASKS, ...ANYTIME_TASKS], state.checked, state);
-  renderTaskList('tasks-evening',  EVENING_TASKS,  state.checked, state);
-
   // 掃除セクション（空なら非表示）
   renderTaskList('tasks-cleaning', [], state.checked, state);
   const cleaningEl = document.getElementById('section-cleaning');
@@ -837,6 +825,16 @@ function render() {
   const learningEl = document.getElementById('section-learning');
   if (learningEl) learningEl.style.display =
     document.getElementById('tasks-learning').children.length > 0 ? '' : 'none';
+
+  // 特別セクション（空なら非表示）
+  renderTaskList('tasks-special', [], state.checked, state);
+  const specialEl = document.getElementById('section-special');
+  if (specialEl) specialEl.style.display =
+    document.getElementById('tasks-special').children.length > 0 ? '' : 'none';
+
+  renderTaskList('tasks-morning',  MORNING_TASKS,  state.checked, state);
+  renderTaskList('tasks-noon',     [...NOON_TASKS, ...ANYTIME_TASKS], state.checked, state);
+  renderTaskList('tasks-evening',  EVENING_TASKS,  state.checked, state);
 
   // 曜日タスク（今日の分だけ表示）
   const todayDayTasks = WEEKLY_DAY_TASKS.filter(t => t.days.includes(dayOfWeek));
