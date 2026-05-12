@@ -244,7 +244,7 @@
   .my-task-card[data-section="昼"]   { background: #e1f5fe; }
   .my-task-card[data-section="夜"]   { background: #ede7f6; }
   .my-task-card[data-section="随時"] { background: #e1f5fe; }
-  .my-task-card[data-section="掃除"] { background: #c8e6c9; }
+  .my-task-card[data-section="家事"] { background: #c8e6c9; }
   .my-task-card[data-section="学び"] { background: #e3f2fd; }
   .my-task-card[data-section="曜日"] { background: #ede7f6; }
   .my-task-card[data-section="週間"] { background: #fff3e0; }
@@ -299,7 +299,7 @@
           <option>朝</option>
           <option>昼</option>
           <option>夜</option>
-          <option>掃除</option>
+          <option>家事</option>
           <option>学び</option>
           <option>曜日</option>
           <option>週間</option>
@@ -329,7 +329,7 @@
       <div class="task-list" id="tasks-today-todo"></div>
     </div>
     <div class="section" id="section-cleaning">
-      <div class="section-title">掃除</div>
+      <div class="section-title">家事</div>
       <div class="task-list" id="tasks-cleaning"></div>
     </div>
     <div class="section" id="section-learning">
@@ -951,7 +951,7 @@ const SECTION_TO_CONTAINER = {
   '昼':   'tasks-noon',
   '夜':   'tasks-evening',
   '随時': 'tasks-noon',  // 後方互換（既存データ）
-  '掃除': 'tasks-cleaning',
+  '家事': 'tasks-cleaning',
   '学び': 'tasks-learning',
 
   '曜日': 'tasks-day',
