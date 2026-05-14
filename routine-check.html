@@ -268,6 +268,57 @@
     flex-shrink: 0; line-height: 1;
   }
   .my-task-delete:hover { color: #e53935; }
+
+  /* レポートタブ */
+  .report-section { margin-bottom: 22px; }
+  .report-section-title {
+    font-size: 0.8rem; font-weight: 700; color: #999;
+    letter-spacing: 0.08em; margin-bottom: 10px; padding-left: 2px;
+  }
+  .report-day-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
+  }
+  .report-day-label {
+    font-size: 0.8rem; color: #666; width: 54px; flex-shrink: 0; text-align: right;
+  }
+  .report-bar-wrap {
+    flex: 1; background: #f0f0f0; border-radius: 6px; height: 18px; overflow: hidden;
+  }
+  .report-bar-fill {
+    height: 100%; border-radius: 6px; transition: width 0.4s;
+    background: linear-gradient(90deg, #66bb6a, #43a047);
+  }
+  .report-bar-fill.low { background: linear-gradient(90deg, #ef9a9a, #e53935); }
+  .report-bar-fill.mid { background: linear-gradient(90deg, #ffcc80, #fb8c00); }
+  .report-pct {
+    font-size: 0.8rem; font-weight: 700; color: #555; width: 36px; flex-shrink: 0;
+  }
+  .report-task-row {
+    display: flex; align-items: center; gap: 10px;
+    background: white; border-radius: 8px; padding: 9px 13px;
+    margin-bottom: 6px; box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  }
+  .report-task-name { flex: 1; font-size: 0.9rem; }
+  .report-task-pct {
+    font-size: 0.85rem; font-weight: 700;
+    padding: 2px 10px; border-radius: 10px;
+  }
+  .report-task-pct.low  { background: #ffebee; color: #e53935; }
+  .report-task-pct.mid  { background: #fff3e0; color: #e65100; }
+  .report-task-pct.high { background: #e8f5e9; color: #2e7d32; }
+  .report-empty {
+    text-align: center; color: #bbb; font-size: 0.9rem; padding: 30px 0;
+  }
+  .report-period-btns {
+    display: flex; gap: 8px; margin-bottom: 16px;
+  }
+  .report-period-btn {
+    padding: 6px 16px; border-radius: 20px; border: 1px solid #ddd;
+    background: white; font-size: 0.85rem; cursor: pointer; color: #666;
+  }
+  .report-period-btn.active {
+    background: #4caf50; color: white; border-color: #4caf50; font-weight: 600;
+  }
 </style>
 </head>
 <body>
@@ -282,6 +333,7 @@
   <div class="tab" data-tab="weekly">週間</div>
   <div class="tab" data-tab="monthly">月間</div>
   <div class="tab" data-tab="annual">年間</div>
+  <div class="tab" data-tab="report">レポート</div>
 </div>
 
 <div class="container">
@@ -456,10 +508,21 @@
     </div>
   </div>
 
+  <!-- レポートタブ -->
+  <div class="tab-content" id="tab-report">
+    <div class="report-period-btns">
+      <button class="report-period-btn active" onclick="setReportPeriod(7, this)">7日</button>
+      <button class="report-period-btn" onclick="setReportPeriod(14, this)">14日</button>
+      <button class="report-period-btn" onclick="setReportPeriod(30, this)">30日</button>
+    </div>
+    <div id="report-content"></div>
+  </div>
+
 </div>
 
 <script>
 const STORAGE_KEY = 'routine_v2';
+const HISTORY_KEY = 'task_history_v1';
 const today = new Date(); // 実際の現在時刻（ヘッダー表示用）
 
 // 6時以前は前日扱い（タスクリセットを朝6時に）
@@ -609,6 +672,22 @@ function loadState() {
   if (!state) state = getDefaultState();
 
   if (state.date !== todayStr) {
+    // 日付が変わる前に昨日の達成記録を保存
+    if (state.date && state.checked) {
+      const prevDate = new Date(state.date + 'T12:00:00');
+      const prevDayOfWeek = prevDate.getDay();
+      const prevIsWeekday = prevDayOfWeek >= 1 && prevDayOfWeek <= 5;
+      const allDaily = [...MORNING_TASKS, ...NOON_TASKS, ...EVENING_TASKS, ...ANYTIME_TASKS];
+      const applicable = allDaily.filter(t => !t.weekdayOnly || prevIsWeekday);
+      const history = loadHistory();
+      history[state.date] = {
+        checked: [...state.checked],
+        myTaskChecked: [...(state.myTaskChecked || [])],
+        total: applicable.length,
+        wasWeekday: prevIsWeekday
+      };
+      saveHistory(history);
+    }
     state.date = todayStr;
     state.checked = [];
     state.myTaskChecked = [];
@@ -637,6 +716,120 @@ function loadState() {
 function saveState(state) {
   memoryState = state;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+// ---- 履歴 ----
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || {}; } catch(e) { return {}; }
+}
+function saveHistory(h) {
+  // 最大60日分だけ保持
+  const keys = Object.keys(h).sort();
+  if (keys.length > 60) keys.slice(0, keys.length - 60).forEach(k => delete h[k]);
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); } catch(e) {}
+}
+
+// ---- レポート ----
+let reportPeriod = 7;
+const DAY_NAMES_REPORT = ['日','月','火','水','木','金','土'];
+
+function setReportPeriod(days, btn) {
+  reportPeriod = days;
+  document.querySelectorAll('.report-period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderReport();
+}
+
+function renderReport() {
+  const el = document.getElementById('report-content');
+  if (!el) return;
+
+  const history = loadHistory();
+  const today = new Date();
+  const allDaily = [...MORNING_TASKS, ...NOON_TASKS, ...EVENING_TASKS, ...ANYTIME_TASKS];
+
+  // 対象日付リストを生成（今日は含めない：まだ進行中）
+  const days = [];
+  for (let i = reportPeriod; i >= 1; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    days.push(toLocalDateStr(d));
+  }
+
+  const recordedDays = days.filter(d => history[d]);
+  if (recordedDays.length === 0) {
+    el.innerHTML = '<div class="report-empty">📊 まだデータがありません！<br>毎日使い続けると記録が溜まります✨</div>';
+    return;
+  }
+
+  // ---- 日別達成率 ----
+  let dayBarsHtml = recordedDays.map(dateStr => {
+    const rec = history[dateStr];
+    const pct = rec.total > 0 ? Math.round(rec.checked.length / rec.total * 100) : 0;
+    const d = new Date(dateStr + 'T12:00:00');
+    const label = (d.getMonth()+1) + '/' + d.getDate() + '(' + DAY_NAMES_REPORT[d.getDay()] + ')';
+    const cls = pct < 50 ? 'low' : pct < 75 ? 'mid' : '';
+    return `<div class="report-day-row">
+      <span class="report-day-label">${label}</span>
+      <div class="report-bar-wrap"><div class="report-bar-fill ${cls}" style="width:${pct}%"></div></div>
+      <span class="report-pct">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  // ---- タスク別達成率（サボりがちTOP） ----
+  const taskStats = allDaily.map(task => {
+    const applicable = recordedDays.filter(d => {
+      const rec = history[d];
+      return !task.weekdayOnly || rec.wasWeekday;
+    });
+    if (applicable.length === 0) return null;
+    const done = applicable.filter(d => history[d].checked.includes(task.id)).length;
+    const pct = Math.round(done / applicable.length * 100);
+    return { id: task.id, name: task.name, pct, days: applicable.length };
+  }).filter(Boolean);
+
+  // 達成率が低い順にソート（5回以上チャンスがあったもの）
+  const lowTasks = taskStats
+    .filter(t => t.days >= 3)
+    .sort((a, b) => a.pct - b.pct)
+    .slice(0, 7);
+
+  // 達成率が高い順
+  const highTasks = taskStats
+    .filter(t => t.days >= 3)
+    .sort((a, b) => b.pct - a.pct)
+    .slice(0, 5);
+
+  const taskRowHtml = (t) => {
+    const cls = t.pct < 50 ? 'low' : t.pct < 75 ? 'mid' : 'high';
+    return `<div class="report-task-row">
+      <span class="report-task-name">${t.name}</span>
+      <span class="report-task-pct ${cls}">${t.pct}%</span>
+    </div>`;
+  };
+
+  // 平均達成率
+  const avgPct = recordedDays.length > 0
+    ? Math.round(recordedDays.reduce((sum, d) => {
+        const rec = history[d];
+        return sum + (rec.total > 0 ? rec.checked.length / rec.total * 100 : 0);
+      }, 0) / recordedDays.length)
+    : 0;
+
+  el.innerHTML = `
+    <div class="report-section">
+      <div class="report-section-title">📊 日別達成率（過去${reportPeriod}日・平均 ${avgPct}%）</div>
+      ${dayBarsHtml || '<div class="report-empty">データなし</div>'}
+    </div>
+    <div class="report-section">
+      <div class="report-section-title">⚠️ サボりがちタスク</div>
+      ${lowTasks.length > 0 ? lowTasks.map(taskRowHtml).join('') : '<div class="report-empty">データなし</div>'}
+    </div>
+    <div class="report-section">
+      <div class="report-section-title">🏆 よくできてるタスク</div>
+      ${highTasks.length > 0 ? highTasks.map(taskRowHtml).join('') : '<div class="report-empty">データなし</div>'}
+    </div>
+  `;
 }
 
 // ---- 非表示タスク ----
@@ -985,6 +1178,7 @@ document.querySelectorAll('.tab').forEach(tab => {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    if (tab.dataset.tab === 'report') renderReport();
   });
 });
 
