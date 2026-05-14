@@ -912,15 +912,6 @@ function renderTaskList(containerId, tasks, checkedArr, state) {
   const order  = loadOrder();
 
   let filtered = tasks.filter(t => !hidden.includes(t.id));
-  if (order[containerId] && order[containerId].length) {
-    const ids = order[containerId];
-    filtered.sort((a, b) => {
-      const ai = ids.indexOf(a.id), bi = ids.indexOf(b.id);
-      if (ai === -1 && bi === -1) return 0;
-      if (ai === -1) return 1; if (bi === -1) return -1;
-      return ai - bi;
-    });
-  }
 
   // カスタムタスクをこのセクションに統合
   const myTasks = loadMyTasks().filter(t =>
