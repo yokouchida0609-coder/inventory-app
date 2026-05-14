@@ -739,15 +739,18 @@ function renderTaskList(containerId, tasks, checkedArr, state) {
     ...myTasks.map(t => ({ ...t, _custom: true }))
   ];
 
-  // 保存済み順番を全体に適用
+  // 保存済み順番を全体に適用（タスクIDが変わっていたら無視してデフォルト順を使う）
   if (order[containerId] && order[containerId].length) {
     const ids = order[containerId];
-    allItems.sort((a, b) => {
-      const ai = ids.indexOf(a.id), bi = ids.indexOf(b.id);
-      if (ai === -1 && bi === -1) return 0;
-      if (ai === -1) return 1; if (bi === -1) return -1;
-      return ai - bi;
-    });
+    const currentIds = allItems.map(t => t.id);
+    const isStale = currentIds.some(id => !ids.includes(id)) ||
+                    ids.some(id => !currentIds.includes(id));
+    if (!isStale) {
+      allItems.sort((a, b) => {
+        const ai = ids.indexOf(a.id), bi = ids.indexOf(b.id);
+        return ai - bi;
+      });
+    }
   }
 
   el.innerHTML = allItems.map(task => {
