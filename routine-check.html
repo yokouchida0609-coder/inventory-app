@@ -388,10 +388,6 @@
       <div class="section-title">学び</div>
       <div class="task-list" id="tasks-learning"></div>
     </div>
-    <div class="section" id="section-special">
-      <div class="section-title">特別</div>
-      <div class="task-list" id="tasks-special"></div>
-    </div>
     <div class="section">
       <div class="section-title">朝</div>
       <div class="task-list" id="tasks-morning"></div>
@@ -416,6 +412,10 @@
     <div class="section">
       <div class="section-title">月間タスク <span class="reset-badge">月末リセット</span></div>
       <div class="task-list" id="tasks-monthly"></div>
+    </div>
+    <div class="section" id="section-special">
+      <div class="section-title">特別</div>
+      <div class="task-list" id="tasks-special"></div>
     </div>
     <div class="section">
       <div class="section-title">年間タスク <span class="reset-badge">年末リセット</span></div>
@@ -1003,7 +1003,7 @@ function render() {
   if (todayTodoEl) todayTodoEl.style.display =
     document.getElementById('tasks-today-todo').children.length > 0 ? '' : 'none';
 
-  // 掃除セクション（空なら非表示）
+  // 家事セクション（空なら非表示）
   renderTaskList('tasks-cleaning', [], state.checked, state);
   const cleaningEl = document.getElementById('section-cleaning');
   if (cleaningEl) cleaningEl.style.display =
@@ -1014,12 +1014,6 @@ function render() {
   const learningEl = document.getElementById('section-learning');
   if (learningEl) learningEl.style.display =
     document.getElementById('tasks-learning').children.length > 0 ? '' : 'none';
-
-  // 特別セクション（空なら非表示）
-  renderTaskList('tasks-special', [], state.checked, state);
-  const specialEl = document.getElementById('section-special');
-  if (specialEl) specialEl.style.display =
-    document.getElementById('tasks-special').children.length > 0 ? '' : 'none';
 
   renderTaskList('tasks-morning',  MORNING_TASKS,  state.checked, state);
   renderTaskList('tasks-noon',     [...NOON_TASKS, ...ANYTIME_TASKS], state.checked, state);
@@ -1037,6 +1031,13 @@ function render() {
 
   renderTaskList('tasks-weekly',  WEEKLY_TASKS,  state.weeklyChecked,  state);
   renderTaskList('tasks-monthly', MONTHLY_TASKS, state.monthlyChecked, state);
+
+  // 特別セクション（空なら非表示）
+  renderTaskList('tasks-special', [], state.checked, state);
+  const specialEl = document.getElementById('section-special');
+  if (specialEl) specialEl.style.display =
+    document.getElementById('tasks-special').children.length > 0 ? '' : 'none';
+
   renderTaskList('tasks-annual',  ANNUAL_TASKS,  state.annualChecked,  state);
 
   if (typeof initSortable === 'function') initSortable();
