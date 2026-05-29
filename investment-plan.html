@@ -419,8 +419,7 @@ const PLAN_H = {}; // 夫
 const PLAN_Y = {}; // Yoko
 
 PLAN_H[2026] = [
-  {id:'h26-t1',type:'tsumitate',title:'オルカン積立 月10万×7ヶ月',desc:'6〜12月 計70万円（毎月の収入から）',amount:700000},
-  {id:'h26-t2',type:'tsumitate',title:'オルカン スポット追加',desc:'余剰資金から50万円 → 積立枠120万満額',amount:500000},
+  {id:'h26-t1',type:'tsumitate',title:'オルカン積立 月4万×5ヶ月 ✅',desc:'8〜12月 計20万円（毎月の収入から）',amount:200000},
   {id:'h26-s1',type:'seicho',title:'大和ハウス 移管①（300株）✅ 5/28完了',desc:'特定口座→NISA 約145万円',amount:1450000,cond:'完了'},
   {id:'h26-s2',type:'seicho',title:'大和ハウス 82株 追加購入',desc:'約40万円',amount:400000,cond:'移管後・下落時'},
   {id:'h26-s3',type:'seicho',title:'高配当株 追加購入（練習）',desc:'15万円',amount:150000,cond:'下落時'},
@@ -529,7 +528,7 @@ const DEFAULT_STATE={
   },
   surplus:{initial:3800000, history:[]},
   settings:{sim_rate:5, sim_annual:480000, sim_yield:4, retire_fund:7000000},
-  actions:{'h26-s1':{completed:true}}, memos:{},
+  actions:{'h26-s1':{completed:true},'h26-t1':{completed:true}}, memos:{},
 };
 
 let STATE=JSON.parse(JSON.stringify(DEFAULT_STATE));
