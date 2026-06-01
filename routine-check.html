@@ -141,6 +141,13 @@
   .task-delete:hover { color: #e53935; }
   .task-card.sortable-ghost { opacity: 0.4; }
   .task-card.sortable-chosen { box-shadow: 0 4px 12px rgba(0,0,0,.2); }
+  .task-card.skip-warn  { border-left: 4px solid #ff9800; }
+  .task-card.skip-alert { border-left: 4px solid #f44336; }
+  .skip-badge {
+    font-size: 0.65rem; font-weight: 700; color: white;
+    background: #f44336; padding: 2px 6px; border-radius: 8px;
+    white-space: nowrap; flex-shrink: 0;
+  }
 
   .weekday-badge {
     font-size: 0.68rem; color: #999; background: #f0f0f0;
@@ -733,6 +740,26 @@ function saveHistory(h) {
 let reportPeriod = 7;
 const DAY_NAMES_REPORT = ['日','月','火','水','木','金','土'];
 
+// 各タスクの連続スキップ日数マップを返す（3日以上のもの）
+function buildSkipMap() {
+  const history = loadHistory();
+  const allDaily = [...MORNING_TASKS, ...NOON_TASKS, ...EVENING_TASKS, ...ANYTIME_TASKS];
+  const dates = Object.keys(history).sort().reverse(); // 新しい順
+  const skipMap = {};
+  allDaily.forEach(task => {
+    if (task.intervalDays) return; // インターバルタスクは除外
+    let count = 0;
+    for (const dateStr of dates) {
+      const rec = history[dateStr];
+      if (task.weekdayOnly && !rec.wasWeekday) continue;
+      if (rec.checked.includes(task.id)) break;
+      count++;
+    }
+    if (count >= 3) skipMap[task.id] = count;
+  });
+  return skipMap;
+}
+
 function setReportPeriod(days, btn) {
   reportPeriod = days;
   document.querySelectorAll('.report-period-btn').forEach(b => b.classList.remove('active'));
@@ -905,7 +932,8 @@ function allCountable() {
     .filter(t => !t.weekdayOnly || isWeekday);
 }
 
-function renderTaskList(containerId, tasks, checkedArr, state) {
+function renderTaskList(containerId, tasks, checkedArr, state, skipMap) {
+  skipMap = skipMap || {};
   const el = document.getElementById(containerId);
   if (!el) return;
   const hidden = loadHidden();
@@ -967,7 +995,9 @@ function renderTaskList(containerId, tasks, checkedArr, state) {
       done = !inactive && checkedArr.includes(task.id);
       noteText = task.note;
     }
-    const cls = 'task-card' + (done ? ' done' : '') + (inactive ? ' inactive' : '');
+    const skipDays = !done ? (skipMap[task.id] || 0) : 0;
+    const skipCls = skipDays >= 5 ? ' skip-alert' : skipDays >= 3 ? ' skip-warn' : '';
+    const cls = 'task-card' + (done ? ' done' : '') + (inactive ? ' inactive' : '') + skipCls;
     const onclick = inactive ? '' : 'onclick="toggleTask(\'' + task.id + '\')"';
     const monthColor = task.id.startsWith('yr') ? getMonthColor(noteText) : null;
     const noteHtml = noteText
@@ -977,17 +1007,19 @@ function renderTaskList(containerId, tasks, checkedArr, state) {
       : '';
     const timeHtml = task.time ? '<span class="task-time">' + task.time + '</span>' : '';
     const badgeHtml = task.weekdayOnly ? '<span class="weekday-badge">平日のみ</span>' : '';
+    const skipBadgeHtml = skipDays >= 5 ? '<span class="skip-badge">' + skipDays + '日</span>' : '';
     const delBtn = '<button class="task-delete" onclick="event.stopPropagation();hideTask(\'' + task.id + '\')">×</button>';
     return '<div class="' + cls + '" data-id="' + task.id + '" ' + onclick + '>'
       + '<div class="task-checkbox"></div>'
       + '<span class="task-name">' + task.name + '</span>'
-      + noteHtml + timeHtml + badgeHtml + delBtn
+      + noteHtml + timeHtml + badgeHtml + skipBadgeHtml + delBtn
       + '</div>';
   }).join('');
 }
 
 function render() {
   const state = loadState();
+  const skipMap = buildSkipMap();
 
   // 進捗バー（毎日タスクのみ）
   const countable = allCountable();
@@ -998,47 +1030,47 @@ function render() {
   document.getElementById('progress-fill').style.width = pct + '%';
 
   // 今日やるセクション（空なら非表示）
-  renderTaskList('tasks-today-todo', [], state.checked, state);
+  renderTaskList('tasks-today-todo', [], state.checked, state, skipMap);
   const todayTodoEl = document.getElementById('section-today-todo');
   if (todayTodoEl) todayTodoEl.style.display =
     document.getElementById('tasks-today-todo').children.length > 0 ? '' : 'none';
 
   // 家事セクション（空なら非表示）
-  renderTaskList('tasks-cleaning', [], state.checked, state);
+  renderTaskList('tasks-cleaning', [], state.checked, state, skipMap);
   const cleaningEl = document.getElementById('section-cleaning');
   if (cleaningEl) cleaningEl.style.display =
     document.getElementById('tasks-cleaning').children.length > 0 ? '' : 'none';
 
   // 学びセクション（空なら非表示）
-  renderTaskList('tasks-learning', [], state.checked, state);
+  renderTaskList('tasks-learning', [], state.checked, state, skipMap);
   const learningEl = document.getElementById('section-learning');
   if (learningEl) learningEl.style.display =
     document.getElementById('tasks-learning').children.length > 0 ? '' : 'none';
 
-  renderTaskList('tasks-morning',  MORNING_TASKS,  state.checked, state);
-  renderTaskList('tasks-noon',     [...NOON_TASKS, ...ANYTIME_TASKS], state.checked, state);
-  renderTaskList('tasks-evening',  EVENING_TASKS,  state.checked, state);
+  renderTaskList('tasks-morning',  MORNING_TASKS,  state.checked, state, skipMap);
+  renderTaskList('tasks-noon',     [...NOON_TASKS, ...ANYTIME_TASKS], state.checked, state, skipMap);
+  renderTaskList('tasks-evening',  EVENING_TASKS,  state.checked, state, skipMap);
 
   // 曜日タスク（今日の分だけ表示）
   const todayDayTasks = WEEKLY_DAY_TASKS.filter(t => t.days.includes(dayOfWeek));
   const daySection = document.getElementById('section-day-tasks');
   if (todayDayTasks.length > 0) {
     daySection.style.display = '';
-    renderTaskList('tasks-day', todayDayTasks, state.checked);
+    renderTaskList('tasks-day', todayDayTasks, state.checked, state, skipMap);
   } else {
     daySection.style.display = 'none';
   }
 
-  renderTaskList('tasks-weekly',  WEEKLY_TASKS,  state.weeklyChecked,  state);
-  renderTaskList('tasks-monthly', MONTHLY_TASKS, state.monthlyChecked, state);
+  renderTaskList('tasks-weekly',  WEEKLY_TASKS,  state.weeklyChecked,  state, skipMap);
+  renderTaskList('tasks-monthly', MONTHLY_TASKS, state.monthlyChecked, state, skipMap);
 
   // 特別セクション（空なら非表示）
-  renderTaskList('tasks-special', [], state.checked, state);
+  renderTaskList('tasks-special', [], state.checked, state, skipMap);
   const specialEl = document.getElementById('section-special');
   if (specialEl) specialEl.style.display =
     document.getElementById('tasks-special').children.length > 0 ? '' : 'none';
 
-  renderTaskList('tasks-annual',  ANNUAL_TASKS,  state.annualChecked,  state);
+  renderTaskList('tasks-annual',  ANNUAL_TASKS,  state.annualChecked,  state, skipMap);
 
   if (typeof initSortable === 'function') initSortable();
 
