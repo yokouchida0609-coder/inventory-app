@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cmd.exe /c 'schtasks /Create /TN \"\"留守電確認リマインダー\"\" /TR \"\"powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File \\\\\"\"C:\\\\\\\\Users\\\\\\\\yoko7\\\\\\\\reminder-app\\\\\\\\remind_voicemail.ps1\\\\\"\"\"\" /SC WEEKLY /D MON,TUE,WED,THU,FRI /ST 09:00 /F')"
+      "Bash(cmd.exe /c 'schtasks /Create /TN \"\"留守電確認リマインダー\"\" /TR \"\"powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File \\\\\"\"C:\\\\\\\\Users\\\\\\\\yoko7\\\\\\\\reminder-app\\\\\\\\remind_voicemail.ps1\\\\\"\"\"\" /SC WEEKLY /D MON,TUE,WED,THU,FRI /ST 09:00 /F')",
+      "mcp__Claude_Preview__preview_start",
+      "WebFetch(domain:ameblo.jp)",
+      "PowerShell(powershell -ExecutionPolicy Bypass -File \"C:\\\\Users\\\\yoko7\\\\tv-tools\\\\setup_news_task.ps1\")",
+      "PowerShell(Get-ScheduledTask | Where-Object { $_.TaskName -match \"株\" } | Select-Object TaskName, State, @{N='LastRun';E={\\(Get-ScheduledTaskInfo $_.TaskName -ErrorAction SilentlyContinue\\).LastRunTime}}, @{N='NextRun';E={\\(Get-ScheduledTaskInfo $_.TaskName -ErrorAction SilentlyContinue\\).NextRunTime}} | Format-Table -AutoSize)"
     ]
   }
 }

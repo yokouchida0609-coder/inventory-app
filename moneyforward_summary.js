@@ -68,6 +68,7 @@ function summarizeMoneyForward() {
   var threads = GmailApp.search(query);
   var rows = [];
   var processedIds = {};
+  var rowKeys = {};
   var idArr = [];
 
   for (var t = 0; t < threads.length; t++) {
@@ -81,14 +82,17 @@ function summarizeMoneyForward() {
 
       var subject = msg.getSubject();
       var body = msg.getBody();
-      rows.push([
-        extractMonth(subject),
-        extractCardName(subject),
-        extractBillingDate(body),
-        extractAmount(body),
-        '三井住友銀行',
-        new Date()
-      ]);
+      var month = extractMonth(subject);
+      var cardName = extractCardName(subject);
+      var billingDate = extractBillingDate(body);
+      var amount = extractAmount(body);
+
+      // 同月・同カード名・同金額の重複メールを除外
+      var rowKey = month + '|' + cardName + '|' + amount;
+      if (rowKeys[rowKey]) continue;
+      rowKeys[rowKey] = true;
+
+      rows.push([month, cardName, billingDate, amount, '三井住友銀行', new Date()]);
     }
   }
 
@@ -109,7 +113,7 @@ function summarizeMoneyForward() {
   PropertiesService.getScriptProperties().setProperty('PROCESSED_IDS', JSON.stringify(idArr));
 
   createMonthlySummary(ss, rows);
-  SpreadsheetApp.getUi().alert('完了！\n月別合計シートの黄色セルに残高を入力してください。');
+  Logger.log('完了！月別合計シートの黄色セルに残高を入力してください。');
 }
 
 // シートへの差分追記
@@ -203,14 +207,22 @@ function createMonthlySummary(ss, rows) {
     summarySheet = ss.insertSheet('月別合計');
   }
 
-  // 既存の残高を保持
+  // 既存の残高・給料・楽天仮入力を保持
   var savedBalances = {};
+  var savedSalaries = {};
+  var savedRakutenTemp = {};
   var lastRow = summarySheet.getLastRow();
   if (lastRow > 1) {
     var existing = summarySheet.getRange(2, 1, lastRow - 1, 3).getValues();
     for (var i = 0; i < existing.length; i++) {
       if (existing[i][1] === '三井住友銀行 残高（手入力）' && existing[i][2]) {
         savedBalances[existing[i][0]] = existing[i][2];
+      }
+      if (existing[i][1] === '給料入金予定（24日）' && existing[i][2]) {
+        savedSalaries[existing[i][0]] = existing[i][2];
+      }
+      if (existing[i][1] === '楽天カード（仮入力）' && existing[i][2]) {
+        savedRakutenTemp[existing[i][0]] = existing[i][2];
       }
     }
   }
@@ -237,22 +249,73 @@ function createMonthlySummary(ss, rows) {
   }
   monthOrder.sort(function(a, b) { return b > a ? 1 : -1; });
 
+  // 固定費（毎月固定）
+  var FIXED_EXPENSES = [
+    { name: 'ローン返済', amount: 142214, date: '27日' },
+    { name: '管理費・積立金', amount: 29350, date: '1日' },
+    { name: 'Dカード', amount: 17000, date: '10日' }
+  ];
+  var FIXED_TOTAL = 0;
+  for (var fi = 0; fi < FIXED_EXPENSES.length; fi++) {
+    FIXED_TOTAL += FIXED_EXPENSES[fi].amount;
+  }
+
   var rowNum = 2;
 
   for (var mi = 0; mi < monthOrder.length; mi++) {
     var month = monthOrder[mi];
     var data = monthMap[month];
 
-    // カード別明細
+    // 全引落項目（カード＋楽天仮入力＋固定費）を引落日順でソートして表示
+    var rakutenTemp = savedRakutenTemp[month] || '';
+    var allItems = [];
+
+    // カード明細（メールから取得した引落日を使用）
     for (var ci = 0; ci < data.cards.length; ci++) {
       var card = data.cards[ci];
-      summarySheet.getRange(rowNum, 1, 1, 3).setValues([[month, card.name, card.amount]]);
-      summarySheet.getRange(rowNum, 3).setNumberFormat('¥#,##0');
+      var dm = String(card.date).match(/(\d{1,2})日/);
+      var dayNum = dm ? parseInt(dm[1]) : 99;
+      allItems.push({ type: 'card', name: card.name, amount: card.amount, day: dayNum });
+    }
+    // 楽天カード仮入力（27日扱い）
+    allItems.push({ type: 'rakuten', name: '楽天カード（仮入力）', amount: rakutenTemp, day: 27 });
+    // 固定費
+    for (var fj = 0; fj < FIXED_EXPENSES.length; fj++) {
+      var fe = FIXED_EXPENSES[fj];
+      var feDay = parseInt(fe.date) || 99;
+      allItems.push({ type: 'fixed', name: fe.name, date: fe.date, amount: fe.amount, day: feDay });
+    }
+    // 引落日順ソート
+    allItems.sort(function(a, b) { return a.day - b.day; });
+
+    var rakutenTempRow = -1;
+    for (var ai = 0; ai < allItems.length; ai++) {
+      var item = allItems[ai];
+      if (item.type === 'card') {
+        summarySheet.getRange(rowNum, 1, 1, 3).setValues([[month, item.name, item.amount]]);
+        summarySheet.getRange(rowNum, 3).setNumberFormat('¥#,##0');
+      } else if (item.type === 'rakuten') {
+        summarySheet.getRange(rowNum, 1, 1, 3).setValues([[month, '楽天カード（仮入力）', item.amount]]);
+        summarySheet.getRange(rowNum, 1, 1, 5).setBackground('#fce4ec');
+        summarySheet.getRange(rowNum, 2).setFontWeight('bold');
+        summarySheet.getRange(rowNum, 3).setNote('楽天カードの確定前金額を仮入力（確定後は自動で上書きされます）');
+        summarySheet.getRange(rowNum, 3).setNumberFormat('¥#,##0');
+        rakutenTempRow = rowNum;
+      } else if (item.type === 'fixed') {
+        summarySheet.getRange(rowNum, 1, 1, 3).setValues([[month, item.name + '（' + item.date + '）', item.amount]]);
+        summarySheet.getRange(rowNum, 3).setNumberFormat('¥#,##0');
+        summarySheet.getRange(rowNum, 1, 1, 5).setBackground('#fff3e0');
+      }
       rowNum++;
     }
 
-    // 引落合計
-    summarySheet.getRange(rowNum, 1, 1, 3).setValues([[month, '【引落合計】', data.total]]);
+    // 引落合計（カード＋固定費＋楽天仮入力）← 数式にすることで仮入力即反映！
+    summarySheet.getRange(rowNum, 1).setValue(month);
+    summarySheet.getRange(rowNum, 2).setValue('【引落合計】');
+    // カード合計 + 楽天仮入力(空なら0) + 固定費合計
+    summarySheet.getRange(rowNum, 3).setFormula(
+      '=' + data.total + '+IF(C' + rakutenTempRow + '="",0,C' + rakutenTempRow + ')+' + FIXED_TOTAL
+    );
     summarySheet.getRange(rowNum, 1, 1, 5).setBackground('#e8f5e9');
     summarySheet.getRange(rowNum, 1, 1, 5).setFontWeight('bold');
     summarySheet.getRange(rowNum, 3).setNumberFormat('¥#,##0');
@@ -269,11 +332,21 @@ function createMonthlySummary(ss, rows) {
     var balanceRow = rowNum;
     rowNum++;
 
-    // 差引残高
+    // 給料入金予定（薄緑）
+    var sal = savedSalaries[month] || '';
+    summarySheet.getRange(rowNum, 1, 1, 3).setValues([[month, '給料入金予定（24日）', sal]]);
+    summarySheet.getRange(rowNum, 1, 1, 5).setBackground('#f1f8e9');
+    summarySheet.getRange(rowNum, 2).setFontWeight('bold');
+    summarySheet.getRange(rowNum, 3).setNote('給料入金予定額を入力してください（約50万円）');
+    summarySheet.getRange(rowNum, 3).setNumberFormat('¥#,##0');
+    var salaryRow = rowNum;
+    rowNum++;
+
+    // 差引残高（残高 + 給料 - 引落合計）
     summarySheet.getRange(rowNum, 1).setValue(month);
     summarySheet.getRange(rowNum, 2).setValue('差引残高（引落後）');
     summarySheet.getRange(rowNum, 3).setFormula(
-      '=IF(C' + balanceRow + '="","残高を入力",C' + balanceRow + '-C' + totalRow + ')'
+      '=IF(C' + balanceRow + '="","残高を入力",C' + balanceRow + '+IF(C' + salaryRow + '="",0,C' + salaryRow + ')-C' + totalRow + ')'
     );
     summarySheet.getRange(rowNum, 3).setNumberFormat('¥#,##0');
     summarySheet.getRange(rowNum, 5).setFormula(
@@ -335,9 +408,7 @@ function setupTrigger() {
     .atHour(9)
     .create();
 
-  SpreadsheetApp.getUi().alert(
-    'トリガー設定完了！\n6時間ごとに新着チェック＆自動更新されます。\n次は summarizeMoneyForward を実行して初回データを取得してください。'
-  );
+  Logger.log('トリガー設定完了！6時間ごとに新着チェック＆自動更新されます。');
 }
 
 // サマリーメール送信

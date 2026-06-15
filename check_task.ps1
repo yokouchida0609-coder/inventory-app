@@ -1,0 +1,1 @@
+﻿Get-ScheduledTask | Select-Object TaskName, State, @{N='LastRun';E={(Get-ScheduledTaskInfo $_.TaskName -ErrorAction SilentlyContinue).LastRunTime}}, @{N='Result';E={(Get-ScheduledTaskInfo $_.TaskName -ErrorAction SilentlyContinue).LastTaskResult}} | Format-Table -AutoSize

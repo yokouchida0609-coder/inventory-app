@@ -7,6 +7,21 @@
       "runtimeArgs": ["server.js"],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "divorce-counselor-trainer",
+      "runtimeExecutable": "C:/Program Files/nodejs/node.exe",
+      "runtimeArgs": ["C:/Users/yoko7/divorce-counselor-trainer/server.js"],
+      "cwd": "C:/Users/yoko7/divorce-counselor-trainer",
+      "port": 3001,
+      "autoPort": true
+    },
+    {
+      "name": "psychology-trainer",
+      "runtimeExecutable": "C:/Program Files/nodejs/node.exe",
+      "runtimeArgs": ["C:/Users/yoko7/psychology-trainer/server.js"],
+      "port": 3002,
+      "autoPort": true
     }
   ]
 }
