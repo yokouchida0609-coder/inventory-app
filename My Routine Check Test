@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>デイリールーティン テスト版</title>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f5f5f5;color:#333;-webkit-tap-highlight-color:transparent}
+header{background:#4caf50;color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+header h1{font-size:1.3rem}
+header span{font-size:.85rem;opacity:.9}
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e0e0e0;overflow-x:auto;position:sticky;top:0;z-index:20}
+.tab{padding:12px 18px;cursor:pointer;white-space:nowrap;font-size:.9rem;border-bottom:3px solid transparent}
+.tab.active{border-bottom-color:#4caf50;color:#4caf50;font-weight:600}
+.container{max-width:700px;margin:0 auto;padding:16px}
+.tab-content{display:none}.tab-content.active{display:block}
+.progress-wrap{background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.progress-label{display:flex;justify-content:space-between;font-size:.85rem;color:#666;margin-bottom:8px}
+.progress-bar{height:8px;background:#e0e0e0;border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:#4caf50;border-radius:4px;transition:width .3s}
+.section{margin-bottom:20px}
+.section-title{font-size:.85rem;font-weight:700;color:#777;letter-spacing:.06em;margin-bottom:8px;padding-left:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.reset-badge{font-size:.65rem;font-weight:400;color:#fff;background:#a5d6a7;padding:1px 7px;border-radius:8px;letter-spacing:0}
+.task-list{display:flex;flex-direction:column;gap:6px}
+.task-card{background:#fff;border-radius:8px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.1);display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;transition:opacity .2s}
+.task-card.done{opacity:.45}.task-card.done .task-name{text-decoration:line-through}
+.task-checkbox{width:22px;height:22px;border:2px solid #ccc;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;color:#fff}
+.task-card.done .task-checkbox{background:#4caf50;border-color:#4caf50}
+.task-card.done .task-checkbox::after{content:'✓'}
+.task-name{flex:1;font-size:.95rem;font-weight:500;word-break:break-word}
+.task-note{font-size:.75rem;color:#999;white-space:nowrap}
+.icon-btn{background:none;border:none;color:#ccc;font-size:1rem;cursor:pointer;padding:2px 4px;flex-shrink:0;line-height:1}
+.icon-btn:hover{color:#e53935}.icon-btn.edit:hover{color:#4caf50}
+.empty-note{font-size:.82rem;color:#bbb;padding:6px 4px}
+.empty-box{background:#fff;border-radius:10px;padding:28px 18px;text-align:center;color:#999;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:16px;line-height:1.8;font-size:.92rem}
+.empty-box b{color:#555}
+.primary-btn{padding:10px 18px;background:#4caf50;color:#fff;border:none;border-radius:8px;font-size:.9rem;cursor:pointer;font-weight:600}
+.primary-btn:hover{background:#43a047}
+.reset-btn{width:100%;padding:10px;background:#fff;border:1px solid #e0e0e0;border-radius:8px;color:#bbb;cursor:pointer;font-size:.85rem;margin-top:4px}
+.reset-btn:hover{background:#fff3e0;color:#e65100;border-color:#ffcc80}
+</style>
+<style>
+.form-box{background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.form-title{font-size:.8rem;font-weight:700;color:#999;letter-spacing:.08em;margin-bottom:10px}
+.form-row{display:flex;gap:8px;margin-bottom:8px}
+.form-row:last-child{margin-bottom:0}
+select,input[type=text]{padding:9px 10px;border:1px solid #ddd;border-radius:8px;font-size:.9rem;background:#f9f9f9;color:#333;min-width:0}
+input[type=text]{flex:1;background:#fff}
+select:focus,input[type=text]:focus{outline:none;border-color:#4caf50}
+.add-btn{padding:9px 18px;background:#4caf50;color:#fff;border:none;border-radius:8px;font-size:.9rem;cursor:pointer;font-weight:600;white-space:nowrap}
+.add-btn:hover{background:#43a047}
+.add-btn:disabled{background:#ccc;cursor:default}
+.hint{font-size:.78rem;color:#aaa;line-height:1.7;margin:6px 2px 14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{font-size:.78rem;padding:5px 11px;border-radius:16px;border:1px solid #ddd;background:#fafafa;color:#666;cursor:pointer}
+.chip:hover{border-color:#4caf50;color:#4caf50}
+.swatches{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.swatch{width:28px;height:28px;border-radius:50%;border:2px solid #e0e0e0;cursor:pointer;flex-shrink:0}
+.swatch.selected{border-color:#333;transform:scale(1.12)}
+.cat-card{background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.1);margin-bottom:8px}
+.cat-card-main{display:flex;align-items:center;gap:8px}
+.drag-handle{cursor:grab;color:#bbb;font-size:1.15rem;padding:4px 2px;touch-action:none;flex-shrink:0}
+.cat-name{flex:1;font-size:.98rem;font-weight:600;word-break:break-word}
+.cat-count{font-size:.75rem;color:#999;white-space:nowrap}
+.mini-btn{background:#f5f5f5;border:1px solid #e0e0e0;border-radius:6px;width:30px;height:30px;font-size:.85rem;cursor:pointer;color:#666;flex-shrink:0}
+.mini-btn:hover{background:#e8f5e9;color:#2e7d32}
+.cat-card-sub{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.cat-card-sub .swatch{width:22px;height:22px}
+.cat-card.sortable-ghost{opacity:.4}
+.data-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.ghost-btn{padding:9px 14px;background:#fff;border:1px solid #ddd;border-radius:8px;font-size:.85rem;cursor:pointer;color:#666}
+.ghost-btn.danger{color:#c62828;border-color:#ef9a9a}
+.report-period-btns{display:flex;gap:8px;margin-bottom:16px}
+.report-period-btn{padding:6px 16px;border-radius:20px;border:1px solid #ddd;background:#fff;font-size:.85rem;cursor:pointer;color:#666}
+.report-period-btn.active{background:#4caf50;color:#fff;border-color:#4caf50;font-weight:600}
+.report-section{margin-bottom:22px}
+.report-section-title{font-size:.8rem;font-weight:700;color:#999;letter-spacing:.08em;margin-bottom:10px}
+.report-day-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.report-day-label{font-size:.8rem;color:#666;width:56px;flex-shrink:0;text-align:right}
+.report-bar-wrap{flex:1;background:#f0f0f0;border-radius:6px;height:18px;overflow:hidden}
+.report-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#66bb6a,#43a047)}
+.report-bar-fill.low{background:linear-gradient(90deg,#ef9a9a,#e53935)}
+.report-bar-fill.mid{background:linear-gradient(90deg,#ffcc80,#fb8c00)}
+.report-pct{font-size:.8rem;font-weight:700;color:#555;width:38px;flex-shrink:0}
+.report-task-row{display:flex;align-items:center;gap:10px;background:#fff;border-radius:8px;padding:9px 13px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.report-task-name{flex:1;font-size:.9rem}
+.report-task-pct{font-size:.85rem;font-weight:700;padding:2px 10px;border-radius:10px}
+.report-task-pct.low{background:#ffebee;color:#e53935}.report-task-pct.mid{background:#fff3e0;color:#e65100}.report-task-pct.high{background:#e8f5e9;color:#2e7d32}
+.report-empty{text-align:center;color:#bbb;font-size:.9rem;padding:30px 0;line-height:1.8}
+</style>
+</head>
+<body>
+<header><h1>デイリールーティン <span style="font-size:.75rem;background:#fff;color:#2e7d32;border-radius:10px;padding:2px 9px;vertical-align:middle">テスト版</span></h1><span id="header-date"></span></header>
+<div class="tabs">
+  <div class="tab active" data-tab="today">今日</div>
+  <div class="tab" data-tab="report">レポート</div>
+  <div class="tab" data-tab="manage">カテゴリ管理</div>
+</div>
+<div class="container">
+  <div class="tab-content active" id="tab-today">
+    <div class="hint" style="margin:0 2px 12px">テスト版です。今までのタスクを初期データとして入れてあります。保存先は元のアプリとは別なので、元のアプリのデータは上書きされません。</div>
+    <div class="form-box">
+      <div class="form-title">タスクを追加</div>
+      <div class="form-row">
+        <select id="task-category" aria-label="カテゴリ"></select>
+        <input type="text" id="task-name" placeholder="タスク名...">
+      </div>
+      <div class="form-row">
+        <input type="text" id="task-note" placeholder="メモ（任意）例: 13:00 / お風呂後">
+        <button class="add-btn" id="task-add-btn" onclick="addTask()">追加</button>
+      </div>
+      <div class="hint" id="task-form-hint"></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>今日の進捗</span><span id="progress-text">0 / 0 完了</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div id="empty-state"></div>
+    <div id="sections"></div>
+    <button class="reset-btn" onclick="resetToday()">今日のチェックをリセット</button>
+    <div class="hint">タスクは長押しドラッグで並び替えできます。カテゴリの順番は「カテゴリ管理」タブで変えられます。</div>
+  </div>
+
+  <div class="tab-content" id="tab-report">
+    <div class="report-period-btns">
+      <button class="report-period-btn active" onclick="setReportPeriod(7,this)">過去7日</button>
+      <button class="report-period-btn" onclick="setReportPeriod(30,this)">過去30日</button>
+    </div>
+    <div id="report-content"></div>
+  </div>
+
+  <div class="tab-content" id="tab-manage">
+    <div class="form-box">
+      <div class="form-title">カテゴリを作る</div>
+      <div class="chips" id="preset-chips"></div>
+      <div class="form-row">
+        <input type="text" id="cat-name" placeholder="カテゴリ名 例: 今日やる">
+      </div>
+      <div class="form-row">
+        <select id="cat-reset" aria-label="リセット周期">
+          <option value="daily">毎日リセット</option>
+          <option value="weekly">週間（月曜リセット）</option>
+          <option value="monthly">月間（月が変わるとリセット）</option>
+          <option value="yearly">年間（年が変わるとリセット）</option>
+          <option value="never">リセットしない（チェックが残る）</option>
+        </select>
+      </div>
+      <div class="form-row" style="align-items:center;justify-content:space-between">
+        <div class="swatches" id="cat-swatches"></div>
+        <button class="add-btn" onclick="addCategory()">追加</button>
+      </div>
+      <div class="hint">「今日やる」「特別」のようなカテゴリも、名前を入力すれば自由に作れます。色とリセット周期はあとからも変更できます。</div>
+    </div>
+    <div class="form-title" style="padding-left:2px">カテゴリの順番（⠿ をドラッグ、または ↑ ↓ で入れ替え）</div>
+    <div id="category-list"></div>
+    <div id="category-empty"></div>
+    <div class="form-box" style="margin-top:20px">
+      <div class="form-title">データの管理</div>
+      <div class="hint" style="margin-top:0">入力したカテゴリ・タスク・チェックは、このスマホのブラウザに保存されます。機種変更のときは書き出して移してください。</div>
+      <div class="data-row">
+        <button class="ghost-btn" onclick="exportData()">データを書き出す</button>
+        <button class="ghost-btn" onclick="document.getElementById('import-file').click()">データを読み込む</button>
+        <button class="ghost-btn danger" onclick="clearAll()">すべて削除して空に戻す</button>
+      </div>
+      <input type="file" id="import-file" accept=".json,application/json" style="display:none" onchange="importData(event)">
+    </div>
+  </div>
+</div>
+<script>
+var STORE_KEY='my_routine_test_v1';
+var SEED_DATA={"categories": [{"id": "c_today", "name": "今日やる", "reset": "never", "color": "#fff9c4"}, {"id": "c_kaji", "name": "家事", "reset": "daily", "color": "#e1f5fe"}, {"id": "c_manabi", "name": "学び", "reset": "daily", "color": "#ede7f6"}, {"id": "c_asa", "name": "朝", "reset": "daily", "color": "#fff3e0"}, {"id": "c_hiru", "name": "昼", "reset": "daily", "color": "#e0f2f1"}, {"id": "c_yoru", "name": "夜", "reset": "daily", "color": "#e1f5fe"}, {"id": "c_weekday", "name": "曜日タスク", "reset": "daily", "color": "#fce4ec"}, {"id": "c_weekly", "name": "週間タスク", "reset": "weekly", "color": "#c8e6c9"}, {"id": "c_monthly", "name": "月間タスク", "reset": "monthly", "color": "#fff9c4"}, {"id": "c_special", "name": "特別", "reset": "never", "color": "#fce4ec"}, {"id": "c_yearly", "name": "年間タスク", "reset": "yearly", "color": "#ede7f6"}], "tasks": [{"id": "m1", "categoryId": "c_asa", "name": "髪の毛セット", "note": "7:30 (平日のみ)"}, {"id": "m2", "categoryId": "c_asa", "name": "歯磨き", "note": "起きたら"}, {"id": "m3", "categoryId": "c_asa", "name": "顔を洗う", "note": "起きたら"}, {"id": "m4", "categoryId": "c_asa", "name": "デイリーレポート作成", "note": "8:30"}, {"id": "m5", "categoryId": "c_asa", "name": "投資レポート作成", "note": "8:45"}, {"id": "m6", "categoryId": "c_asa", "name": "体重測定", "note": "8:45"}, {"id": "m7", "categoryId": "c_asa", "name": "掃除機", "note": "8:30～"}, {"id": "n1", "categoryId": "c_hiru", "name": "昼ごはん", "note": "13:00"}, {"id": "a1", "categoryId": "c_hiru", "name": "朝歯磨き", "note": "朝歯磨き後"}, {"id": "a9", "categoryId": "c_hiru", "name": "洗濯", "note": "2日に1回"}, {"id": "a4", "categoryId": "c_hiru", "name": "お水を飲む", "note": "午後"}, {"id": "a5", "categoryId": "c_hiru", "name": "暑い日の散歩", "note": "午後"}, {"id": "a6", "categoryId": "c_hiru", "name": "髪の毛セット", "note": "午後"}, {"id": "a7", "categoryId": "c_hiru", "name": "ストレッチ", "note": "午後"}, {"id": "a8", "categoryId": "c_hiru", "name": "お風呂掃除", "note": "夕方"}, {"id": "a2", "categoryId": "c_hiru", "name": "体重測定", "note": "週1回"}, {"id": "a3", "categoryId": "c_hiru", "name": "お風呂掃除", "note": "週1回"}, {"id": "e1", "categoryId": "c_yoru", "name": "夜ごはん準備", "note": "18:30"}, {"id": "e2", "categoryId": "c_yoru", "name": "夜ごはん", "note": "19:00"}, {"id": "e2b", "categoryId": "c_yoru", "name": "洗濯物を干す", "note": "19:30"}, {"id": "e5", "categoryId": "c_yoru", "name": "入浴", "note": "20:00"}, {"id": "e7", "categoryId": "c_yoru", "name": "夜の洗濯物を干す", "note": "20:30"}, {"id": "e10", "categoryId": "c_yoru", "name": "パソコンの電源を切る", "note": "帰宅したら"}, {"id": "e8", "categoryId": "c_yoru", "name": "歯磨き・スキンケア", "note": "21:00"}, {"id": "e9", "categoryId": "c_yoru", "name": "就寝準備", "note": "23:00"}, {"id": "wd1", "categoryId": "c_weekday", "name": "ゴミ出し", "note": "月・金 / 22:00以降"}, {"id": "wd2", "categoryId": "c_weekday", "name": "冷蔵庫チェック", "note": "金 / ゴミ出し前"}, {"id": "wd3", "categoryId": "c_weekday", "name": "ペットボトルゴミ出し", "note": "日 / 22:00ごろ"}, {"id": "w1", "categoryId": "c_weekly", "name": "枕カバー洗濯", "note": "週1"}, {"id": "w2", "categoryId": "c_weekly", "name": "玄関掃除", "note": "週1"}, {"id": "w3", "categoryId": "c_weekly", "name": "アイロン", "note": "週1"}, {"id": "w4", "categoryId": "c_weekly", "name": "ブルーレイのデータ整理", "note": "週1"}, {"id": "w5", "categoryId": "c_weekly", "name": "お風呂掃除", "note": "週1"}, {"id": "w6", "categoryId": "c_weekly", "name": "トイレ掃除", "note": "週1"}, {"id": "w7a", "categoryId": "c_weekly", "name": "チョコザップ", "note": "週2 / 1回目"}, {"id": "w7b", "categoryId": "c_weekly", "name": "チョコザップ", "note": "週2 / 2回目"}, {"id": "w12a", "categoryId": "c_weekly", "name": "QQイングリッシュ", "note": "週2 / 1回目"}, {"id": "w12b", "categoryId": "c_weekly", "name": "QQイングリッシュ", "note": "週2 / 2回目"}, {"id": "w8", "categoryId": "c_weekly", "name": "爪切り", "note": "2週間"}, {"id": "w9", "categoryId": "c_weekly", "name": "シーツ交換", "note": "2週間"}, {"id": "w10", "categoryId": "c_weekly", "name": "ベランダ掃除", "note": "2週間"}, {"id": "w11", "categoryId": "c_weekly", "name": "髪染め", "note": "3週間・お風呂前"}, {"id": "mo1", "categoryId": "c_monthly", "name": "税理士費用", "note": "月イチ"}, {"id": "mo2", "categoryId": "c_monthly", "name": "棚の食材確認", "note": "月イチ"}, {"id": "mo3", "categoryId": "c_monthly", "name": "コンロ清掃", "note": "月末"}, {"id": "mo4", "categoryId": "c_monthly", "name": "鍋底、コンロの掃除", "note": "月末"}, {"id": "mo5", "categoryId": "c_monthly", "name": "やり直し", "note": "月イチ"}, {"id": "mo6", "categoryId": "c_monthly", "name": "照明", "note": "月末"}, {"id": "yr1", "categoryId": "c_yearly", "name": "エアコンクリーニング", "note": "6月"}, {"id": "yr2", "categoryId": "c_yearly", "name": "大掃除", "note": "12月"}, {"id": "yr3", "categoryId": "c_yearly", "name": "年賀状デザイン・印刷", "note": "12月"}, {"id": "yr4", "categoryId": "c_yearly", "name": "年賀状印刷", "note": "12月"}, {"id": "yr5", "categoryId": "c_yearly", "name": "実家の家電購入", "note": "1月"}, {"id": "yr6", "categoryId": "c_yearly", "name": "お墓参り", "note": "8月（お盆）"}, {"id": "yr8", "categoryId": "c_yearly", "name": "楽器の体験", "note": "9月"}, {"id": "yr9", "categoryId": "c_yearly", "name": "資格の申し込み", "note": "10月"}, {"id": "yr10", "categoryId": "c_yearly", "name": "確定申告", "note": "3月"}, {"id": "yr11", "categoryId": "c_yearly", "name": "カーテン浴槽の洗濯", "note": "12月"}, {"id": "yr7a", "categoryId": "c_yearly", "name": "ふるさと納税", "note": "12月"}, {"id": "yr12", "categoryId": "c_yearly", "name": "おせち予約", "note": "10月"}, {"id": "yr7b", "categoryId": "c_yearly", "name": "ハウスクリーニング", "note": "12月"}, {"id": "yr13", "categoryId": "c_yearly", "name": "カタカナ読書", "note": "1月"}, {"id": "yr14", "categoryId": "c_yearly", "name": "カタカナ読書", "note": "2月"}, {"id": "yr15", "categoryId": "c_yearly", "name": "カタカナ読書", "note": "3月"}, {"id": "yr16", "categoryId": "c_yearly", "name": "カタカナ読書", "note": "6月"}, {"id": "yr17", "categoryId": "c_yearly", "name": "カタカナ読書", "note": "9月"}, {"id": "yr18", "categoryId": "c_yearly", "name": "カタカナ読書", "note": "10月"}, {"id": "yr19", "categoryId": "c_yearly", "name": "カタカナ読書", "note": "3月"}, {"id": "yr20", "categoryId": "c_yearly", "name": "カタカナ読書", "note": "12月"}], "checked": {}, "history": {}};
+var PALETTE=['#ffffff','#fce4ec','#fff9c4','#e1f5fe','#c8e6c9','#ede7f6','#fff3e0','#e0f2f1'];
+var PRESETS=['今日やる','特別','朝','昼','夜','家事','学び','週間','月間','年間'];
+var RESET_LABELS={daily:'毎日リセット',weekly:'月曜リセット',monthly:'月末リセット',yearly:'年末リセット',never:'リセットなし'};
+var selectedColor=PALETTE[3];
+function uid(p){return p+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function toLocalDateStr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function mondayStr(d){var x=new Date(d);var day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);return toLocalDateStr(x)}
+function periodKey(reset,date){var d=date||new Date();if(reset==='daily')return toLocalDateStr(d);if(reset==='weekly')return 'W'+mondayStr(d);if(reset==='monthly')return 'M'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');if(reset==='yearly')return 'Y'+d.getFullYear();return 'always'}
+function defaultData(){return seedData()}
+function seedData(){
+  var d=JSON.parse(JSON.stringify(SEED_DATA));
+  // 元アプリで非表示にした固定タスクは、テスト版でも最初から除外する (読み取り専用)
+  try{
+    var hidden=JSON.parse(localStorage.getItem('hidden_tasks_v1')||'[]');
+    if(Array.isArray(hidden)&&hidden.length){
+      var hs={}; hidden.forEach(function(x){hs[String(x)]=1});
+      d.tasks=d.tasks.filter(function(t){return !hs[t.id]});
+    }
+  }catch(e){}
+  // 元アプリで自分で追加したタスク (マイタスク) を取り込む (読み取り専用・元データは変更しない)
+  try{
+    var raw=localStorage.getItem('my_tasks_v1');
+    if(raw){
+      var parsed=JSON.parse(raw);
+      var byName={}; d.categories.forEach(function(c){byName[c.name]=c.id});
+      var used={}; d.tasks.forEach(function(t){used[t.id]=1});
+      var addOne=function(item,catName){
+        if(!item)return;
+        var name='',note='';
+        if(typeof item==='string'){name=item}
+        else{name=item.name||item.text||item.title||'';note=item.note||item.memo||'';catName=catName||item.section||item.category||item.cat}
+        name=String(name).trim(); if(!name)return;
+        var cid=byName[catName]||byName['今日やる'];
+        var id=(item&&item.id&&!used[item.id])?String(item.id):uid('t');
+        used[id]=1;
+        d.tasks.push({id:id,name:name,note:String(note).trim(),categoryId:cid});
+      };
+      if(Array.isArray(parsed)){parsed.forEach(function(it){addOne(it,null)})}
+      else if(parsed&&typeof parsed==='object'){Object.keys(parsed).forEach(function(k){var v=parsed[k];if(Array.isArray(v))v.forEach(function(it){addOne(it,k)});else addOne(v,k)})}
+    }
+  }catch(e){}
+  return d;
+}
+
+function loadData(){try{var raw=localStorage.getItem(STORE_KEY);if(!raw)return defaultData();var d=JSON.parse(raw);if(!d||!Array.isArray(d.categories)||!Array.isArray(d.tasks))return defaultData();d.checked=d.checked||{};d.history=d.history||{};return d}catch(e){return defaultData()}}
+function saveData(d){try{localStorage.setItem(STORE_KEY,JSON.stringify(d))}catch(e){}}
+var data=loadData();
+function catById(id){return data.categories.find(function(c){return c.id===id})}
+function isDone(task){var cat=catById(task.categoryId);if(!cat)return false;return data.checked[task.id]===periodKey(cat.reset)}
+function reportTasks(){var daily=data.tasks.filter(function(t){var c=catById(t.categoryId);return c&&c.reset==='daily'});return daily.length?daily:data.tasks}
+function updateTodayHistory(){var list=reportTasks();var today=toLocalDateStr(new Date());var per={},names={};var done=0;list.forEach(function(t){var d=isDone(t);per[t.id]=d;names[t.id]=t.name;if(d)done++});data.history[today]={total:list.length,done:done,per:per,names:names};var keys=Object.keys(data.history).sort();if(keys.length>90)keys.slice(0,keys.length-90).forEach(function(k){delete data.history[k]})}
+</script>
+<script>
+var taskSortables={},catSortable=null;
+function render(){
+  var now=new Date();var dn=['日','月','火','水','木','金','土'];
+  document.getElementById('header-date').textContent=(now.getMonth()+1)+'月'+now.getDate()+'日（'+dn[now.getDay()]+'）';
+  renderTaskForm();renderSections();renderManage();updateTodayHistory();saveData(data);
+}
+function renderTaskForm(){
+  var sel=document.getElementById('task-category');var prev=sel.value;
+  if(!data.categories.length){sel.innerHTML='<option value="">カテゴリなし</option>';document.getElementById('task-add-btn').disabled=true;document.getElementById('task-form-hint').textContent='先に「カテゴリ管理」タブでカテゴリを作ってください。';return}
+  document.getElementById('task-add-btn').disabled=false;document.getElementById('task-form-hint').textContent='';
+  sel.innerHTML=data.categories.map(function(c){return '<option value="'+c.id+'">'+esc(c.name)+'</option>'}).join('');
+  if(catById(prev))sel.value=prev;
+}
+function renderSections(){
+  var wrap=document.getElementById('sections');var empty=document.getElementById('empty-state');
+  var total=data.tasks.length;var done=data.tasks.filter(isDone).length;
+  document.getElementById('progress-text').textContent=done+' / '+total+' 完了';
+  document.getElementById('progress-fill').style.width=(total?Math.round(done/total*100):0)+'%';
+  if(!data.categories.length){wrap.innerHTML='';empty.innerHTML='<div class="empty-box"><b>まだ何もありません</b><br>最初にカテゴリを作るところから始められます。<br>例：今日やる ／ 特別 ／ 朝 ／ 夜 など<br><br><button class="primary-btn" onclick="switchTab(\'manage\')">カテゴリを作る</button></div>';return}
+  empty.innerHTML='';
+  wrap.innerHTML=data.categories.map(function(cat){
+    var tasks=data.tasks.filter(function(t){return t.categoryId===cat.id});
+    var cards=tasks.map(function(t){
+      var d=isDone(t);
+      return '<div class="task-card'+(d?' done':'')+'" data-id="'+t.id+'" style="background:'+esc(cat.color||'#fff')+'" onclick="toggleTask(\''+t.id+'\')">'
+      +'<div class="task-checkbox"></div><span class="task-name">'+esc(t.name)+'</span>'
+      +(t.note?'<span class="task-note">'+esc(t.note)+'</span>':'')
+      +'<button class="icon-btn edit" title="編集" onclick="event.stopPropagation();editTask(\''+t.id+'\')">✎</button>'
+      +'<button class="icon-btn" title="削除" onclick="event.stopPropagation();deleteTask(\''+t.id+'\')">×</button></div>';
+    }).join('');
+    return '<div class="section"><div class="section-title">'+esc(cat.name)+' <span class="reset-badge">'+esc(RESET_LABELS[cat.reset]||'')+'</span></div>'
+      +'<div class="task-list" data-cat="'+cat.id+'">'+cards+'</div>'
+      +(tasks.length?'':'<div class="empty-note">タスクがありません（上のフォームから追加できます）</div>')+'</div>';
+  }).join('');
+  initTaskSortables();
+}
+function initTaskSortables(){
+  Object.keys(taskSortables).forEach(function(k){try{taskSortables[k].destroy()}catch(e){}});taskSortables={};
+  if(typeof Sortable==='undefined')return;
+  document.querySelectorAll('.task-list').forEach(function(el){
+    taskSortables[el.dataset.cat]=Sortable.create(el,{animation:150,delay:450,delayOnTouchOnly:true,
+      onEnd:function(){
+        var catId=el.dataset.cat;var order=[].map.call(el.querySelectorAll('[data-id]'),function(c){return c.dataset.id});
+        var inCat=data.tasks.filter(function(t){return t.categoryId===catId});
+        inCat.sort(function(a,b){return order.indexOf(a.id)-order.indexOf(b.id)});
+        var rest=data.tasks.filter(function(t){return t.categoryId!==catId});
+        var rebuilt=[];data.categories.forEach(function(c){rebuilt=rebuilt.concat(c.id===catId?inCat:rest.filter(function(t){return t.categoryId===c.id}))});
+        data.tasks=rebuilt;saveData(data);
+      }});
+  });
+}
+</script>
+<script>
+function toggleTask(id){var t=data.tasks.find(function(x){return x.id===id});if(!t)return;var cat=catById(t.categoryId);if(!cat)return;var key=periodKey(cat.reset);if(data.checked[id]===key)delete data.checked[id];else data.checked[id]=key;render()}
+function addTask(){var name=document.getElementById('task-name').value.trim();var catId=document.getElementById('task-category').value;if(!name||!catId)return;data.tasks.push({id:uid('t'),name:name,note:document.getElementById('task-note').value.trim(),categoryId:catId});document.getElementById('task-name').value='';document.getElementById('task-note').value='';render();document.getElementById('task-name').focus()}
+function editTask(id){var t=data.tasks.find(function(x){return x.id===id});if(!t)return;var name=prompt('タスク名',t.name);if(name===null)return;name=name.trim();if(!name)return;var note=prompt('メモ（任意）',t.note||'');if(note===null)return;t.name=name;t.note=note.trim();render()}
+function deleteTask(id){var t=data.tasks.find(function(x){return x.id===id});if(!t)return;if(!confirm('「'+t.name+'」を削除しますか？'))return;data.tasks=data.tasks.filter(function(x){return x.id!==id});delete data.checked[id];render()}
+function resetToday(){if(!confirm('今日リセット対象のチェックをすべて外しますか？'))return;data.tasks.forEach(function(t){var c=catById(t.categoryId);if(c&&c.reset==='daily')delete data.checked[t.id]});render()}
+function switchTab(name){document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===name)});document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});document.getElementById('tab-'+name).classList.add('active');if(name==='report')renderReport();window.scrollTo(0,0)}
+document.querySelectorAll('.tab').forEach(function(tab){tab.addEventListener('click',function(){switchTab(tab.dataset.tab)})});
+function addCategory(){var name=document.getElementById('cat-name').value.trim();if(!name)return;data.categories.push({id:uid('c'),name:name,reset:document.getElementById('cat-reset').value,color:selectedColor});document.getElementById('cat-name').value='';render()}
+function deleteCategory(id){var c=catById(id);if(!c)return;var n=data.tasks.filter(function(t){return t.categoryId===id}).length;if(!confirm('カテゴリ「'+c.name+'」を削除しますか？'+(n?' 中のタスク '+n+' 件も削除されます。':'')))return;data.tasks.filter(function(t){return t.categoryId===id}).forEach(function(t){delete data.checked[t.id]});data.tasks=data.tasks.filter(function(t){return t.categoryId!==id});data.categories=data.categories.filter(function(x){return x.id!==id});render()}
+function renameCategory(id){var c=catById(id);if(!c)return;var name=prompt('カテゴリ名',c.name);if(name===null)return;name=name.trim();if(!name)return;c.name=name;render()}
+function moveCategory(id,dir){var i=data.categories.findIndex(function(c){return c.id===id});var j=i+dir;if(i<0||j<0||j>=data.categories.length)return;var tmp=data.categories[i];data.categories[i]=data.categories[j];data.categories[j]=tmp;render()}
+function setCatColor(id,color){var c=catById(id);if(c){c.color=color;render()}}
+function setCatReset(id,val){var c=catById(id);if(c){c.reset=val;render()}}
+</script>
+<script>
+function renderManage(){
+  var chips=document.getElementById('preset-chips');
+  chips.innerHTML=PRESETS.map(function(p){return '<button class="chip" onclick="fillPreset(\''+p+'\')">'+p+'</button>'}).join('');
+  var sw=document.getElementById('cat-swatches');
+  sw.innerHTML=PALETTE.map(function(col){return '<span class="swatch'+(col===selectedColor?' selected':'')+'" style="background:'+col+'" onclick="pickColor(\''+col+'\')"></span>'}).join('');
+  var list=document.getElementById('category-list');var empty=document.getElementById('category-empty');
+  if(!data.categories.length){list.innerHTML='';empty.innerHTML='<div class="empty-note" style="text-align:center;padding:16px 0">まだカテゴリがありません。上のフォームから作ってください。</div>';return}
+  empty.innerHTML='';
+  list.innerHTML=data.categories.map(function(cat,i){
+    var count=data.tasks.filter(function(t){return t.categoryId===cat.id}).length;
+    var swatches=PALETTE.map(function(col){return '<span class="swatch'+(col===cat.color?' selected':'')+'" style="background:'+col+'" onclick="setCatColor(\''+cat.id+'\',\''+col+'\')"></span>'}).join('');
+    var opts=Object.keys(RESET_LABELS).map(function(k){return '<option value="'+k+'"'+(cat.reset===k?' selected':'')+'>'+RESET_LABELS[k]+'</option>'}).join('');
+    return '<div class="cat-card" data-id="'+cat.id+'"><div class="cat-card-main">'
+      +'<span class="drag-handle" title="ドラッグで並び替え">⠿</span>'
+      +'<span class="cat-name">'+esc(cat.name)+'</span><span class="cat-count">'+count+' 件</span>'
+      +'<button class="mini-btn" onclick="moveCategory(\''+cat.id+'\',-1)">↑</button>'
+      +'<button class="mini-btn" onclick="moveCategory(\''+cat.id+'\',1)">↓</button>'
+      +'<button class="mini-btn" onclick="renameCategory(\''+cat.id+'\')">✎</button>'
+      +'<button class="mini-btn" onclick="deleteCategory(\''+cat.id+'\')">×</button></div>'
+      +'<div class="cat-card-sub"><div class="swatches">'+swatches+'</div>'
+      +'<select onchange="setCatReset(\''+cat.id+'\',this.value)">'+opts+'</select></div></div>';
+  }).join('');
+  if(typeof Sortable!=='undefined'){
+    if(catSortable){try{catSortable.destroy()}catch(e){}}
+    catSortable=Sortable.create(list,{animation:150,handle:'.drag-handle',
+      onEnd:function(){var order=[].map.call(list.querySelectorAll('[data-id]'),function(c){return c.dataset.id});data.categories.sort(function(a,b){return order.indexOf(a.id)-order.indexOf(b.id)});saveData(data);renderSections();renderTaskForm()}});
+  }
+}
+function fillPreset(name){document.getElementById('cat-name').value=name;document.getElementById('cat-name').focus()}
+function pickColor(col){selectedColor=col;renderManage()}
+function exportData(){var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='my-routine-test-backup.json';a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},2000)}
+function importData(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(!d||!Array.isArray(d.categories)||!Array.isArray(d.tasks))throw new Error('bad');d.checked=d.checked||{};d.history=d.history||{};if(!confirm('今のデータを、読み込んだデータで置き換えますか？'))return;data=d;saveData(data);render();alert('読み込みました')}catch(e){alert('読み込めませんでした。書き出したファイルを選んでください')}};r.readAsText(f);ev.target.value=''}
+function clearAll(){if(!confirm('カテゴリ・タスク・記録をすべて削除して、空の状態に戻しますか？'))return;if(!confirm('本当に削除しますか？ 元に戻せません。'))return;data={categories:[],tasks:[],checked:{},history:{}};saveData(data);render()}
+</script>
+<script>
+var reportPeriod=7;var DAY_NAMES=['日','月','火','水','木','金','土'];
+function setReportPeriod(days,btn){reportPeriod=days;document.querySelectorAll('.report-period-btn').forEach(function(b){b.classList.remove('active')});btn.classList.add('active');renderReport()}
+function renderReport(){
+  var el=document.getElementById('report-content');if(!el)return;
+  var today=new Date();var days=[];
+  for(var i=reportPeriod-1;i>=0;i--){var d=new Date(today);d.setDate(d.getDate()-i);days.push(toLocalDateStr(d))}
+  var recorded=days.filter(function(d){return data.history[d]&&data.history[d].total>0});
+  if(!recorded.length){el.innerHTML='<div class="report-empty">📊 まだデータがありません<br>タスクをチェックすると記録が溜まります</div>';return}
+  var bars=recorded.map(function(ds){var rec=data.history[ds];var pct=rec.total?Math.round(rec.done/rec.total*100):0;var d=new Date(ds+'T12:00:00');var label=(d.getMonth()+1)+'/'+d.getDate()+'('+DAY_NAMES[d.getDay()]+')';var cls=pct<50?'low':pct<75?'mid':'';
+    return '<div class="report-day-row"><span class="report-day-label">'+label+'</span><div class="report-bar-wrap"><div class="report-bar-fill '+cls+'" style="width:'+pct+'%"></div></div><span class="report-pct">'+pct+'%</span></div>'}).join('');
+  var stats={};
+  recorded.forEach(function(ds){var rec=data.history[ds];Object.keys(rec.per||{}).forEach(function(id){if(!stats[id])stats[id]={name:(rec.names&&rec.names[id])||'（削除済み）',days:0,done:0};stats[id].days++;if(rec.per[id])stats[id].done++})});
+  var arr=Object.keys(stats).map(function(id){var s=stats[id];s.pct=s.days?Math.round(s.done/s.days*100):0;return s}).filter(function(s){return s.days>=2});
+  var low=arr.slice().sort(function(a,b){return a.pct-b.pct}).slice(0,7);
+  var high=arr.slice().sort(function(a,b){return b.pct-a.pct}).slice(0,5);
+  var row=function(t){var cls=t.pct<50?'low':t.pct<75?'mid':'high';return '<div class="report-task-row"><span class="report-task-name">'+esc(t.name)+'</span><span class="report-task-pct '+cls+'">'+t.pct+'%</span></div>'};
+  var avg=Math.round(recorded.reduce(function(s,ds){var r=data.history[ds];return s+(r.total?r.done/r.total*100:0)},0)/recorded.length);
+  el.innerHTML='<div class="report-section"><div class="report-section-title">📊 日別達成率（平均 '+avg+'%）</div>'+bars+'</div>'
+    +'<div class="report-section"><div class="report-section-title">⚠️ サボりがちタスク</div>'+(low.length?low.map(row).join(''):'<div class="report-empty">データなし</div>')+'</div>'
+    +'<div class="report-section"><div class="report-section-title">🏆 よくできてるタスク</div>'+(high.length?high.map(row).join(''):'<div class="report-empty">データなし</div>')+'</div>';
+}
+document.getElementById('task-name').addEventListener('keydown',function(e){if(e.key==='Enter')addTask()});
+document.getElementById('task-note').addEventListener('keydown',function(e){if(e.key==='Enter')addTask()});
+document.getElementById('cat-name').addEventListener('keydown',function(e){if(e.key==='Enter')addCategory()});
+render();
+</script>
+</body>
+</html>
